@@ -23,6 +23,9 @@ class PyTest(TestCommand):
         import pytest
         sys.exit(pytest.main(self.test_args))
 
+with open('requirements.txt') as f:
+    required = f.read().splitlines()
+
 setup(
     name='clinstatsdb',
     version='0.0.1',
@@ -31,15 +34,7 @@ setup(
     author_email='kenny.billiau@scilifelab.se',
     packages=find_packages(exclude=('tests*', 'docs', 'examples')),
     include_package_data=True,
-    install_requires=[
-        'Flask>=0.10',
-        'Flask-Script',
-        'Flask-Restful',
-        'Flask-SQLAlchemy',
-        'mongoengine',
-        'gunicorn',
-        'cghq_common',
-    ],
+    install_requires=required,
     cmdclass=dict(test=PyTest),
     zip_safe=False,
     classifiers=[
