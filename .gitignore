@@ -63,3 +63,6 @@ docs/_build
 # Testing
 *.ipynb
 *.sqlite3
+
+# settings
+clinstatsdb/settings.py
