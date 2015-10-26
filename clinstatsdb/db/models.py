@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from ..clinstatsdb import db
+from ..db import db
 from sqlalchemy import Column, Integer, String, DateTime, Text, Enum, ForeignKey, UniqueConstraint, Numeric, Date
 from sqlalchemy.orm import relationship, backref
 
