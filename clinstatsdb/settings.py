@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
-PROJECT_NAME = __name__.split('.')[0]
+
+import yaml
+from os.path import expanduser
 
 class BaseConfig:
-    PROJECT = PROJECT_NAME
-    DEBUG = False
-    TESTING = False
-    SQLALCHEMY_DATABASE_URI = ""
+
+    def __init__(self):
+        with open(expanduser("~/.clinical/databases.yaml"), 'r') as ymlfile:
+            self.get = yaml.load(ymlfile)
