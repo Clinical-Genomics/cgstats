@@ -10,7 +10,7 @@ from ..settings import BaseConfig
 config = BaseConfig()
 db = declarative_base()
 
-engine = create_engine(config['connection_string'])
+engine = create_engine(config['clinstats']['connection_string'])
 Session = sessionmaker()
 Session.configure(bind=engine)
 SQL = Session()

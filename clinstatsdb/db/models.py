@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
-from ..db import db
+from ..db import db, SQL, config
 from sqlalchemy import Column, Integer, String, DateTime, Text, Enum, ForeignKey, UniqueConstraint, Numeric, Date
 from sqlalchemy.orm import relationship, backref
 
@@ -133,3 +133,56 @@ class Backup(db):
     tapedir = Column(String(255), nullable=True)
     totape = Column(DateTime, nullable=True)
     fromtape = Column(DateTime, nullable=True)
+
+class Version(db):
+    __tablename__ = 'version'
+
+    version_id = Column(Integer, primary_key=True)
+    name = Column(String(255), nullable=True)
+    major = Column(Integer, nullable=True)
+    minor = Column(Integer, nullable=True)
+    patch = Column(Integer, nullable=True)
+    comment = Column(String(255), nullable=True)
+    time = Column(DateTime, nullable=True)
+
+    UniqueConstraint('name', 'major', 'minor', 'patch', name='flowcellname')
+
+    @classmethod
+    def get_version(cls):
+        """Retrieves the database version
+        Returns (tuple): (major, minor, patch, name)
+        """
+
+        """ SELECT major, minor, patch, name FROM version ORDER BY time DESC LIMIT 1 """
+        return SQL.query(
+            Version.major.label('major'),\
+            Version.minor.label('minor'),\
+            Version.patch.label('patch'),\
+            Version.name.label('name')).\
+        order_by(Version.time.desc()).\
+        limit(1).\
+        one()
+
+    @classmethod
+    def check(cls, dbname, ver):
+        """Checks version of database against dbname and version [normally from the config file]
+
+        Args:
+          dbname (str): database name as stored in table version
+          ver (str): version string in the format major.minor.patch
+
+        Returns:
+          True: if identical
+        """
+        rs = cls.get_version()
+        if rs is not None:
+            return ('{0}.{1}.{2}'.format(str(rs.major), str(rs.minor), str(rs.patch)) == ver and dbname == rs.name)
+
+
+    @classmethod
+    def latest(cls):
+        """Checks if the latest version in the settings file matches with the DB
+        Returns: True if identical
+
+        """
+        return cls.check(config['clinstats']['name'], config['clinstats']['version'])
