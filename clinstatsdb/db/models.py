@@ -173,8 +173,6 @@ class Flowcell(db):
     flowcell_id = Column(Integer, primary_key=True)
     flowcellname = Column(String(255), nullable=False)
     flowcell_pos = Column(Enum('A', 'B'), nullable=False)
-    time_start = Column(DateTime, nullable=True)
-    time_end = Column(DateTime, nullable=True)
     time = Column(DateTime)
 
     UniqueConstraint('flowcellname', name='flowcellname')
