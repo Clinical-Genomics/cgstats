@@ -4,6 +4,7 @@
 from ..db import db, SQL, config
 from sqlalchemy import Column, Integer, String, DateTime, Text, Enum, ForeignKey, UniqueConstraint, Numeric, Date
 from sqlalchemy.orm import relationship, backref
+from sqlalchemy.orm.exc import NoResultFound
 
 class Project(db):
     __tablename__ = 'project'
@@ -15,6 +16,24 @@ class Project(db):
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.project_id}'.format(self=self))
 
+    @classmethod
+    def exists(cls, project_name):
+        """Checks if the Prohect entry already exists
+
+        Args:
+            project_name (str): project name without the Project_ prefix
+
+        Returns:
+            int: project_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.project_id.label('id')).filter(cls.projectname==project_name).one()
+            return rs.id
+        except NoResultFound:
+            return False
+
 class Sample(db):
     __tablename__ = 'sample'
 
@@ -25,6 +44,25 @@ class Sample(db):
     time = Column(DateTime, nullable=True)
 
     project = relationship('Project', backref=backref('samples'))
+
+    @classmethod
+    def exists(cls, sample_name, barcode):
+        """Checks if a Sample entry already exists
+
+        Args:
+            sample_name (str): sample name without Sample_ prefix but with index identifier _nxdual9
+            barcode (str): the index
+
+        Returns:
+            int: sample_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.sample_id.label('id')).filter(cls.samplename==sample_name).filter(cls.barcode==barcode).one()
+            return rs.id
+        except NoResultFound:
+            return False
 
 class Supportparams(db):
     __tablename__ = 'supportparams'
@@ -41,6 +79,24 @@ class Supportparams(db):
     sampleconfig_path = Column(String(255), nullable=True)
     sampleconfig = Column(Text)
     time = Column(DateTime, nullable=True)
+
+    @classmethod
+    def exists(cls, document_path):
+        """Checks if the supportparams entry already exists
+
+        Args:
+            document_path (str): Full path to the Unaligned directory
+
+        Returns:
+            int: supportparams_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.supportparams_id.label('id')).filter(cls.document_path==document_path).one()
+            return rs.id
+        except NoResultFound:
+            return False
 
 class Datasource(db):
     __tablename__ = 'datasource'
@@ -60,6 +116,24 @@ class Datasource(db):
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
 
+    @classmethod
+    def exists(cls, document_path):
+        """Checks if the Datasource entry already exists
+
+        Args:
+            document_path (str): Full path to the stats file
+
+        Returns:
+            int: datasource_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.supportparams_id.label('id')).filter(cls.document_path==document_path).one()
+            return rs.id
+        except NoResultFound:
+            return False
+
 class Demux(db):
     __tablename__ = 'demux'
 
@@ -74,6 +148,25 @@ class Demux(db):
     datasource = relationship('Datasource', backref=backref('demuxes'))
     datasource = relationship('Flowcell', backref=backref('demuxes'))
 
+    @classmethod
+    def exists(cls, flowcell_id, basemask):
+        """Checks if the Demux entry already exists
+
+        Args:
+            flowcell_id (int): flowcell_id in the table Flowcell
+            basemask (str): the basemask used to demux, e.g. Y101,I6n,Y101
+
+        Returns:
+            int: demux_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.demux_id.label('id')).filter(cls.flowcell_id==flowcell_id).filter(cls.basemask==basemask).one()
+            return rs.id
+        except NoResultFound:
+            return False
+
 class Flowcell(db):
     __tablename__ = 'flowcell'
 
@@ -87,6 +180,24 @@ class Flowcell(db):
     UniqueConstraint('flowcellname', name='flowcellname')
 
     datasource = relationship('Demux', backref=backref('flowcells'))
+
+    @classmethod
+    def exists(cls, flowcell_name):
+        """Checks if the Flowcell entry already exists
+
+        Args:
+            flowcell_name (str): The name of the flowcell
+
+        Returns:
+            int: flowcell_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.flowcell_id.label('id')).filter(cls.flowcellname==flowcell_name).one()
+            return rs.id
+        except NoResultFound:
+            return False
 
 class Unaligned(db):
     __tablename__ = 'unaligned'
@@ -106,6 +217,26 @@ class Unaligned(db):
 
     demux = relationship('Demux', backref=backref('unaligned'))
     sample = relationship('Sample', backref=backref('unaligned'))
+
+    @classmethod
+    def exists(cls, sample_id, demux_id, lane):
+        """Checks if an Unaligned entry already exists
+
+        Args:
+            sample_id (int): sample id
+            demux_id (int): demux id
+            lane (int): lane in which the sample ran
+
+        Returns:
+            int: unaligned_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.unaligned_id.label('id')).filter(cls.sample_id==sample_id).filter(cls.demux_id==demux_id).filter(cls.lane==lane).one()
+            return rs.id
+        except NoResultFound:
+            return False
 
 class Backup(db):
     __tablename__ = 'backup'
