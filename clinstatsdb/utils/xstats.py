@@ -42,8 +42,8 @@ def get_summary( tree):
     pf_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/Yield")
     pf_read1_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='1']/Yield")
     pf_read2_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='2']/Yield")
-    #raw_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/Read/Yield")
-    #pf_clusters_pc = pf_yield / raw_yield
+    raw_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/Read/Yield")
+    pf_clusters_pc = pf_yield / raw_yield
 
     pf_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/YieldQ30")
     #raw_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/Read/YieldQ30")
@@ -56,10 +56,10 @@ def get_summary( tree):
 
     return {
         #'raw_clusters': raw_clusters,
-        #'raw_yield': raw_yield,
-        #'pf_clusters_pc': pf_clusters_pc,
         #'pf_q30_bases_pc': pf_q30_bases_pc,
         #'raw_q30': raw_q30,
+        #'pf_clusters_pc': pf_clusters_pc,
+        'raw_yield': raw_yield,
         'pf_clusters': pf_clusters,
         'pf_yield': pf_yield,
         'pf_read1_yield': pf_read1_yield,
@@ -169,9 +169,9 @@ def parse( demux_dir):
     for line in sample_sheet:
         total_lane_summary[ line['Lane'] ] = {
             #'raw_clusters': 0,
-            #'raw_yield': 0,
-            #'pf_clusters_pc': 0,
             #'pf_q30_bases_pc': 0,
+            #'pf_clusters_pc': 0,
+            'raw_yield': 0,
             'pf_clusters': 0,
             'pf_yield': 0,
             'pf_read1_yield': 0,
@@ -197,6 +197,7 @@ def parse( demux_dir):
             'flowcell': summary['flowcell'],
             'lane': lane,
             'pf_clusters': str(summary['pf_clusters']),
+            'pf_yield_pc': str(round(summary['pf_yield'] / summary['raw_yield'] * 100, 2)),
             'pf_yield': str(summary['pf_yield']),
             'pf_Q30': str(round(summary['pf_q30'] / summary['pf_yield'] * 100, 2)),
             'pf_read1_q30': str(round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2)),
