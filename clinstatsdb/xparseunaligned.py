@@ -7,6 +7,7 @@ import sys
 from sqlalchemy import func
 from .db import SQL
 from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample
+from .utils import stats
 
 def main(argv):
 
@@ -17,6 +18,8 @@ def main(argv):
     print(Project.exists('240540')) #552
     print(Sample.exists('ADM1136A1_XTA08', 'CAGCGTTA')) #6651
     print(Unaligned.exists(18, 487, 1)) #13902
+
+    print(stats.parse('/mnt/hds/proj/bioinfo/DEMUX/151009_ST-E00198_0059_BH2V2YCCXX'))
 
     rs = SQL.query(
         func.year(Datasource.rundate).label('year'),\
