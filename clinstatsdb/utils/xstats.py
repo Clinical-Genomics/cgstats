@@ -36,7 +36,7 @@ def get_summary( tree):
     Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
 
     """
-    #raw_clusters = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/ClusterCount")
+    raw_clusters = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/ClusterCount")
     pf_clusters = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/ClusterCount")
 
     pf_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/Yield")
@@ -55,10 +55,10 @@ def get_summary( tree):
     pf_qscore = pf_qscore_sum / pf_yield
 
     return {
-        #'raw_clusters': raw_clusters,
         #'pf_q30_bases_pc': pf_q30_bases_pc,
         #'raw_q30': raw_q30,
         #'pf_clusters_pc': pf_clusters_pc,
+        'raw_clusters': raw_clusters,
         'raw_yield': raw_yield,
         'pf_clusters': pf_clusters,
         'pf_yield': pf_yield,
@@ -168,9 +168,9 @@ def parse( demux_dir):
     total_lane_summary = {}
     for line in sample_sheet:
         total_lane_summary[ line['Lane'] ] = {
-            #'raw_clusters': 0,
             #'pf_q30_bases_pc': 0,
             #'pf_clusters_pc': 0,
+            'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
             'pf_yield': 0,
@@ -196,6 +196,7 @@ def parse( demux_dir):
             'sample_name': summary['samplename'],
             'flowcell': summary['flowcell'],
             'lane': lane,
+            'raw_clusters_pc': str(round(summary['pf_clusters'] / summary['raw_clusters'] * 100, 2)),
             'pf_clusters': str(summary['pf_clusters']),
             'pf_yield_pc': str(round(summary['pf_yield'] / summary['raw_yield'] * 100, 2)),
             'pf_yield': str(summary['pf_yield']),
