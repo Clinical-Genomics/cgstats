@@ -3,6 +3,7 @@
 
 from ..db import db, SQL, config
 from sqlalchemy import Column, Integer, String, DateTime, Text, Enum, ForeignKey, UniqueConstraint, Numeric, Date
+from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
 
@@ -254,14 +255,60 @@ class Backup(db):
     analysisdir = Column(String(255)    , nullable=True)
     toanalysis = Column(DateTime, nullable=True)
     fromanalysis = Column(DateTime, nullable=True)
-    backup = Column(String(255), nullable=True)
-    backupdir = Column(String(255), nullable=True)
-    tobackup = Column(DateTime, nullable=True)
-    frombackup = Column(DateTime, nullable=True)
-    tape = Column(String(255), nullable=True)
+    inbackupdir = Column(TINYINT, nullable=True)
+    backuptape_id = Column(Integer, ForeignKey('backuptape.backuptape_id'), nullable=False)
+    backupdone = Column(DateTime, nullable=True)
+    md5done = Column(DateTime, nullable=True)
+
+    tape = relationship('Tape', backref=backref('backup'))
+
+    @classmethod
+    def exists(cls, runname, tapedir=None):
+        """Check if run is already backed up. Optionally: checks if run is on certain tape
+
+        Args:
+            runname (str): e.g. 151117_D00410_0187_AHWYGMADXX
+            tapedir (str): the name of the tape, e.g. tape036_037
+
+        Returns:
+            int: backup_id on exists
+            False: on not exists
+
+        """
+        try:
+            if tapedir is not None:
+                rs = SQL.query(cls.backuptape_id.label('id')).outerjoin(Backuptape).filter(cls.runname==runname).filter(Backuptape.tapedir==tapedir).one()
+            else:
+                rs = SQL.query(cls.backuptape_id.label('id')).filter(cls.runname==runname).one()
+            return rs.id
+        except NoResultFound:
+            return False
+
+class Backuptape(db):
+    __tablename__ = 'backuptape'
+
+    backuptape_id = Column(Integer, primary_key=True)
     tapedir = Column(String(255), nullable=True)
-    totape = Column(DateTime, nullable=True)
-    fromtape = Column(DateTime, nullable=True)
+    nametext = Column(String(255), nullable=True)
+    tapedate = Column(DateTime, nullable=True)
+
+    @classmethod
+    def exists(cls, tapedir):
+        """Check if a tape already exists
+
+        Args:
+            tapedir (str): the name of the tape, e.g. tape036_037
+
+        Returns:
+            int: backuptape_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = SQL.query(cls.backuptape_id_id.label('id')).filter(cls.tapedir==tapedir).one()
+            return rs.id
+        except NoResultFound:
+            return False
 
 class Version(db):
     __tablename__ = 'version'

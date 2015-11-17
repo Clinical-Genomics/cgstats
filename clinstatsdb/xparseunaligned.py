@@ -6,8 +6,8 @@ import sys
 
 from sqlalchemy import func
 from .db import SQL
-from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample
-from .utils import stats
+from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample, Backup
+from .utils import xstats
 
 def main(argv):
 
@@ -19,7 +19,13 @@ def main(argv):
     print(Sample.exists('ADM1136A1_XTA08', 'CAGCGTTA')) #6651
     print(Unaligned.exists(18, 487, 1)) #13902
 
-    print(stats.parse('/mnt/hds/proj/bioinfo/DEMUX/151009_ST-E00198_0059_BH2V2YCCXX'))
+    print(xstats.parse('/mnt/hds/proj/bioinfo/DEMUX/151009_ST-E00198_0059_BH2V2YCCXX'))
+
+    print(Backup.exists('151117_D00410_0187_AHWYGMADXX'))
+    print(Backup.exists('141212_D00134_0166_AHB058ADXX'))
+    print(Backup.exists('131219_D00134_0057_BH829YADXX'))
+    print(Backup.exists('131219_D00134_0057_BH829YADXX', 'tape005_006'))
+    print(Backup.exists('131219_D00134_0057_BH829YADXX', 'tape007_005'))
 
     rs = SQL.query(
         func.year(Datasource.rundate).label('year'),\
