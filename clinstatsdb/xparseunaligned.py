@@ -6,7 +6,7 @@ import sys
 
 from sqlalchemy import func
 from .db import SQL
-from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample, Backup
+from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample, Backup, Backuptape
 from .utils import xstats
 
 def main(argv):
@@ -26,6 +26,8 @@ def main(argv):
     print(Backup.exists('131219_D00134_0057_BH829YADXX'))
     print(Backup.exists('131219_D00134_0057_BH829YADXX', 'tape005_006'))
     print(Backup.exists('131219_D00134_0057_BH829YADXX', 'tape007_005'))
+
+    print(Backuptape.exists('tape005_006'))
 
     rs = SQL.query(
         func.year(Datasource.rundate).label('year'),\

@@ -260,7 +260,7 @@ class Backup(db):
     backupdone = Column(DateTime, nullable=True)
     md5done = Column(DateTime, nullable=True)
 
-    tape = relationship('Tape', backref=backref('backup'))
+    tape = relationship('Backuptape', backref=backref('backup'))
 
     @classmethod
     def exists(cls, runname, tapedir=None):
