@@ -305,7 +305,7 @@ class Backuptape(db):
 
         """
         try:
-            rs = SQL.query(cls.backuptape_id_id.label('id')).filter(cls.tapedir==tapedir).one()
+            rs = SQL.query(cls.backuptape_id.label('id')).filter(cls.tapedir==tapedir).one()
             return rs.id
         except NoResultFound:
             return False
