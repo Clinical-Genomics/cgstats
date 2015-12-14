@@ -44,8 +44,61 @@ def get_barcode_summary(tree, project, sample, barcode):
         'one_mismatch_barcodes': one_mismatch_barcodes,
     }
 
+def get_sample_summary( tree, project, sample, barcode):
+    """Calculates following statistics from from the ConversionStats file, for a sample
+    * pf clusters
+    * pf yield
+    * pf Q30
+    * raw Q30
+    * pf Q Score
+
+    Args:
+        tree (an elementTree): parsed XML as an elementTree
+        project (str): A project name
+        sample (str): A sample name. In our case, this is the same as the project
+        barcode (str): An index identifying a sample
+
+    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
+
+    """
+    raw_clusters = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/ClusterCount".format(project=project, sample=sample, barcode=barcode))
+    pf_clusters = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/ClusterCount".format(project=project, sample=sample, barcode=barcode))
+
+    pf_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_read1_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='1']/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_read2_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='2']/Yield".format(project=project, sample=sample, barcode=barcode))
+    raw_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/Read/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_clusters_pc = pf_yield / raw_yield
+
+    pf_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    #raw_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    pf_read1_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='1']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    pf_read2_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='2']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    #pf_q30_bases_pc = pf_q30 / pf_yield
+
+    pf_qscore_sum = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/QualityScoreSum".format(project=project, sample=sample, barcode=barcode))
+    pf_qscore = pf_qscore_sum / pf_yield
+
+    return {
+        #'pf_q30_bases_pc': pf_q30_bases_pc,
+        #'raw_q30': raw_q30,
+        #'pf_clusters_pc': pf_clusters_pc,
+        'raw_clusters': raw_clusters,
+        'raw_yield': raw_yield,
+        'pf_clusters': pf_clusters,
+        'pf_yield': pf_yield,
+        'pf_read1_yield': pf_read1_yield,
+        'pf_read2_yield': pf_read2_yield,
+        'pf_q30': pf_q30,
+        'pf_read1_q30': pf_read1_q30,
+        'pf_read2_q30': pf_read2_q30,
+        'pf_qscore_sum': pf_qscore_sum,
+        'pf_qscore': pf_qscore
+    }
+
+
 def get_summary( tree):
-    """Calculates following statistics from the provided elementTree:
+    """Calculates following statistics from the ConversionStats file, for a lane
     * pf clusters
     * pf yield
     * pf Q30
@@ -140,28 +193,121 @@ def get_lanes( sample_sheet):
     Args:
         sample_sheet (list of dicts): a samplesheet with each line a dict. The keys are the header, the values the split line
 
-    Returns:
-        a list of lane numbers
+    Returns (dict): lane is key, line is value
 
     """
     return { line['Lane']: line  for line in sample_sheet }
 
 def get_samples( sample_sheet):
-    """TODO: Docstring for get_samples.
+    """Gets the samples from a sample sheet.
 
     Args:
         sample_sheet (list of dicts): a samplesheet with each line a dict. The keys are the header, the values the split line
 
-    Returns (dict): lane is key, raw sample name is value
+    Returns (dict): sample is key, raw sample name is value
 
     """
-    return { line['Lane']: line['SampleID'] for line in sample_sheet }
+    return { line['SampleID']: line for line in sample_sheet }
+
+def parse_samples(demux_dir):
+    """Takes a DEMUX dir and calculates statistics for a run on sample level.
+
+    Args:
+        demux_dir (str): the DEMUX dir
+
+    """
+    sample_sheet = get_samplesheet(demux_dir)
+    samples = get_samples(sample_sheet)
+
+    # get all % undetermined indexes / sample
+    proc_undetermined = calc_undetermined(demux_dir)
+
+    # create a { 1: [], 2: [], ... } structure
+    summaries = dict(zip(samples, [ [] for t in xrange(len(samples))])) # init ;)
+
+    # get all the stats numbers
+    for sample, line in samples.iteritems():
+        stats_files = glob.glob('%s/l%st??/Stats/ConversionStats.xml' % (demux_dir, line['Lane']))
+        index_files = glob.glob('%s/l%st??/Stats/DemultiplexingStats.xml' % (demux_dir, line['Lane']))
+
+        if len(stats_files) == 0:
+            exit("No stats file found for sample {}".format(sample))
+
+        if len(index_files) == 0:
+            exit("No index stats file found for sample {}".format(sample))
+
+        for f in stats_files:
+            tree = et.parse(f)
+            summaries[ sample ].append(get_sample_summary(tree, line['Project'], line['SampleName'], line['index']))
+
+        for f in index_files:
+            tree = et.parse(f)
+            summaries[ sample ].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
+
+    # sum the numbers over a lane
+    # create a { 1: {'raw_clusters': 0, ... } } structure
+    total_sample_summary = {}
+    for line in sample_sheet:
+        total_sample_summary[ line['SampleID'] ] = {
+            #'pf_q30_bases_pc': 0,
+            #'pf_clusters_pc': 0,
+            'raw_clusters': 0,
+            'raw_yield': 0,
+            'pf_clusters': 0,
+            'pf_yield': 0,
+            'pf_read1_yield': 0,
+            'pf_read2_yield': 0,
+            'pf_q30': 0,
+            'pf_read1_q30': 0,
+            'pf_read2_q30': 0,
+            'pf_qscore_sum': 0,
+            'pf_qscore': 0,
+            'flowcell': line['FCID'],
+            'samplename': line['SampleID'],
+            'lane': line['Lane'],
+            'barcodes': 0,
+            'perfect_barcodes': 0,
+            'one_mismatch_barcodes': 0,
+        }
+
+    import json
+    #print(json.dumps(summaries, sort_keys=True, indent=4, separators=(',', ': ')))
+    print(json.dumps(sample_sheet, sort_keys=True, indent=4, separators=(',', ': ')))
+    #print(json.dumps(samples, sort_keys=True, indent=4, separators=(',', ': ')))
+
+    for sample, summary in summaries.items():
+       for summary_quart in summary:
+            for key, stat in summary_quart.items():
+                total_sample_summary[sample][ key ] += stat
+
+    rs = {} # generate a dict: raw sample name is key, value is a dict of stats
+    for sample, summary in total_sample_summary.items():
+        rs[ summary['samplename'] ] = {
+            'sample_name':     summary['samplename'],
+            'flowcell':        summary['flowcell'],
+            'lane':            summary['lane'],
+            'raw_clusters_pc': 100, # we still only have one sample/lane ;)
+            'pf_clusters':     summary['pf_clusters'],
+            'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2),
+            'pf_yield':        summary['pf_yield'],
+            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100, 2),
+            'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2),
+            'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2),
+            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2),
+            'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100,
+            'undetermined_proc': round(proc_undetermined[ summary['samplename'] ], 2) if summary['samplename'] in proc_undetermined else 0,
+            'barcodes':         summary['barcodes'],
+            'perfect_barcodes': summary['perfect_barcodes'],
+            'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
+        }
+
+    return rs
 
 def parse( demux_dir):
     """Takes a DEMUX dir and calculates statistics for the run.
 
     Args:
-        demux_dir [0] (str): the DEMUX dir
+        demux_dir (str): the DEMUX dir
 
     """
 
