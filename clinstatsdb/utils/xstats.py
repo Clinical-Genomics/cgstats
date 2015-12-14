@@ -270,11 +270,6 @@ def parse_samples(demux_dir):
             'one_mismatch_barcodes': 0,
         }
 
-    import json
-    #print(json.dumps(summaries, sort_keys=True, indent=4, separators=(',', ': ')))
-    print(json.dumps(sample_sheet, sort_keys=True, indent=4, separators=(',', ': ')))
-    #print(json.dumps(samples, sort_keys=True, indent=4, separators=(',', ': ')))
-
     for sample, summary in summaries.items():
        for summary_quart in summary:
             for key, stat in summary_quart.items():
