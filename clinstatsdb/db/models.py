@@ -271,16 +271,15 @@ class Backup(db):
             tapedir (str): the name of the tape, e.g. tape036_037
 
         Returns:
-            int: backup_id on exists
+            int: runname on exists
             False: on not exists
-
         """
         try:
             if tapedir is not None:
-                rs = SQL.query(cls.backuptape_id.label('id')).outerjoin(Backuptape).filter(cls.runname==runname).filter(Backuptape.tapedir==tapedir).one()
+                rs = SQL.query(cls.runname.label('runname')).outerjoin(Backuptape).filter(cls.runname==runname).filter(Backuptape.tapedir==tapedir).one()
             else:
-                rs = SQL.query(cls.backuptape_id.label('id')).filter(cls.runname==runname).one()
-            return rs.id
+                rs = SQL.query(cls.runname.label('runname')).filter(cls.runname==runname).one()
+            return rs.runname
         except NoResultFound:
             return False
 
