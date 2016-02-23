@@ -398,11 +398,3 @@ class Version(db):
             ver_string = "{0}.{1}.{2}".format(str(rs.major), str(rs.minor),
                                               str(rs.patch))
             return ((ver_string == ver) and (dbname == rs.name))
-
-    @classmethod
-    def latest(cls):
-        """Checks if the latest version in the settings file matches with the DB
-
-        Returns: True if identical
-        """
-        return cls.check(config['clinstats']['name'], config['clinstats']['version'])
