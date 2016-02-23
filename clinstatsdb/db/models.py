@@ -1,11 +1,14 @@
 #!/usr/bin/env python
 # encoding: utf-8
-
-from ..db import db, SQL, config
-from sqlalchemy import Column, Integer, String, DateTime, Text, Enum, ForeignKey, UniqueConstraint, Numeric, Date
+from sqlalchemy import (Column, Integer, String, DateTime, Text, Enum,
+                        ForeignKey, UniqueConstraint, Numeric, Date)
 from sqlalchemy.dialects.mysql import TINYINT
 from sqlalchemy.orm import relationship, backref
 from sqlalchemy.orm.exc import NoResultFound
+from sqlalchemy.ext.declarative import declarative_base
+
+db = declarative_base()
+
 
 class Project(db):
     __tablename__ = 'project'
@@ -15,7 +18,8 @@ class Project(db):
     time = Column(DateTime, nullable=False)
 
     def __repr__(self):
-        return (u'{self.__class__.__name__}: {self.project_id}'.format(self=self))
+        return (u"{self.__class__.__name__}: {self.project_id}"
+                .format(self=self))
 
     @classmethod
     def exists(cls, project_name):
@@ -30,28 +34,37 @@ class Project(db):
 
         """
         try:
-            rs = SQL.query(cls.project_id.label('id')).filter(cls.projectname==project_name).one()
+            rs = (cls.query(cls.project_id.label('id'))
+                     .filter(cls.projectname == project_name).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Sample(db):
     __tablename__ = 'sample'
 
     sample_id = Column(Integer, primary_key=True)
-    project_id = Column(Integer, ForeignKey('project.project_id'), nullable=False)
+    project_id = Column(Integer, ForeignKey('project.project_id'),
+                        nullable=False)
     samplename = Column(String(255), nullable=False)
     barcode = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=True)
 
     project = relationship('Project', backref=backref('samples'))
 
+    @property
+    def lims_id(self):
+        """Parse out the LIMS id from the samplename in demux database."""
+        return self.samplename.split('_')[0]
+
     @classmethod
     def exists(cls, sample_name, barcode):
         """Checks if a Sample entry already exists
 
         Args:
-            sample_name (str): sample name without Sample_ prefix but with index identifier _nxdual9
+            sample_name (str): sample name without Sample_ prefix but with
+                               index identifier _nxdual9
             barcode (str): the index
 
         Returns:
@@ -60,10 +73,13 @@ class Sample(db):
 
         """
         try:
-            rs = SQL.query(cls.sample_id.label('id')).filter(cls.samplename==sample_name).filter(cls.barcode==barcode).one()
+            rs = (cls.query(cls.sample_id.label('id'))
+                     .filter(cls.samplename == sample_name)
+                     .filter(cls.barcode == barcode).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Supportparams(db):
     __tablename__ = 'supportparams'
@@ -94,25 +110,31 @@ class Supportparams(db):
 
         """
         try:
-            rs = SQL.query(cls.supportparams_id.label('id')).filter(cls.document_path==document_path).one()
+            rs = (cls.query(cls.supportparams_id.label('id'))
+                     .filter(cls.document_path == document_path).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Datasource(db):
     __tablename__ = 'datasource'
 
     datasource_id = Column(Integer, primary_key=True)
-    supportparams_id = Column(Integer, ForeignKey('supportparams.supportparams_id'), nullable=False)
+    supportparams_id = Column(Integer,
+                              ForeignKey('supportparams.supportparams_id'),
+                              nullable=False)
     runname = Column(String(255), nullable=True)
     machine = Column(String(255), nullable=True)
     rundate = Column(DateTime, nullable=True)
     document_path = Column(String(255), nullable=False)
-    document_type = Column(Enum('html', 'xml', 'undefined'), nullable=False, default='html')
+    document_type = Column(Enum('html', 'xml', 'undefined'), nullable=False,
+                           default='html')
     server = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=True)
 
-    supportparams = relationship('Supportparams', backref=backref('datasources'))
+    supportparams = relationship('Supportparams',
+                                 backref=backref('datasources'))
 
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
@@ -130,24 +152,28 @@ class Datasource(db):
 
         """
         try:
-            rs = SQL.query(cls.supportparams_id.label('id')).filter(cls.document_path==document_path).one()
+            rs = (cls.query(cls.supportparams_id.label('id'))
+                     .filter(cls.document_path == document_path).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Demux(db):
     __tablename__ = 'demux'
 
     demux_id = Column(Integer, primary_key=True)
-    flowcell_id = Column(Integer, ForeignKey('flowcell.flowcell_id'), nullable=False)
-    datasource_id = Column(Integer, ForeignKey('datasource.datasource_id'), nullable=False)
+    flowcell_id = Column(Integer, ForeignKey('flowcell.flowcell_id'),
+                         nullable=False)
+    datasource_id = Column(Integer, ForeignKey('datasource.datasource_id'),
+                           nullable=False)
     basemask = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=True)
 
     UniqueConstraint('flowcell', 'basemask', name='demux_ibuk_1')
 
     datasource = relationship('Datasource', backref=backref('demuxes'))
-    datasource = relationship('Flowcell', backref=backref('demuxes'))
+    flowcell = relationship('Flowcell', backref=backref('demuxes'))
 
     @classmethod
     def exists(cls, flowcell_id, basemask):
@@ -163,10 +189,13 @@ class Demux(db):
 
         """
         try:
-            rs = SQL.query(cls.demux_id.label('id')).filter(cls.flowcell_id==flowcell_id).filter(cls.basemask==basemask).one()
+            rs = (cls.query(cls.demux_id.label('id'))
+                     .filter(cls.flowcell_id == flowcell_id)
+                     .filter(cls.basemask == basemask).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Flowcell(db):
     __tablename__ = 'flowcell'
@@ -193,10 +222,12 @@ class Flowcell(db):
 
         """
         try:
-            rs = SQL.query(cls.flowcell_id.label('id')).filter(cls.flowcellname==flowcell_name).one()
+            rs = (cls.query(cls.flowcell_id.label('id'))
+                     .filter(cls.flowcellname == flowcell_name).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Unaligned(db):
     __tablename__ = 'unaligned'
@@ -206,12 +237,12 @@ class Unaligned(db):
     demux_id = Column(Integer, ForeignKey('demux.demux_id'), nullable=False)
     lane = Column(Integer, nullable=True)
     yield_mb = Column(Integer, nullable=True)
-    passed_filter_pct = Column(Numeric(10,5), nullable=True)
+    passed_filter_pct = Column(Numeric(10, 5), nullable=True)
     readcounts = Column(Integer, nullable=True)
-    raw_clusters_per_lane_pct = Column(Numeric(10,5), nullable=True)
-    perfect_indexreads_pct = Column(Numeric(10,5), nullable=True)
-    q30_bases_pct = Column(Numeric(10,5), nullable=True)
-    mean_quality_score = Column(Numeric(10,5), nullable=True)
+    raw_clusters_per_lane_pct = Column(Numeric(10, 5), nullable=True)
+    perfect_indexreads_pct = Column(Numeric(10, 5), nullable=True)
+    q30_bases_pct = Column(Numeric(10, 5), nullable=True)
+    mean_quality_score = Column(Numeric(10, 5), nullable=True)
     time = Column(DateTime, nullable=True)
 
     demux = relationship('Demux', backref=backref('unaligned'))
@@ -232,10 +263,14 @@ class Unaligned(db):
 
         """
         try:
-            rs = SQL.query(cls.unaligned_id.label('id')).filter(cls.sample_id==sample_id).filter(cls.demux_id==demux_id).filter(cls.lane==lane).one()
+            rs = (cls.query(cls.unaligned_id.label('id'))
+                     .filter(cls.sample_id == sample_id)
+                     .filter(cls.demux_id == demux_id)
+                     .filter(cls.lane == lane).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Backup(db):
     __tablename__ = 'backup'
@@ -252,11 +287,12 @@ class Backup(db):
     endpreproc = Column(DateTime, nullable=True)
     frompreproc = Column(DateTime, nullable=True)
     analysis = Column(String(255), nullable=True)
-    analysisdir = Column(String(255)    , nullable=True)
+    analysisdir = Column(String(255), nullable=True)
     toanalysis = Column(DateTime, nullable=True)
     fromanalysis = Column(DateTime, nullable=True)
     inbackupdir = Column(TINYINT, nullable=True)
-    backuptape_id = Column(Integer, ForeignKey('backuptape.backuptape_id'), nullable=False)
+    backuptape_id = Column(Integer, ForeignKey('backuptape.backuptape_id'),
+                           nullable=False)
     backupdone = Column(DateTime, nullable=True)
     md5done = Column(DateTime, nullable=True)
 
@@ -264,7 +300,8 @@ class Backup(db):
 
     @classmethod
     def exists(cls, runname, tapedir=None):
-        """Check if run is already backed up. Optionally: checks if run is on certain tape
+        """Check if run is already backed up. Optionally: checks if run is
+        on certain tape
 
         Args:
             runname (str): e.g. 151117_D00410_0187_AHWYGMADXX
@@ -276,12 +313,17 @@ class Backup(db):
         """
         try:
             if tapedir is not None:
-                rs = SQL.query(cls.runname.label('runname')).outerjoin(Backuptape).filter(cls.runname==runname).filter(Backuptape.tapedir==tapedir).one()
+                rs = (cls.query(cls.runname.label('runname'))
+                         .outerjoin(Backuptape)
+                         .filter(cls.runname == runname)
+                         .filter(Backuptape.tapedir == tapedir).one())
             else:
-                rs = SQL.query(cls.runname.label('runname')).filter(cls.runname==runname).one()
+                rs = (cls.query(cls.runname.label('runname'))
+                         .filter(cls.runname == runname).one())
             return rs.runname
         except NoResultFound:
             return False
+
 
 class Backuptape(db):
     __tablename__ = 'backuptape'
@@ -304,10 +346,12 @@ class Backuptape(db):
 
         """
         try:
-            rs = SQL.query(cls.backuptape_id.label('id')).filter(cls.tapedir==tapedir).one()
+            rs = (cls.query(cls.backuptape_id.label('id'))
+                     .filter(cls.tapedir == tapedir).one())
             return rs.id
         except NoResultFound:
             return False
+
 
 class Version(db):
     __tablename__ = 'version'
@@ -325,22 +369,22 @@ class Version(db):
     @classmethod
     def get_version(cls):
         """Retrieves the database version
+
         Returns (tuple): (major, minor, patch, name)
         """
 
-        """ SELECT major, minor, patch, name FROM version ORDER BY time DESC LIMIT 1 """
-        return SQL.query(
-            Version.major.label('major'),\
-            Version.minor.label('minor'),\
-            Version.patch.label('patch'),\
-            Version.name.label('name')).\
-        order_by(Version.time.desc()).\
-        limit(1).\
-        one()
+        """SELECT major, minor, patch, name FROM version ORDER BY time DESC LIMIT 1"""
+        return (cls.query(Version.major.label('major'),
+                          Version.minor.label('minor'),
+                          Version.patch.label('patch'),
+                          Version.name.label('name'))
+                   .order_by(Version.time.desc()).limit(1).one())
 
     @classmethod
     def check(cls, dbname, ver):
-        """Checks version of database against dbname and version [normally from the config file]
+        """Checks version of database against dbname and version
+
+        [normally from the config file]
 
         Args:
           dbname (str): database name as stored in table version
@@ -351,13 +395,6 @@ class Version(db):
         """
         rs = cls.get_version()
         if rs is not None:
-            return ('{0}.{1}.{2}'.format(str(rs.major), str(rs.minor), str(rs.patch)) == ver and dbname == rs.name)
-
-
-    @classmethod
-    def latest(cls):
-        """Checks if the latest version in the settings file matches with the DB
-        Returns: True if identical
-
-        """
-        return cls.check(config['clinstats']['name'], config['clinstats']['version'])
+            ver_string = "{0}.{1}.{2}".format(str(rs.major), str(rs.minor),
+                                              str(rs.patch))
+            return ((ver_string == ver) and (dbname == rs.name))
