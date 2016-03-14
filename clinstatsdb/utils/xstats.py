@@ -219,6 +219,22 @@ def get_samples( sample_sheet):
 
     return rs
 
+def get_raw_clusters_lane(total_sample_summary):
+    """TODO: Docstring for get_raw_clusters_lane.
+
+    Args:
+        total_sample_summary (TODO): TODO
+
+    Returns: TODO
+
+    """
+    raw_clusters_lane = dict(zip(total_sample_summary.keys(), [ 0 for t in xrange(len(total_sample_summary.keys())) ])) # lane: raw_clusters
+    for lane, sample_summary in total_sample_summary.items():
+        for sample, summary in sample_summary.items():
+            raw_clusters_lane[ lane ] += summary['raw_clusters']
+
+    return raw_clusters_lane
+
 def parse_samples(demux_dir):
     """Takes a DEMUX dir and calculates statistics for a run on sample level.
 
@@ -290,6 +306,8 @@ def parse_samples(demux_dir):
                 for key, stat in summary_quart.items():
                     total_sample_summary[lane][sample][ key ] += stat
 
+    raw_clusters_lane = get_raw_clusters_lane(total_sample_summary)
+
     rs= dict(zip(lanes, [ {} for t in xrange(len(lanes))]))
     for lane, sample_summary in total_sample_summary.items():
         for sample, summary in sample_summary.items():
@@ -297,7 +315,7 @@ def parse_samples(demux_dir):
                 'sample_name':     summary['samplename'],
                 'flowcell':        summary['flowcell'],
                 'lane':            lane,
-                'raw_clusters_pc': 100, # we still only have one sample/lane ;)
+                'raw_clusters_pc': round(summary['raw_clusters'] / raw_clusters_lane[lane] * 100, 2),
                 'pf_clusters':     summary['pf_clusters'],
                 'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2),
                 'pf_yield':        summary['pf_yield'],
