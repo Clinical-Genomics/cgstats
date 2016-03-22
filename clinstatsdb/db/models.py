@@ -56,7 +56,9 @@ class Sample(db):
     @property
     def lims_id(self):
         """Parse out the LIMS id from the samplename in demux database."""
-        return self.samplename.split('_')[0]
+        sample_part = self.samplename.split('_')[0]
+        sanitized_id = sample_part.rstrip('FB')
+        return sanitized_id
 
     @classmethod
     def exists(cls, sample_name, barcode):
