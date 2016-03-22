@@ -10,5 +10,5 @@ def connect(connection_string):
     engine = create_engine(connection_string)
     db.metadata.bind = engine
     session = scoped_session(sessionmaker(bind=engine))
-    db.query = session.query
+    db.query = session.query_property()
     return session
