@@ -12,7 +12,7 @@ class SampleFlowcell(Model):
 
     id = Column(types.Integer, primary_key=True)
     flowcell_id = Column(types.String(16))
-    sample_id = Column(types.Integer, ForeignKey('analysis_sample.id'))
+    sample_id = Column(ForeignKey('analysis_sample.id'))
 
     lane = Column(types.Integer)
     cbot_machine = Column(types.String(32))
@@ -33,7 +33,7 @@ class AnalysisSample(Model):
 
     id = Column(types.Integer, primary_key=True)
     sample_id = Column(types.String(32), unique=True)
-    analysis_id = Column(types.String(64), ForeignKey('analysis.id'))
+    analysis_id = Column(ForeignKey('analysis.id'))
     sequencing_type = Column(types.Enum('wes', 'wgs'))
     sex_predicted = Column(types.Enum('male', 'female', 'unknown'))
 

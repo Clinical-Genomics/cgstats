@@ -1,13 +1,13 @@
 """add post alignment tables
 
-Revision ID: 384635dfd4c5
+Revision ID: a0e7145e6e45
 Revises: 0da5c0952076
-Create Date: 2016-09-20 16:23:28.423214
+Create Date: 2016-09-20 16:33:17.040729
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '384635dfd4c5'
+revision = 'a0e7145e6e45'
 down_revision = '0da5c0952076'
 branch_labels = None
 depends_on = None
@@ -31,7 +31,7 @@ def upgrade():
     op.create_table('analysis_sample',
     sa.Column('id', sa.Integer(), nullable=False),
     sa.Column('sample_id', sa.String(length=32), nullable=True),
-    sa.Column('analysis_id', sa.String(length=64), nullable=True),
+    sa.Column('analysis_id', sa.Integer(), nullable=True),
     sa.Column('sequencing_type', sa.Enum('wes', 'wgs'), nullable=True),
     sa.Column('sex_predicted', sa.Enum('male', 'female', 'unknown'), nullable=True),
     sa.Column('capture_kit', sa.String(length=32), nullable=True),
