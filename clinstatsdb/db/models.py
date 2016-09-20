@@ -65,8 +65,8 @@ class Sample(Model):
     sample_id = Column(types.Integer, primary_key=True)
     project_id = Column(ForeignKey('project.project_id'), nullable=False)
     samplename = Column(types.String(255), nullable=False)
-    customerid = Column(String(255))
-    limsid = Column(String(255))
+    customerid = Column(types.String(255))
+    limsid = Column(types.String(255))
     barcode = Column(types.String(255))
     time = Column(types.DateTime)
 
@@ -218,7 +218,7 @@ class Flowcell(Model):
     flowcell_id = Column(types.Integer, primary_key=True)
     flowcellname = Column(types.String(255), nullable=False, unique=True)
     flowcell_pos = Column(types.Enum('A', 'B'), nullable=False)
-    hiseqtype = Column(String(255), nullable=False)
+    hiseqtype = Column(types.String(255), nullable=False)
     time = Column(types.DateTime)
 
     datasource = orm.relationship('Demux', backref=orm.backref('flowcells'))
