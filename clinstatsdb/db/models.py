@@ -1,21 +1,40 @@
-#!/usr/bin/env python
-# encoding: utf-8
-from sqlalchemy import (Column, Integer, String, DateTime, Text, Enum,
-                        ForeignKey, UniqueConstraint, Numeric, Date)
-from sqlalchemy.orm import relationship, backref
+# -*- coding: utf-8 -*-
+from datetime import datetime
+import json
+
+from alchy import ModelBase, make_declarative_base
+from sqlalchemy import Column, types, orm, ForeignKey, UniqueConstraint
 from sqlalchemy.orm.exc import NoResultFound
-from sqlalchemy.ext.declarative import declarative_base
-
-db = declarative_base()
 
 
-class Project(db):
-    __tablename__ = 'project'
+def json_serial(obj):
+    """JSON serializer for objects not serializable by default json code"""
+    if isinstance(obj, datetime):
+        serial = obj.isoformat()
+        return serial
+    raise TypeError('Type not serializable')
 
-    project_id = Column(Integer, primary_key=True)
-    projectname = Column(String(255), nullable=False)
-    comment = Column(Text)
-    time = Column(DateTime, nullable=False)
+
+class JsonModel(ModelBase):
+
+    def to_json(self, pretty=False):
+        """Serialize to JSON.
+
+        Handle DateTime objects.
+        """
+        kwargs = dict(indent=4, sort_keys=True) if pretty else dict()
+        return json.dumps(self.to_dict(), default=json_serial, **kwargs)
+
+
+Model = make_declarative_base(Base=JsonModel)
+
+
+class Project(Model):
+
+    project_id = Column(types.Integer, primary_key=True)
+    projectname = Column(types.String(255), nullable=False)
+    comment = Column(types.Text)
+    time = Column(types.DateTime, nullable=False)
 
     def __repr__(self):
         return (u"{self.__class__.__name__}: {self.project_id}"
@@ -41,18 +60,17 @@ class Project(db):
             return False
 
 
-class Sample(db):
-    __tablename__ = 'sample'
+class Sample(Model):
 
-    sample_id = Column(Integer, primary_key=True)
+    sample_id = Column(types.Integer, primary_key=True)
     project_id = Column(ForeignKey('project.project_id'), nullable=False)
-    samplename = Column(String(255), nullable=False)
+    samplename = Column(types.String(255), nullable=False)
     customerid = Column(String(255))
     limsid = Column(String(255))
-    barcode = Column(String(255))
-    time = Column(DateTime)
+    barcode = Column(types.String(255))
+    time = Column(types.DateTime)
 
-    project = relationship('Project', backref=backref('samples'))
+    project = orm.relationship('Project', backref=orm.backref('samples'))
 
     @property
     def lims_id(self):
@@ -84,21 +102,20 @@ class Sample(db):
             return False
 
 
-class Supportparams(db):
-    __tablename__ = 'supportparams'
+class Supportparams(Model):
 
-    supportparams_id = Column(Integer, primary_key=True)
-    document_path = Column(String(255), nullable=False)
-    systempid = Column(String(255))
-    systemos = Column(String(255))
-    systemperlv = Column(String(255))
-    systemperlexe = Column(String(255))
-    idstring = Column(String(255))
-    program = Column(String(255))
-    commandline = Column(Text)
-    sampleconfig_path = Column(String(255))
-    sampleconfig = Column(Text)
-    time = Column(DateTime)
+    supportparams_id = Column(types.Integer, primary_key=True)
+    document_path = Column(types.String(255), nullable=False)
+    systempid = Column(types.String(255))
+    systemos = Column(types.String(255))
+    systemperlv = Column(types.String(255))
+    systemperlexe = Column(types.String(255))
+    idstring = Column(types.String(255))
+    program = Column(types.String(255))
+    commandline = Column(types.Text)
+    sampleconfig_path = Column(types.String(255))
+    sampleconfig = Column(types.Text)
+    time = Column(types.DateTime)
 
     @classmethod
     def exists(cls, document_path):
@@ -120,23 +137,22 @@ class Supportparams(db):
             return False
 
 
-class Datasource(db):
-    __tablename__ = 'datasource'
+class Datasource(Model):
 
-    datasource_id = Column(Integer, primary_key=True)
+    datasource_id = Column(types.Integer, primary_key=True)
     supportparams_id = Column(ForeignKey('supportparams.supportparams_id'),
                               nullable=False)
-    runname = Column(String(255))
-    machine = Column(String(255))
-    rundate = Column(Date)
-    document_path = Column(String(255), nullable=False)
-    document_type = Column(Enum('html', 'xml', 'undefined'), nullable=False,
-                           default='html')
-    server = Column(String(255))
-    time = Column(DateTime)
+    runname = Column(types.String(255))
+    machine = Column(types.String(255))
+    rundate = Column(types.Date)
+    document_path = Column(types.String(255), nullable=False)
+    document_type = Column(types.Enum('html', 'xml', 'undefined'),
+                           nullable=False, default='html')
+    server = Column(types.String(255))
+    time = Column(types.DateTime)
 
-    supportparams = relationship('Supportparams',
-                                 backref=backref('datasources'))
+    supportparams = orm.relationship('Supportparams',
+                                     backref=orm.backref('datasources'))
 
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
@@ -161,19 +177,19 @@ class Datasource(db):
             return False
 
 
-class Demux(db):
-    __tablename__ = 'demux'
+class Demux(Model):
+
     __table_args__ = (UniqueConstraint('flowcell_id', 'basemask',
                                        name='demux_ibuk_1'),)
 
-    demux_id = Column(Integer, primary_key=True)
+    demux_id = Column(types.Integer, primary_key=True)
     flowcell_id = Column(ForeignKey('flowcell.flowcell_id'), nullable=False)
     datasource_id = Column(ForeignKey('datasource.datasource_id'), nullable=False)
-    basemask = Column(String(255))
-    time = Column(DateTime)
+    basemask = Column(types.String(255))
+    time = Column(types.DateTime)
 
-    datasource = relationship('Datasource', backref=backref('demuxes'))
-    flowcell = relationship('Flowcell', backref=backref('demuxes'))
+    datasource = orm.relationship('Datasource', backref=orm.backref('demuxes'))
+    flowcell = orm.relationship('Flowcell', backref=orm.backref('demuxes'))
 
     @classmethod
     def exists(cls, flowcell_id, basemask):
@@ -197,16 +213,15 @@ class Demux(db):
             return False
 
 
-class Flowcell(db):
-    __tablename__ = 'flowcell'
+class Flowcell(Model):
 
-    flowcell_id = Column(Integer, primary_key=True)
-    flowcellname = Column(String(255), nullable=False, unique=True)
-    flowcell_pos = Column(Enum('A', 'B'), nullable=False)
+    flowcell_id = Column(types.Integer, primary_key=True)
+    flowcellname = Column(types.String(255), nullable=False, unique=True)
+    flowcell_pos = Column(types.Enum('A', 'B'), nullable=False)
     hiseqtype = Column(String(255), nullable=False)
-    time = Column(DateTime)
+    time = Column(types.DateTime)
 
-    datasource = relationship('Demux', backref=backref('flowcells'))
+    datasource = orm.relationship('Demux', backref=orm.backref('flowcells'))
 
     @classmethod
     def exists(cls, flowcell_name):
@@ -228,24 +243,23 @@ class Flowcell(db):
             return False
 
 
-class Unaligned(db):
-    __tablename__ = 'unaligned'
+class Unaligned(Model):
 
-    unaligned_id = Column(Integer, primary_key=True)
+    unaligned_id = Column(types.Integer, primary_key=True)
     sample_id = Column(ForeignKey('sample.sample_id'), nullable=False)
     demux_id = Column(ForeignKey('demux.demux_id'), nullable=False)
-    lane = Column(Integer)
-    yield_mb = Column(Integer)
-    passed_filter_pct = Column(Numeric(10, 5))
-    readcounts = Column(Integer)
-    raw_clusters_per_lane_pct = Column(Numeric(10, 5))
-    perfect_indexreads_pct = Column(Numeric(10, 5))
-    q30_bases_pct = Column(Numeric(10, 5))
-    mean_quality_score = Column(Numeric(10, 5))
-    time = Column(DateTime)
+    lane = Column(types.Integer)
+    yield_mb = Column(types.Integer)
+    passed_filter_pct = Column(types.Numeric(10, 5))
+    readcounts = Column(types.Integer)
+    raw_clusters_per_lane_pct = Column(types.Numeric(10, 5))
+    perfect_indexreads_pct = Column(types.Numeric(10, 5))
+    q30_bases_pct = Column(types.Numeric(10, 5))
+    mean_quality_score = Column(types.Numeric(10, 5))
+    time = Column(types.DateTime)
 
-    demux = relationship('Demux', backref=backref('unaligned'))
-    sample = relationship('Sample', backref=backref('unaligned'))
+    demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
+    sample = orm.relationship('Sample', backref=orm.backref('unaligned'))
 
     @classmethod
     def exists(cls, sample_id, demux_id, lane):
@@ -271,30 +285,29 @@ class Unaligned(db):
             return False
 
 
-class Backup(db):
-    __tablename__ = 'backup'
+class Backup(Model):
 
-    runname = Column(String(255), primary_key=True)
-    startdate = Column(Date, nullable=False)
-    nas = Column(String(255))
-    nasdir = Column(String(255))
-    starttonas = Column(DateTime)
-    endtonas = Column(DateTime)
-    preproc = Column(String(255))
-    preprocdir = Column(String(255))
-    startpreproc = Column(DateTime)
-    endpreproc = Column(DateTime)
-    frompreproc = Column(DateTime)
-    analysis = Column(String(255))
-    analysisdir = Column(String(255))
-    toanalysis = Column(DateTime)
-    fromanalysis = Column(DateTime)
-    inbackupdir = Column(Integer, default=0)
+    runname = Column(types.String(255), primary_key=True)
+    startdate = Column(types.Date, nullable=False)
+    nas = Column(types.String(255))
+    nasdir = Column(types.String(255))
+    starttonas = Column(types.DateTime)
+    endtonas = Column(types.DateTime)
+    preproc = Column(types.String(255))
+    preprocdir = Column(types.String(255))
+    startpreproc = Column(types.DateTime)
+    endpreproc = Column(types.DateTime)
+    frompreproc = Column(types.DateTime)
+    analysis = Column(types.String(255))
+    analysisdir = Column(types.String(255))
+    toanalysis = Column(types.DateTime)
+    fromanalysis = Column(types.DateTime)
+    inbackupdir = Column(types.Integer)
     backuptape_id = Column(ForeignKey('backuptape.backuptape_id'), nullable=False)
-    backupdone = Column(DateTime)
-    md5done = Column(DateTime)
+    backupdone = Column(types.DateTime)
+    md5done = Column(types.DateTime)
 
-    tape = relationship('Backuptape', backref=backref('backup'))
+    tape = orm.relationship('Backuptape', backref=orm.backref('backup'))
 
     @classmethod
     def exists(cls, runname, tapedir=None):
@@ -323,13 +336,12 @@ class Backup(db):
             return False
 
 
-class Backuptape(db):
-    __tablename__ = 'backuptape'
+class Backuptape(Model):
 
-    backuptape_id = Column(Integer, primary_key=True)
-    tapedir = Column(String(255))
-    nametext = Column(Text)
-    tapedate = Column(DateTime)
+    backuptape_id = Column(types.Integer, primary_key=True)
+    tapedir = Column(types.String(255))
+    nametext = Column(types.String(255))
+    tapedate = Column(types.DateTime)
 
     @classmethod
     def exists(cls, tapedir):
@@ -351,18 +363,18 @@ class Backuptape(db):
             return False
 
 
-class Version(db):
-    __tablename__ = 'version'
+class Version(Model):
+
     __table_args__ = (UniqueConstraint('name', 'major', 'minor', 'patch',
                                        name='name_major_minor_patch_uc'),)
 
-    version_id = Column(Integer, primary_key=True)
-    name = Column(String(255))
-    major = Column(Integer)
-    minor = Column(Integer)
-    patch = Column(Integer)
-    comment = Column(String(255))
-    time = Column(DateTime, nullable=False)
+    version_id = Column(types.Integer, primary_key=True)
+    name = Column(types.String(255))
+    major = Column(types.Integer)
+    minor = Column(types.Integer)
+    patch = Column(types.Integer)
+    comment = Column(types.String(255))
+    time = Column(types.DateTime, nullable=False)
 
     @classmethod
     def get_version(cls):

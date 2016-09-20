@@ -1,0 +1,15 @@
+---
+'family':
+  sample:
+    Capture_kit:
+      - Agilent_SureSelect.V5
+    Clinical_db:
+      - IEM
+    FamilyID: 'family'
+    Father: '0'
+    Mother: '0'
+    Phenotype: '2'
+    SampleID: sample
+    Sex: '1'
+    display_name:
+      - family-I-1A
