@@ -1,13 +1,13 @@
 """current structure
 
-Revision ID: 79b1c668853f
+Revision ID: eca00ca616a6
 Revises: 
-Create Date: 2016-09-20 15:02:27.156717
+Create Date: 2016-09-20 15:06:39.370122
 
 """
 
 # revision identifiers, used by Alembic.
-revision = '79b1c668853f'
+revision = 'eca00ca616a6'
 down_revision = None
 branch_labels = None
 depends_on = None
