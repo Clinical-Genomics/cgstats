@@ -12,6 +12,7 @@ log = logging.getLogger(__name__)
 
 @click.group()
 def analysis():
+    """Interact with the post alignment part of the database."""
     pass
 
 

@@ -3,7 +3,7 @@ import json
 
 from sqlalchemy import Column, types, orm, ForeignKey
 
-from .models import Model
+from clinstatsdb.db import Model
 
 
 class SampleFlowcell(Model):

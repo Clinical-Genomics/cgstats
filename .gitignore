@@ -45,6 +45,7 @@ TRASH*
 *.tar.gz
 .vagrant/
 dev/
+_DEVELOP/
 
 # SublimeText
 *.sublime-*

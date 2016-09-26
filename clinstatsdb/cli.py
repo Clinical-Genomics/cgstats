@@ -4,13 +4,11 @@ import logging
 import os
 import pkg_resources
 
-from alchy import Manager
 import click
 import yaml
 
 from clinstatsdb import __title__, __version__
 from clinstatsdb.db import api
-from clinstatsdb.db.models import Model
 
 log = logging.getLogger(__name__)
 
@@ -42,10 +40,10 @@ class EntryPointsCLI(click.MultiCommand):
 @click.option('-c', '--config', default='~/.clinstatsdb.yaml',
               type=click.Path(), help='path to config file')
 @click.option('-d', '--database', help='path/URI of the SQL database')
-@click.option('-l', '--log-level', default='INFO')
+@click.option('-l', '--log-level', default='INFO', help='level to log at')
 @click.option('-r', '--reset', is_flag=True,
               help='reset database from scratch')
-@click.option('--log-file', type=click.Path())
+@click.option('--log-file', type=click.Path(), help='write logs to a file')
 @click.version_option(__version__, prog_name=__title__)
 @click.pass_context
 def root(context, config, database, reset, log_level, log_file):
