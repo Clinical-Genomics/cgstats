@@ -205,6 +205,7 @@ class Flowcell(db):
     flowcell_id = Column(Integer, primary_key=True)
     flowcellname = Column(String(255), nullable=False)
     flowcell_pos = Column(Enum('A', 'B'), nullable=False)
+    hiseqtype = Column(String(255), nullable=True)
     time = Column(DateTime)
 
     UniqueConstraint('flowcellname', name='flowcellname')
@@ -310,7 +311,7 @@ class Backup(db):
             tapedir (str): the name of the tape, e.g. tape036_037
 
         Returns:
-            int: runname on exists
+            str: runname on exists
             False: on not exists
         """
         try:
