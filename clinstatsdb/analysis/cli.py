@@ -43,7 +43,7 @@ def add(context, force, sampleinfo_file, metrics_file, qcpedigree_file):
     metrics = yaml.load(metrics_file)
     log.debug("parsing analysis: %s", analysis_id)
     new_analysis = process_all(pedigree, sample_info, metrics)
-    log.info("adding analysis: %s", new_analysis.id)
+    log.info("adding analysis: %s", new_analysis.analysis_id)
     context.obj['manager'].add_commit(new_analysis)
 
 
@@ -54,8 +54,8 @@ def test_analysis(sample_info):
     if status != 'Finished':
         return False
 
-    version = sample_info[family_key][family_key]['MIPVersion']
-    if not version.startswith('v3.'):
+    version = sample_info[family_key][family_key].get('MIPVersion')
+    if version is None or not version.startswith('v3.'):
         return False
 
     return True
