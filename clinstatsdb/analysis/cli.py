@@ -30,7 +30,7 @@ def add(context, force, sampleinfo_file, metrics_file, qcpedigree_file):
         log.warn("analysis can't be loaded, use '--force'")
         context.abort()
     else:
-        old_analysis = Analysis.query.get(analysis_id)
+        old_analysis = Analysis.query.filter(analysis_id=analysis_id).first()
         if old_analysis:
             if force:
                 log.info("removing old analysis")
