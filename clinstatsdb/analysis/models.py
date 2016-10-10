@@ -86,8 +86,8 @@ class Analysis(Model):
 
     """Meta-data class to group samples from the same analysis."""
 
-    # composed from "{customer_id}-{name}"
     id = Column(types.Integer, primary_key=True)
+    # composed from "{customer_id}-{name}"
     analysis_id = Column(types.String(64), unique=True)
     pipeline = Column(types.String(32))
     pipeline_version = Column(types.String(32))
