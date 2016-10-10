@@ -3,7 +3,7 @@
 from __future__ import division
 import logging
 
-from clinstatsdb.db import Analysis, AnalysisSample
+from .models import Analysis, AnalysisSample
 
 log = logging.getLogger(__name__)
 

@@ -4,7 +4,7 @@ import logging
 import click
 import yaml
 
-from clinstatsdb.db import Analysis
+from .models import Analysis
 from .mip import process_all, get_analysisid
 
 log = logging.getLogger(__name__)
