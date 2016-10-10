@@ -36,7 +36,7 @@ def add(context, force, sampleinfo_file, metrics_file, qcpedigree_file):
                 log.info("removing old analysis")
                 old_analysis.delete()
             else:
-                log.warn("analysis already added to database: %s", analysis_id)
+                log.debug("analysis already added: %s", analysis_id)
                 context.abort()
 
     pedigree = yaml.load(qcpedigree_file)
