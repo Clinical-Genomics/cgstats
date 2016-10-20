@@ -24,4 +24,5 @@ Bootstrap(app)
 def index():
     """Dashboard view."""
     dups = analysis_api.duplicates()
-    return render_template('index.html', dups=dups)
+    readsvscov = analysis_api.readsvscov(db)
+    return render_template('index.html', dups=dups, readsvscov=readsvscov)
