@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+import datetime
 from .models import Analysis, AnalysisSample
+
+BEGINNING = datetime.datetime(1970, 1, 1)
 
 
 def samples(query=None):
@@ -15,7 +18,10 @@ def duplicates():
     results = {}
     for seq_type in ('wes', 'wgs'):
         query = samples().filter(AnalysisSample.sequencing_type == seq_type)
-        percentages = [(sample.duplicates_percent * 100) for sample in query]
+        percentages = [{
+            'name': sample.sample_id,
+            'y': sample.duplicates_percent * 100
+        } for sample in query]
         results[seq_type] = percentages
     return results
 
