@@ -28,7 +28,7 @@ with open('requirements.txt') as f:
     required = f.read().splitlines()
 
 setup(
-    name='clinstatsdb',
+    name='cgstats',
     version='0.14.5',
     description='Models and access to clinstatsdb',
     author='Kenny Billiau',
