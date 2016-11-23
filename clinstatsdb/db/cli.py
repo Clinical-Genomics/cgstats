@@ -49,8 +49,8 @@ def sample(context, expected, date, sample_id):
         context.abort()
 
     if date:
-        sorted_dates = sorted(unaligned.demux.flowcell.time for unaligned in
-                              sample_obj.unaligned)
+        sorted_dates = sorted(unaligned.demux.datasource.rundate for unaligned
+                              in sample_obj.unaligned)
         click.echo(sorted_dates[-1])
     else:
         click.echo(reads)
