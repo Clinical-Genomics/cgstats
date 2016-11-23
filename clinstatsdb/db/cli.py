@@ -30,7 +30,18 @@ def show(context, limit, flowcell_id):
 def sample(context, expected, date, sample_id):
     """Report how many reads a sample has been sequenced."""
     # fetch sample from the database
-    sample_obj = api.get_sample(sample_id)
+    query = api.get_sample(sample_id)
+    num_samples = query.count()
+    if num_samples == 0:
+        click.echo("sample not found in database")
+        context.abort()
+    elif num_samples > 1:
+        samples_str = ", ".join(sample.samplename for sample in query)
+        click.echo("conflicting samples: {}".format(samples_str))
+        context.abort()
+    else:
+        sample_obj = query.one()
+
     # fetch number of reads
     reads = sum(unaligned.readcounts for unaligned in sample_obj.unaligned)
     if expected and reads < expected:
