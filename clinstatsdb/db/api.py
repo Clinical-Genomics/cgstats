@@ -20,6 +20,6 @@ def connect(uri):
 
 def get_sample(sample_id):
     """Get a unique demux sample."""
-    pattern = "{}_%".format(sample_id)
+    pattern = "{}\_%".format(sample_id)
     query = Sample.query.filter(Sample.samplename.like(pattern))
     return query.one()
