@@ -40,8 +40,8 @@ class Project(Model):
         return (u"{self.__class__.__name__}: {self.project_id}"
                 .format(self=self))
 
-    @classmethod
-    def exists(cls, project_name):
+    @staticmethod
+    def exists(project_name):
         """Checks if the Prohect entry already exists
 
         Args:
@@ -53,9 +53,9 @@ class Project(Model):
 
         """
         try:
-            rs = (cls.query(cls.project_id.label('id'))
-                     .filter(cls.projectname == project_name).one())
-            return rs.id
+            rs = (Project.query
+                         .filter_by(projectname=project_name).one())
+            return rs.project_id
         except NoResultFound:
             return False
 
@@ -79,8 +79,8 @@ class Sample(Model):
         sanitized_id = sample_part.rstrip('FB')
         return sanitized_id
 
-    @classmethod
-    def exists(cls, sample_name, barcode):
+    @staticmethod
+    def exists(sample_name, barcode):
         """Checks if a Sample entry already exists
 
         Args:
@@ -94,10 +94,10 @@ class Sample(Model):
 
         """
         try:
-            rs = (cls.query(cls.sample_id.label('id'))
-                     .filter(cls.samplename == sample_name)
-                     .filter(cls.barcode == barcode).one())
-            return rs.id
+            rs = (Sample.query
+                        .filter_by(samplename=sample_name)
+                        .filter_by(barcode=barcode).one())
+            return rs.sample_id
         except NoResultFound:
             return False
 
@@ -117,8 +117,8 @@ class Supportparams(Model):
     sampleconfig = Column(types.Text)
     time = Column(types.DateTime)
 
-    @classmethod
-    def exists(cls, document_path):
+    @staticmethod
+    def exists(document_path):
         """Checks if the supportparams entry already exists
 
         Args:
@@ -130,9 +130,9 @@ class Supportparams(Model):
 
         """
         try:
-            rs = (cls.query(cls.supportparams_id.label('id'))
-                     .filter(cls.document_path == document_path).one())
-            return rs.id
+            rs = (Supportparams.query
+                               .filter_by(document_path=document_path).one())
+            return rs.supportparams_id
         except NoResultFound:
             return False
 
@@ -157,8 +157,8 @@ class Datasource(Model):
     def __repr__(self):
         return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
 
-    @classmethod
-    def exists(cls, document_path):
+    @staticmethod
+    def exists(document_path):
         """Checks if the Datasource entry already exists
 
         Args:
@@ -170,9 +170,9 @@ class Datasource(Model):
 
         """
         try:
-            rs = (cls.query(cls.supportparams_id.label('id'))
-                     .filter(cls.document_path == document_path).one())
-            return rs.id
+            rs = (Datasource.query
+                            .filter_by(document_path=document_path).one())
+            return rs.datasource_id
         except NoResultFound:
             return False
 
@@ -191,8 +191,8 @@ class Demux(Model):
     datasource = orm.relationship('Datasource', backref=orm.backref('demuxes'))
     flowcell = orm.relationship('Flowcell', backref=orm.backref('demuxes'))
 
-    @classmethod
-    def exists(cls, flowcell_id, basemask):
+    @staticmethod
+    def exists(flowcell_id, basemask):
         """Checks if the Demux entry already exists
 
         Args:
@@ -200,15 +200,15 @@ class Demux(Model):
             basemask (str): the basemask used to demux, e.g. Y101,I6n,Y101
 
         Returns:
-            int: demux_id on exists
+        int: demux_id on exists
             False: on not exists
 
         """
         try:
-            rs = (cls.query(cls.demux_id.label('id'))
-                     .filter(cls.flowcell_id == flowcell_id)
-                     .filter(cls.basemask == basemask).one())
-            return rs.id
+            rs = (Demux.query
+                       .filter_by(flowcell_id=flowcell_id)
+                       .filter_by(basemask=basemask).one())
+            return rs.demux_id
         except NoResultFound:
             return False
 
@@ -223,8 +223,8 @@ class Flowcell(Model):
 
     datasource = orm.relationship('Demux', backref=orm.backref('flowcells'))
 
-    @classmethod
-    def exists(cls, flowcell_name):
+    @staticmethod
+    def exists(flowcell_name):
         """Checks if the Flowcell entry already exists
 
         Args:
@@ -236,9 +236,8 @@ class Flowcell(Model):
 
         """
         try:
-            rs = (cls.query(cls.flowcell_id.label('id'))
-                     .filter(cls.flowcellname == flowcell_name).one())
-            return rs.id
+            rs = Flowcell.query.filter_by(flowcellname=flowcell_name).one()
+            return rs.flowcell_id
         except NoResultFound:
             return False
 
@@ -261,8 +260,8 @@ class Unaligned(Model):
     demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
     sample = orm.relationship('Sample', backref=orm.backref('unaligned'))
 
-    @classmethod
-    def exists(cls, sample_id, demux_id, lane):
+    @staticmethod
+    def exists(sample_id, demux_id, lane):
         """Checks if an Unaligned entry already exists
 
         Args:
@@ -276,11 +275,11 @@ class Unaligned(Model):
 
         """
         try:
-            rs = (cls.query(cls.unaligned_id.label('id'))
-                     .filter(cls.sample_id == sample_id)
-                     .filter(cls.demux_id == demux_id)
-                     .filter(cls.lane == lane).one())
-            return rs.id
+            rs = (Unaligned.query
+                           .filter_by(sample_id=sample_id)
+                           .filter_by(demux_id=demux_id)
+                           .filter_by(lane=lane).one())
+            return rs.unaligned_id
         except NoResultFound:
             return False
 
@@ -309,8 +308,8 @@ class Backup(Model):
 
     tape = orm.relationship('Backuptape', backref=orm.backref('backup'))
 
-    @classmethod
-    def exists(cls, runname, tapedir=None):
+    @staticmethod
+    def exists(runname, tapedir=None):
         """Check if run is already backed up. Optionally: checks if run is
         on certain tape
 
@@ -324,13 +323,12 @@ class Backup(Model):
         """
         try:
             if tapedir is not None:
-                rs = (cls.query(cls.runname.label('runname'))
-                         .outerjoin(Backuptape)
-                         .filter(cls.runname == runname)
-                         .filter(Backuptape.tapedir == tapedir).one())
+                rs = (Backup.query
+                            .outerjoin(Backuptape)
+                            .filter_by(runname=runname)
+                            .filter(Backuptape.tapedir == tapedir).one())
             else:
-                rs = (cls.query(cls.runname.label('runname'))
-                         .filter(cls.runname == runname).one())
+                rs = Backup.query.filter_by(runname=runname).one()
             return rs.runname
         except NoResultFound:
             return False
@@ -343,8 +341,8 @@ class Backuptape(Model):
     nametext = Column(types.String(255))
     tapedate = Column(types.DateTime)
 
-    @classmethod
-    def exists(cls, tapedir):
+    @staticmethod
+    def exists(tapedir):
         """Check if a tape already exists
 
         Args:
@@ -356,9 +354,8 @@ class Backuptape(Model):
 
         """
         try:
-            rs = (cls.query(cls.backuptape_id.label('id'))
-                     .filter(cls.tapedir == tapedir).one())
-            return rs.id
+            rs = Backuptape.query.filter_by(tapedir=tapedir).one()
+            return rs.backuptape_id
         except NoResultFound:
             return False
 
@@ -376,22 +373,18 @@ class Version(Model):
     comment = Column(types.String(255))
     time = Column(types.DateTime, nullable=False)
 
-    @classmethod
-    def get_version(cls):
+    @staticmethod
+    def get_version():
         """Retrieves the database version
 
         Returns (tuple): (major, minor, patch, name)
         """
 
         """SELECT major, minor, patch, name FROM version ORDER BY time DESC LIMIT 1"""
-        return (cls.query(Version.major.label('major'),
-                          Version.minor.label('minor'),
-                          Version.patch.label('patch'),
-                          Version.name.label('name'))
-                   .order_by(Version.time.desc()).limit(1).one())
+        return Version.query.order_by(Version.time.desc()).limit(1).one()
 
-    @classmethod
-    def check(cls, dbname, ver):
+    @staticmethod
+    def check(dbname, ver):
         """Checks version of database against dbname and version
 
         [normally from the config file]
@@ -403,7 +396,7 @@ class Version(Model):
         Returns:
           True: if identical
         """
-        rs = cls.get_version()
+        rs = Version.get_version()
         if rs is not None:
             ver_string = "{0}.{1}.{2}".format(str(rs.major), str(rs.minor),
                                               str(rs.patch))
