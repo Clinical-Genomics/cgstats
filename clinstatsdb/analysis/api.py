@@ -20,7 +20,7 @@ def duplicates():
         query = samples().filter(AnalysisSample.sequencing_type == seq_type)
         percentages = [{
             'name': sample.sample_id,
-            'y': sample.duplicates_percent * 100
+            'y': (sample.duplicates_percent * 100)
         } for sample in query]
         results[seq_type] = percentages
     return results
