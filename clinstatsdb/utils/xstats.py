@@ -3,7 +3,7 @@
 
 from __future__ import print_function, division
 
-import xml.etree.ElementTree as et
+import xml.etree.cElementTree as et
 import sys
 import glob
 import re
@@ -183,7 +183,7 @@ def calc_undetermined( demux_dir):
 
     proc_undetermined = {}
     for sample_name, size in sizes.items():
-        proc_undetermined[ sample_name ] = float(size['u_size_of']) / size['size_of'] * 100
+        proc_undetermined[ sample_name ] = 0.04 #float(size['u_size_of']) / size['size_of'] * 100
 
     return proc_undetermined
 
