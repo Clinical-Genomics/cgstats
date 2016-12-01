@@ -59,6 +59,8 @@ setup(
             'show = clinstatsdb.db.cli:show',
             'analysis = clinstatsdb.analysis.cli:analysis',
             'sample = clinstatsdb.db.cli:sample',
+            'flowcells = clinstatsdb.db.cli:flowcells',
+            'samples = clinstatsdb.db.cli:samples',
         ],
         'clinstatsdb.models.1': [
             'core = clinstatsdb.db.models',

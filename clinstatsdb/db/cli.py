@@ -54,3 +54,26 @@ def sample(context, expected, date, sample_id):
         click.echo(sorted_dates[-1])
     else:
         click.echo(reads)
+
+
+@click.command()
+@click.option('-l', '--limit', default=20, help='limit number of flowcells')
+@click.option('-o', '--offset', default=0, help='skip initial flowcells')
+@click.pass_context
+def flowcells(context, limit, offset):
+    """Get information about flowcells."""
+    query = api.flowcells()
+    for flowcell in query.offset(offset).limit(limit):
+        click.echo(flowcell.flowcellname)
+
+
+@click.command()
+@click.option('-l', '--limit', default=20, help='limit number of flowcells')
+@click.option('-o', '--offset', default=0, help='skip initial flowcells')
+@click.option('-f', '--flowcell', help='flowcell name')
+@click.pass_context
+def samples(context, limit, offset, flowcell):
+    """List samples in the database."""
+    query = api.samples(flowcell_name=flowcell)
+    for sample in query.offset(offset).limit(limit):
+        click.echo(sample.lims_id)
