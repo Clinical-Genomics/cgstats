@@ -6,8 +6,10 @@ import sys
 
 from sqlalchemy import func
 from .db import SQL
-from .db.models import Datasource, Unaligned, Demux, Flowcell, Supportparams, Project, Sample, Backup, Backuptape
+from .db.models import (Datasource, Unaligned, Demux, Flowcell, Supportparams,
+                        Project, Sample, Backup, Backuptape)
 from .utils import xstats
+
 
 def main(argv):
 
