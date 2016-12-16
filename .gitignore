@@ -67,3 +67,4 @@ docs/_build
 
 # settings
 clinstatsdb/settings.py
+alembic.ini
