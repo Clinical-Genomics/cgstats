@@ -6,6 +6,7 @@ from alchy import Manager
 
 from .models import Model, Sample, Flowcell, Demux, Datasource, Unaligned
 
+SAMPLE_PATTERN = "{}\_%"
 log = logging.getLogger(__name__)
 
 
@@ -20,15 +21,19 @@ def connect(uri):
 
 def get_sample(sample_id):
     """Get a unique demux sample."""
-    pattern = "{}\_%".format(sample_id)
+    pattern = SAMPLE_PATTERN.format(sample_id)
     query = Sample.query.filter(Sample.samplename.like(pattern))
     return query
 
 
-def flowcells():
+def flowcells(sample=None):
     """Return a query for the latest flowcells."""
     query = (Flowcell.query.join(Flowcell.datasource, Demux.datasource)
                            .order_by(Datasource.rundate.desc()))
+    if sample:
+        pattern = SAMPLE_PATTERN.format(sample)
+        query = (query.join(Demux.unaligned, Unaligned.sample)
+                      .filter(Sample.samplename.like(pattern)))
     return query
 
 

@@ -59,10 +59,11 @@ def sample(context, expected, date, sample_id):
 @click.command()
 @click.option('-l', '--limit', default=20, help='limit number of flowcells')
 @click.option('-o', '--offset', default=0, help='skip initial flowcells')
+@click.option('-s', '--sample', help='look up flowcells based on sample')
 @click.pass_context
-def flowcells(context, limit, offset):
+def flowcells(context, limit, offset, sample):
     """Get information about flowcells."""
-    query = api.flowcells()
+    query = api.flowcells(sample=sample)
     for flowcell in query.offset(offset).limit(limit):
         click.echo(flowcell.flowcellname)
 
