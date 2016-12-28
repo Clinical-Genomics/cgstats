@@ -53,10 +53,11 @@ def build_sample(sample_id, sample_data, seq_type):
             data['concordant_rate'] = comp_overlap['concordantRate'] / 100
             data['hethom_ratio'] = variant_count['hetHomRatio']
 
+            data['duplicates_percent'] = (value['markduplicates']
+                                               ['fraction_duplicates'])
+
     data['reads_total'] = sample_data['reads']
     data['mapped_percent'] = sample_data['reads_mapped_rate']
-    data['duplicates_percent'] = (sample_data['markduplicates']
-                                             ['fraction_duplicates'])
 
     new_sample = AnalysisSample(**data)
     return new_sample
