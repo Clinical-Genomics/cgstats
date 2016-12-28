@@ -8,38 +8,28 @@ from .models import Analysis, AnalysisSample
 log = logging.getLogger(__name__)
 
 
-def prepare(qc_metrics):
-    """Take raw QC metrics and preapre for parsing."""
-    family_key = qc_metrics.keys()[0]
-    data = {
-        'family': qc_metrics[family_key][family_key],
-        'family_id': family_key,
-        'samples': {key: value for key, value in qc_metrics[family_key].items()
-                    if key != family_key}
-    }
-    return data
-
-
-def parse_family(qc_family):
+def parse_versions(qcmetrics):
     """Parse our version from family section of data."""
-    versions = {
-        'samtools': qc_family['Program']['Samtools']['Version'],
-        'gatk': str(qc_family['Program']['GATK']['Version']),
-        'freebayes': qc_family['Program']['Freebayes']['Version'],
-    }
+    versions = dict(
+        samtools=qcmetrics['program']['samtools']['version'],
+        gatk=str(qcmetrics['program']['gatk']['version']),
+        freebayes=qcmetrics['program']['freebayes']['version'],
+        genmod=str(qcmetrics['program']['genmod']['version']),
+        manta=str(qcmetrics['program']['manta']['version']),
+    )
     return versions
 
 
-def parse_sample(qc_sample):
+def build_sample(sample_id, sample_data, seq_type):
     """Parse out relevant information from sample data."""
-    data = {}
-    for key, value in qc_sample.items():
-        if 'lanes' in key:
+    data = dict(sample_id=sample_id, sequencing_type=seq_type)
+    for key, value in sample_data.items():
+        if '_lanes_' in key:
             # alignment
-            hs_metrics = value['CalculateHsMetrics']['Header']['Data']
-            mult_metrics = value['CollectMultipleMetrics']['Header']['Pair']
+            hs_metrics = value['calculatehsmetrics']['header']['data']
+            mult_metrics = value['collectmultiplemetrics']['header']['pair']
             data['strand_balance'] = mult_metrics['STRAND_BALANCE']
-            data['sex_predicted'] = value['ChanjoSexCheck']['gender']
+            data['sex_predicted'] = value['chanjo_sexcheck']['gender']
 
             # coverage
             data['coverage_target'] = hs_metrics['MEAN_TARGET_COVERAGE']
@@ -49,12 +39,12 @@ def parse_sample(qc_sample):
             data['completeness_target_100'] = hs_metrics['PCT_TARGET_BASES_100X']
 
             # variants
-            comp_overlap = (value['VariantEval_All']['CompOverlap_header']
-                                 ['CompOverlap_data_all'])
-            variant_sum = (value['VariantEval_All']['VariantSummary_header']
-                                ['VariantSummary_data_all'])
-            variant_count = (value['VariantEval_All']['CountVariants_header']
-                                  ['CountVariants_data_all'])
+            comp_overlap = (value['variantevalall']['comp_overlap_header']
+                                 ['comp_overlap_data_all'])
+            variant_sum = (value['variantevalall']['variant_summary_header']
+                                ['variant_summary_data_all'])
+            variant_count = (value['variantevalall']['count_variants_header']
+                                  ['count_variants_data_all'])
             data['variants'] = comp_overlap['nEvalVariants']
             data['indels'] = variant_sum['nIndels']
             data['snps'] = variant_sum['nSNPs']
@@ -63,66 +53,42 @@ def parse_sample(qc_sample):
             data['concordant_rate'] = comp_overlap['concordantRate'] / 100
             data['hethom_ratio'] = variant_count['hetHomRatio']
 
-    data['reads_total'] = qc_sample['TotalReads']
-    data['mapped_percent'] = qc_sample['MappedRate']
-    data['duplicates_percent'] = qc_sample['Duplicates']
-    return data
+    data['reads_total'] = sample_data['reads']
+    data['mapped_percent'] = sample_data['reads_mapped_rate']
+    data['duplicates_percent'] = (sample_data['markduplicates']
+                                             ['fraction_duplicates'])
+
+    new_sample = AnalysisSample(**data)
+    return new_sample
 
 
-def process_samples(qc_samples, sequencing_type):
-    """Build models from QC metrics output."""
-    for sample_id, sample_values in qc_samples.items():
-        log.info("adding sample: %s", sample_id)
-        sample_data = parse_sample(sample_values)
-        sample_obj = AnalysisSample(sample_id=sample_id,
-                                    sequencing_type=sequencing_type,
-                                    **sample_data)
-        yield sample_obj
-
-
-def process_analysis(qc_sampleInfo):
+def build_analysis(analysis_id, sampleinfo):
     """Build analysis model from QC sample info file."""
-    data = {'pipeline': 'mip'}
-    family_key = qc_sampleInfo.keys()[0]
-    data['analysis_id'] = get_analysisid(qc_sampleInfo)
-    data['pipeline_version'] = qc_sampleInfo[family_key][family_key]['MIPVersion']
-    data['analyzed_at'] = qc_sampleInfo[family_key][family_key]['AnalysisDate']
-
-    rank_model = (qc_sampleInfo[family_key][family_key]['Program']
-                               ['RankVariants']['RankModel']['Version'])
-    data['program_versions'] = dict(rank_model=rank_model)
-    analysis_type = qc_sampleInfo[family_key][family_key]['AnalysisType']
-    # this should really be found from LIMS... and be on sample level!
-    sequencing_type = dict(exomes='wes', genomes='wgs').get(analysis_type)
-    return Analysis(**data), sequencing_type
+    rank_model = sampleinfo['program']['rankvariant']['rank_model']['version']
+    data = dict(
+        pipeline='mip',
+        analysis_id=analysis_id,
+        pipeline_version=sampleinfo['mip_version'],
+        analyzed_at=sampleinfo['analysis_date'],
+        program_versions=dict(rank_model=rank_model),
+    )
+    return Analysis(**data)
 
 
-def get_capturekits(pedigree):
-    """Parse out capture kits used for samples."""
-    family_key = pedigree.keys()[0]
-    samples = {sample_id: data.get('Capture_kit', [None])[0] for
-               sample_id, data in pedigree[family_key].items()}
-    return samples
-
-
-def process_all(pedigree, qc_sampleInfo, qc_metrics):
+def process_all(analysis_id, sampleinfo, qcmetrics):
     """Process all data."""
-    new_analysis, sequencing_type = process_analysis(qc_sampleInfo)
-    data = prepare(qc_metrics)
-    program_versions = parse_family(data['family'])
-    program_versions['rank_model'] = new_analysis.program_versions['rank_model']
-    new_analysis.program_versions = program_versions
-    new_samples = list(process_samples(data['samples'], sequencing_type))
-    ped_samples = get_capturekits(pedigree)
-    for new_sample in new_samples:
-        new_sample.capture_kit = ped_samples[new_sample.sample_id]
+    new_analysis = build_analysis(analysis_id, sampleinfo)
+    # parse out program versions
+    versions = parse_versions(qcmetrics)
+    versions['rank_model'] = new_analysis.program_versions['rank_model']
+    new_analysis.program_versions = versions
 
-    new_analysis.samples = new_samples
+    for sample_id, sample_data in qcmetrics['sample'].items():
+        log.info("adding sample: %s", sample_id)
+        seq_type = sampleinfo['analysis_type'][sample_id]
+        new_sample = build_sample(sample_id, sample_data, seq_type)
+        capture_kit = sampleinfo['sample'][new_sample.sample_id]['capture_kit']
+        new_sample.capture_kit = capture_kit
+        new_analysis.samples.append(new_sample)
+
     return new_analysis
-
-
-def get_analysisid(sample_info):
-    family_key = sample_info.keys()[0]
-    customer = sample_info[family_key][family_key]['InstanceTag'][0]
-    identifier = "{}-{}".format(customer, family_key)
-    return identifier

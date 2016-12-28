@@ -1,0 +1,645 @@
+---
+analysis_date: 2016-12-27T09:38:10
+analysis_type:
+  SER2202A1: wes
+  SER2202A2: wes
+  SER2202A3: wes
+analysisrunstatus: finished
+bcf_file:
+  path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_BOTH.bcf
+config_file_analysis: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest_config.yaml
+default_gene_panels:
+  - OMIM
+expected_coverage:
+  SER2202A1: '0.0'
+  SER2202A2: '0.0'
+  SER2202A3: '0.0'
+family: 15026-miptest
+gbcf_file:
+  path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/gatk/15026-miptest_sorted_md_brecal_gvcf_BOTH.bcf
+human_genome_build:
+  path: /mnt/hds/proj/bioinfo/develop/references_4.0/Homo_sapiens.GRCh37.d5.fasta
+  source: GRCh
+  version: '37'
+last_log_file_path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/mip_log/2016-12-27/mip.pl_2016-12-27T09:38:10.log
+log_file_dir: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/mip_log
+mip_version: v4.0.3
+owner: cust000
+pedigree_file:
+  path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/15026-miptest_pedigree.yaml
+pedigree_file_analysis:
+  path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/qc_pedigree.yaml
+pedigree_minimal: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/15026-miptest.fam
+program:
+  bcftools:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/freebayes
+    outfile: 15026-miptest_sorted_md_brecal_freebayes_BOTH.vcf
+  freebayes:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/freebayes
+    outfile: 15026-miptest_sorted_md_brecal_freebayes_BOTH.vcf
+  gatk:
+    version: '3.6'
+  genmod:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+  inbreeding_factor:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck
+    outfile: 15026-miptest.het
+  manta:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/manta
+    outfile: 15026-miptest_sorted_md_brecal_manta_SV.vcf
+  pedigree_check:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/gatk
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_BOTH.vcf
+  picardtools:
+    version: 2.5.0(2c370988aefe41f579920c8a6a678a201c5261c1_1466708365)
+  plink2:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck/info/
+    outfile: samplecheck_15026-miptest_BOTH.0.stdout.txt
+  plink_sexcheck:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck
+    outfile: 15026-miptest.sexcheck
+  qccollect:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest
+    outfile: 15026-miptest_qc_metrics.yaml
+    qccollect_metrics_file:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/15026-miptest_qc_metrics.yaml
+  rankvariant:
+    clinical:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+    rank_model:
+      file: rank_model_cmms_v1.18.ini
+      path: /mnt/hds/proj/bioinfo/develop/references_4.0/rank_model_cmms_v1.18.ini
+      version: '1.18'
+    research:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.vcf
+  relation_check:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck
+    outfile: 15026-miptest.mibs
+  sambamba:
+    version: 0.6.3
+  samtools:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samtools
+    outfile: 15026-miptest_sorted_md_brecal_mpileup_BOTH.vcf
+  samtools_mpileup:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samtools
+    outfile: 15026-miptest_sorted_md_brecal_mpileup_BOTH.vcf
+  snpeff:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_BOTH_1.selected.vcf
+  sv_combinevariantcallsets:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/info/
+    outfile: sv_combinevariantcallsets_15026-miptest_SV.0.stderr.txt
+  sv_genmod:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+  sv_rankvariant:
+    clinical:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+    rank_model:
+      file: svrank_model_cmms_v1.0.ini
+      path: /mnt/hds/proj/bioinfo/develop/references_4.0/svrank_model_cmms_v1.0.ini
+      version: '1.0'
+    research:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.vcf
+  sv_varianteffectpredictor:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_comb_vep_SV.vcf
+  sv_varianteffectpredictorsummary:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_comb_vep_SV.vcf_summary.html
+  sv_vcfparser:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_comb_vep_parsed_SV.vcf
+  variant_integrity_father:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck
+    outfile: 15026-miptest_father.txt
+  variant_integrity_mendel:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck
+    outfile: 15026-miptest_mendel.txt
+  variantannotationblock:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/info/
+    outfile: variantannotationblock_15026-miptest.0.stderr.txt
+  varianteffectpredictor:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_BOTH_1.vcf
+  varianteffectpredictorsummary:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_BOTH_1.vcf_summary.html
+  vcfparser:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa
+    outfile: 15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_BOTH_1.vcf
+  vcftools:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/samplecheck/info/
+    outfile: samplecheck_15026-miptest_BOTH.0.stderr.txt
+  vt:
+    outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/info/
+    outfile: variantannotationblock_15026-miptest.0.1.1.stderr.txt
+sample:
+  SER2202A1:
+    analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: '0.0'
+    father: SER2202A3
+    file:
+      SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1:
+        interleaved: ~
+        read_direction_file:
+          SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1_1:
+            date: 2016-12-12
+            flowcell: HF3FNADXX
+            lane: '1'
+            original_file_name: 1_161212_HF3FNADXX_SER2202A1_AGCCATGC_1.fastq.gz
+            original_file_name_noending: 1_161212_HF3FNADXX_SER2202A1_AGCCATGC_1
+            read_direction: 1
+            run_barcode: 161212_HF3FNADXX_1_AGCCATGC
+            sample_barcode: AGCCATGC
+          SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1_2:
+            date: 2016-12-12
+            flowcell: HF3FNADXX
+            lane: '1'
+            original_file_name: 1_161212_HF3FNADXX_SER2202A1_AGCCATGC_2.fastq.gz
+            original_file_name_noending: 1_161212_HF3FNADXX_SER2202A1_AGCCATGC_2
+            read_direction: 2
+            run_barcode: 161212_HF3FNADXX_1_AGCCATGC
+            sample_barcode: AGCCATGC
+        sequence_length: '101'
+        sequence_run_type: paired_end
+      SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2:
+        interleaved: ~
+        read_direction_file:
+          SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2_1:
+            date: 2016-12-12
+            flowcell: HF3FNADXX
+            lane: '2'
+            original_file_name: 2_161212_HF3FNADXX_SER2202A1_AGCCATGC_1.fastq.gz
+            original_file_name_noending: 2_161212_HF3FNADXX_SER2202A1_AGCCATGC_1
+            read_direction: 1
+            run_barcode: 161212_HF3FNADXX_2_AGCCATGC
+            sample_barcode: AGCCATGC
+          SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2_2:
+            date: 2016-12-12
+            flowcell: HF3FNADXX
+            lane: '2'
+            original_file_name: 2_161212_HF3FNADXX_SER2202A1_AGCCATGC_2.fastq.gz
+            original_file_name_noending: 2_161212_HF3FNADXX_SER2202A1_AGCCATGC_2
+            read_direction: 2
+            run_barcode: 161212_HF3FNADXX_2_AGCCATGC
+            sample_barcode: AGCCATGC
+        sequence_length: '101'
+        sequence_run_type: paired_end
+    most_complete_bam:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/SER2202A1_lanes_12_sorted_md_brecal.bam
+    mother: SER2202A2
+    phenotype: affected
+    program:
+      bamstats:
+        SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa
+          outfile: SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1_sorted.stats
+        SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa
+          outfile: SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2_sorted.stats
+      bwa:
+        SER2202A1.161212_HF3FNADXX_AGCCATGC.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/info/
+          outfile: bwa_mem_SER2202A1.0.stderr.txt
+        SER2202A1.161212_HF3FNADXX_AGCCATGC.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/info/
+          outfile: bwa_mem_SER2202A1.1.stderr.txt
+      calculatehsmetrics:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport
+          outfile: SER2202A1_lanes_12_sorted_md_brecal_CalculateHsMetrics
+      chanjo:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport
+          outfile: SER2202A1_lanes_12_sorted_md_brecal_chanjo_sexcheck.log
+      chanjo_sexcheck:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport
+          outfile: SER2202A1_lanes_12_sorted_md_brecal.sexcheck
+      collectmultiplemetrics:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport
+          outfile: SER2202A1_lanes_12_sorted_md_brecal.alignment_summary_metrics
+      collectmultiplemetricsinsertsize:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport
+          outfile: SER2202A1_lanes_12_sorted_md_brecal.insert_size_metrics
+      fastqc:
+        1_161212_HF3FNADXX_SER2202A1_AGCCATGC_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/fastqc/1_161212_HF3FNADXX_SER2202A1_AGCCATGC_1_fastqc
+          outfile: fastqc_data.txt
+        1_161212_HF3FNADXX_SER2202A1_AGCCATGC_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/fastqc/1_161212_HF3FNADXX_SER2202A1_AGCCATGC_2_fastqc
+          outfile: fastqc_data.txt
+        2_161212_HF3FNADXX_SER2202A1_AGCCATGC_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/fastqc/2_161212_HF3FNADXX_SER2202A1_AGCCATGC_1_fastqc
+          outfile: fastqc_data.txt
+        2_161212_HF3FNADXX_SER2202A1_AGCCATGC_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/fastqc/2_161212_HF3FNADXX_SER2202A1_AGCCATGC_2_fastqc
+          outfile: fastqc_data.txt
+      markduplicates:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa
+          outfile: SER2202A1_lanes_12_sorted_md_metric
+          processed_by: picardtools_markduplicates
+      sambamba_depth:
+        SER2202A1_lanes_12:
+          bed:
+            path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/coveragereport/SER2202A1_lanes_12_sorted_md_brecal_coverage.bed
+      variantevalall:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/gatk_variantevalall
+          outfile: SER2202A1_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH.vcf.varianteval
+      variantevalexome:
+        SER2202A1_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A1/bwa/gatk_variantevalexome
+          outfile: SER2202A1_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH_exome.vcf.varianteval
+    sample_id: SER2202A1
+    sample_name: ADM980A9-miptest
+    sex: male
+  SER2202A2:
+    analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: '0.0'
+    father: '0'
+    file:
+      SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1:
+        interleaved: ~
+        read_direction_file:
+          SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1_1:
+            date: 2016-12-12
+            flowcell: HF5CGADXX
+            lane: '1'
+            original_file_name: 1_161212_HF5CGADXX_SER2202A2_GTACGCAA_1.fastq.gz
+            original_file_name_noending: 1_161212_HF5CGADXX_SER2202A2_GTACGCAA_1
+            read_direction: 1
+            run_barcode: 161212_HF5CGADXX_1_GTACGCAA
+            sample_barcode: GTACGCAA
+          SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1_2:
+            date: 2016-12-12
+            flowcell: HF5CGADXX
+            lane: '1'
+            original_file_name: 1_161212_HF5CGADXX_SER2202A2_GTACGCAA_2.fastq.gz
+            original_file_name_noending: 1_161212_HF5CGADXX_SER2202A2_GTACGCAA_2
+            read_direction: 2
+            run_barcode: 161212_HF5CGADXX_1_GTACGCAA
+            sample_barcode: GTACGCAA
+        sequence_length: '101'
+        sequence_run_type: paired_end
+      SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2:
+        interleaved: ~
+        read_direction_file:
+          SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2_1:
+            date: 2016-12-12
+            flowcell: HF5CGADXX
+            lane: '2'
+            original_file_name: 2_161212_HF5CGADXX_SER2202A2_GTACGCAA_1.fastq.gz
+            original_file_name_noending: 2_161212_HF5CGADXX_SER2202A2_GTACGCAA_1
+            read_direction: 1
+            run_barcode: 161212_HF5CGADXX_2_GTACGCAA
+            sample_barcode: GTACGCAA
+          SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2_2:
+            date: 2016-12-12
+            flowcell: HF5CGADXX
+            lane: '2'
+            original_file_name: 2_161212_HF5CGADXX_SER2202A2_GTACGCAA_2.fastq.gz
+            original_file_name_noending: 2_161212_HF5CGADXX_SER2202A2_GTACGCAA_2
+            read_direction: 2
+            run_barcode: 161212_HF5CGADXX_2_GTACGCAA
+            sample_barcode: GTACGCAA
+        sequence_length: '101'
+        sequence_run_type: paired_end
+    most_complete_bam:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/SER2202A2_lanes_12_sorted_md_brecal.bam
+    mother: '0'
+    phenotype: unaffected
+    program:
+      bamstats:
+        SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa
+          outfile: SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1_sorted.stats
+        SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa
+          outfile: SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2_sorted.stats
+      bwa:
+        SER2202A2.161212_HF5CGADXX_GTACGCAA.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/info/
+          outfile: bwa_mem_SER2202A2.0.stderr.txt
+        SER2202A2.161212_HF5CGADXX_GTACGCAA.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/info/
+          outfile: bwa_mem_SER2202A2.1.stderr.txt
+      calculatehsmetrics:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport
+          outfile: SER2202A2_lanes_12_sorted_md_brecal_CalculateHsMetrics
+      chanjo:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport
+          outfile: SER2202A2_lanes_12_sorted_md_brecal_chanjo_sexcheck.log
+      chanjo_sexcheck:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport
+          outfile: SER2202A2_lanes_12_sorted_md_brecal.sexcheck
+      collectmultiplemetrics:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport
+          outfile: SER2202A2_lanes_12_sorted_md_brecal.alignment_summary_metrics
+      collectmultiplemetricsinsertsize:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport
+          outfile: SER2202A2_lanes_12_sorted_md_brecal.insert_size_metrics
+      fastqc:
+        1_161212_HF5CGADXX_SER2202A2_GTACGCAA_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/fastqc/1_161212_HF5CGADXX_SER2202A2_GTACGCAA_1_fastqc
+          outfile: fastqc_data.txt
+        1_161212_HF5CGADXX_SER2202A2_GTACGCAA_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/fastqc/1_161212_HF5CGADXX_SER2202A2_GTACGCAA_2_fastqc
+          outfile: fastqc_data.txt
+        2_161212_HF5CGADXX_SER2202A2_GTACGCAA_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/fastqc/2_161212_HF5CGADXX_SER2202A2_GTACGCAA_1_fastqc
+          outfile: fastqc_data.txt
+        2_161212_HF5CGADXX_SER2202A2_GTACGCAA_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/fastqc/2_161212_HF5CGADXX_SER2202A2_GTACGCAA_2_fastqc
+          outfile: fastqc_data.txt
+      markduplicates:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa
+          outfile: SER2202A2_lanes_12_sorted_md_metric
+          processed_by: picardtools_markduplicates
+      sambamba_depth:
+        SER2202A2_lanes_12:
+          bed:
+            path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/coveragereport/SER2202A2_lanes_12_sorted_md_brecal_coverage.bed
+      variantevalall:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/gatk_variantevalall
+          outfile: SER2202A2_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH.vcf.varianteval
+      variantevalexome:
+        SER2202A2_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A2/bwa/gatk_variantevalexome
+          outfile: SER2202A2_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH_exome.vcf.varianteval
+    sample_id: SER2202A2
+    sample_name: ADM980A10-miptest
+    sex: female
+  SER2202A3:
+    analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: '0.0'
+    father: '0'
+    file:
+      SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1:
+        interleaved: ~
+        read_direction_file:
+          SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1_1:
+            date: 2016-12-12
+            flowcell: H2Y5VBCXX
+            lane: '1'
+            original_file_name: 1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1.fastq.gz
+            original_file_name_noending: 1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1
+            read_direction: 1
+            run_barcode: 161212_H2Y5VBCXX_1_CCTAATCC
+            sample_barcode: CCTAATCC
+          SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1_2:
+            date: 2016-12-12
+            flowcell: H2Y5VBCXX
+            lane: '1'
+            original_file_name: 1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2.fastq.gz
+            original_file_name_noending: 1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2
+            read_direction: 2
+            run_barcode: 161212_H2Y5VBCXX_1_CCTAATCC
+            sample_barcode: CCTAATCC
+        sequence_length: '101'
+        sequence_run_type: paired_end
+      SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2:
+        interleaved: ~
+        read_direction_file:
+          SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2_1:
+            date: 2016-12-12
+            flowcell: H2Y5VBCXX
+            lane: '2'
+            original_file_name: 2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1.fastq.gz
+            original_file_name_noending: 2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1
+            read_direction: 1
+            run_barcode: 161212_H2Y5VBCXX_2_CCTAATCC
+            sample_barcode: CCTAATCC
+          SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2_2:
+            date: 2016-12-12
+            flowcell: H2Y5VBCXX
+            lane: '2'
+            original_file_name: 2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2.fastq.gz
+            original_file_name_noending: 2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2
+            read_direction: 2
+            run_barcode: 161212_H2Y5VBCXX_2_CCTAATCC
+            sample_barcode: CCTAATCC
+        sequence_length: '101'
+        sequence_run_type: paired_end
+    most_complete_bam:
+      path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/SER2202A3_lanes_12_sorted_md_brecal.bam
+    mother: '0'
+    phenotype: unaffected
+    program:
+      bamstats:
+        SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa
+          outfile: SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1_sorted.stats
+        SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa
+          outfile: SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2_sorted.stats
+      bwa:
+        SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane1:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/info/
+          outfile: bwa_mem_SER2202A3.0.stderr.txt
+        SER2202A3.161212_H2Y5VBCXX_CCTAATCC.lane2:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/info/
+          outfile: bwa_mem_SER2202A3.1.stderr.txt
+      calculatehsmetrics:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport
+          outfile: SER2202A3_lanes_12_sorted_md_brecal_CalculateHsMetrics
+      chanjo:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport
+          outfile: SER2202A3_lanes_12_sorted_md_brecal_chanjo_sexcheck.log
+      chanjo_sexcheck:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport
+          outfile: SER2202A3_lanes_12_sorted_md_brecal.sexcheck
+      collectmultiplemetrics:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport
+          outfile: SER2202A3_lanes_12_sorted_md_brecal.alignment_summary_metrics
+      collectmultiplemetricsinsertsize:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport
+          outfile: SER2202A3_lanes_12_sorted_md_brecal.insert_size_metrics
+      fastqc:
+        1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/fastqc/1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1_fastqc
+          outfile: fastqc_data.txt
+        1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/fastqc/1_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2_fastqc
+          outfile: fastqc_data.txt
+        2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/fastqc/2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_1_fastqc
+          outfile: fastqc_data.txt
+        2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2.fastq.gz:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/fastqc/2_161212_H2Y5VBCXX_SER2202A3_CCTAATCC_2_fastqc
+          outfile: fastqc_data.txt
+      markduplicates:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa
+          outfile: SER2202A3_lanes_12_sorted_md_metric
+          processed_by: picardtools_markduplicates
+      sambamba_depth:
+        SER2202A3_lanes_12:
+          bed:
+            path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/coveragereport/SER2202A3_lanes_12_sorted_md_brecal_coverage.bed
+      variantevalall:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/gatk_variantevalall
+          outfile: SER2202A3_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH.vcf.varianteval
+      variantevalexome:
+        SER2202A3_lanes_12:
+          outdirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/SER2202A3/bwa/gatk_variantevalexome
+          outfile: SER2202A3_lanes_12_sorted_md_brecal_gvcf_vrecal_comb_BOTH_exome.vcf.varianteval
+    sample_id: SER2202A3
+    sample_name: ADM994A2-miptest
+    sex: male
+sv_bcf_file:
+  path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_SV.bcf
+sv_vcf_binary_file:
+  clinical:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.selected.vcf.gz
+  research:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.vcf.gz
+sv_vcf_file:
+  clinical:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+  ready_vcf:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_SV.vcf
+  research:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_comb_vep_parsed_ranked_SV.vcf
+sv_vcfparser:
+  select_file:
+    gene_panel:
+      ENDO:
+        display_name: Endocrinology
+        gene_panel: ENDO
+        updated_at: 2016-09-28
+        version: '9.4'
+      EP:
+        display_name: Epilepsy
+        gene_panel: EP
+        updated_at: 2016-09-28
+        version: '9.4'
+      IBMFS:
+        display_name: Inherited Bone Marrow Failure Syndromes
+        gene_panel: IBMFS
+        updated_at: 2016-09-19
+        version: '12.0'
+      IEM:
+        display_name: Inborn Errors of Metabolism
+        gene_panel: IEM
+        updated_at: 2016-09-28
+        version: '9.4'
+      MIT:
+        display_name: Mitochondrial nuclear
+        gene_panel: MIT
+        updated_at: 2016-09-28
+        version: '9.4'
+      OMIM:
+        display_name: OMIM of 2016-10-30
+        gene_panel: OMIM
+        updated_at: 2016-10-30
+        version: '64.1'
+      PID:
+        display_name: Primary Immune Deficiency
+        gene_panel: PID
+        updated_at: 2016-09-28
+        version: '11.1'
+      PIDCAD:
+        display_name: PID Candidates
+        gene_panel: PIDCAD
+        updated_at: 2016-09-28
+        version: '11.1'
+      SKD:
+        display_name: Skeletal dysplasia
+        gene_panel: SKD
+        updated_at: 2016-04-22
+        version: '54.0'
+      mtDNA:
+        display_name: Mitochondrial DNA
+        gene_panel: mtDNA
+        updated_at: 2015-11-30
+        version: '8.0'
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/aggregated_master.bed
+vcf_binary_file:
+  clinical:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf.gz
+  research:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.vcf.gz
+vcf_file:
+  clinical:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+  ready_vcf:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_BOTH.vcf
+  research:
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/analysis/15026-miptest/bwa/15026-miptest_sorted_md_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.vcf
+vcfparser:
+  select_file:
+    gene_panel:
+      ENDO:
+        display_name: Endocrinology
+        gene_panel: ENDO
+        updated_at: 2016-09-28
+        version: '9.4'
+      EP:
+        display_name: Epilepsy
+        gene_panel: EP
+        updated_at: 2016-09-28
+        version: '9.4'
+      IBMFS:
+        display_name: Inherited Bone Marrow Failure Syndromes
+        gene_panel: IBMFS
+        updated_at: 2016-09-19
+        version: '12.0'
+      IEM:
+        display_name: Inborn Errors of Metabolism
+        gene_panel: IEM
+        updated_at: 2016-09-28
+        version: '9.4'
+      MIT:
+        display_name: Mitochondrial nuclear
+        gene_panel: MIT
+        updated_at: 2016-09-28
+        version: '9.4'
+      OMIM:
+        display_name: OMIM of 2016-10-30
+        gene_panel: OMIM
+        updated_at: 2016-10-30
+        version: '64.1'
+      PID:
+        display_name: Primary Immune Deficiency
+        gene_panel: PID
+        updated_at: 2016-09-28
+        version: '11.1'
+      PIDCAD:
+        display_name: PID Candidates
+        gene_panel: PIDCAD
+        updated_at: 2016-09-28
+        version: '11.1'
+      SKD:
+        display_name: Skeletal dysplasia
+        gene_panel: SKD
+        updated_at: 2016-04-22
+        version: '54.0'
+      mtDNA:
+        display_name: Mitochondrial DNA
+        gene_panel: mtDNA
+        updated_at: 2015-11-30
+        version: '8.0'
+    path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/customers/cust000/15026-miptest/aggregated_master.bed
+
