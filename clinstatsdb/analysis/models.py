@@ -79,7 +79,7 @@ class AnalysisSample(Model):
 
     @property
     def read_pairs(self):
-        return self.reads / 2
+        return self.reads_total / 2
 
 
 class Analysis(Model):

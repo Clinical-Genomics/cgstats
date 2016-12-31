@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+from __future__ import division
 import os
 
 from flask import Flask, render_template
@@ -20,9 +21,26 @@ db = Alchy(app, Model=Model)
 Bootstrap(app)
 
 
+@app.template_filter()
+def millions(value):
+    return "{} M".format(int(value / 1000000))
+
+
+@app.template_filter()
+def percent(value):
+    return round(value * 100, 1)
+
+
 @app.route('/')
 def index():
     """Dashboard view."""
     dups = analysis_api.duplicates()
     readsvscov = analysis_api.readsvscov(db)
     return render_template('index.html', dups=dups, readsvscov=readsvscov)
+
+
+@app.route('/samples')
+def samples():
+    """Show raw samples data."""
+    samples_q = analysis_api.samples().limit(50)
+    return render_template('samples.html', samples=samples_q)
