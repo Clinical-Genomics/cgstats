@@ -45,6 +45,20 @@ def add(context, force, sampleinfo_file, metrics_file):
     context.obj['manager'].add_commit(new_analysis)
 
 
+@analysis.command()
+@click.argument('case_id')
+@click.pass_context
+def delete(context, case_id):
+    """Delete an existing analysis and samples in the database."""
+    analysis_obj = Analysis.query.filter_by(analysis_id=case_id).first()
+    if analysis_obj is None:
+        log.error('analysis not found in database')
+        context.abort()
+    analysis_obj.delete()
+    context.obj['manager'].commit()
+    log.info("removed analysis: %s", analysis_obj.id)
+
+
 def test_analysis(sampleinfo):
     """Test if it's a supported version of MIP."""
     status = sampleinfo['analysisrunstatus']
