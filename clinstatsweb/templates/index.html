@@ -1,23 +1,33 @@
 {% extends "base.html" %}
 
 {% block content %}
-    <div class="container">
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div id="percentDups"></div>
-                </div>
-            </div>
-        </div>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-4">
+        {{ samples_panel('Most duplicates', most_dups, 'duplicates_percent') }}
+      </div>
 
-        <div class="row">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div id="readsVsCoverage"></div>
-                </div>
-            </div>
-        </div>
+      <div class="col-md-4">
+        {{ samples_panel('Least mapped', least_mapped, 'mapped_percent') }}
+      </div>
+
+      <div class="col-md-4">
+        {{ samples_panel('Least completeness', least_complete, 'completeness_target_10') }}
+      </div>
     </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="percentDups"></div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="readsVsCoverage"></div>
+      </div>
+    </div>
+  </div>
 {% endblock %}
 
 {% block scripts %}
@@ -111,3 +121,25 @@
         })
     </script>
 {% endblock %}
+
+{% macro samples_panel(title, samples, value_attr) %}
+  <div class="panel panel-default">
+    <div class="panel-heading">{{ title }}</div>
+    <table class="table table-bordered">
+      <tbody>
+        {% for sample in samples %}
+          <tr>
+            <td>
+              {{ sample.sample_id }}
+              <span class="label label-info pull-right">
+                {{ sample.sequencing_type }}
+              </span>
+            </td>
+            <td>{{ sample.analysis.analyzed_at.date() }}</td>
+            <td class="text-right">{{ sample|attr(value_attr)|percent }} %</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endmacro %}

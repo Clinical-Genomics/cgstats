@@ -8,6 +8,7 @@ from flask_bootstrap import Bootstrap
 
 from clinstatsdb.db import Model
 from clinstatsdb.analysis import api as analysis_api
+from clinstatsdb.analysis.models import AnalysisSample
 
 TEMPLATES_AUTO_RELOAD = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False
@@ -34,9 +35,20 @@ def percent(value):
 @app.route('/')
 def index():
     """Dashboard view."""
+    most_dups = (AnalysisSample.query.order_by(AnalysisSample.duplicates_percent.desc())
+                               .limit(5))
+    least_mapped = (AnalysisSample.query.filter(AnalysisSample.mapped_percent != None)
+                                  .order_by(AnalysisSample.mapped_percent)
+                                  .limit(5))
+    order_attr = AnalysisSample.completeness_target_10
+    filter_cond = AnalysisSample.completeness_target_10 != None
+    least_complete = (AnalysisSample.query.filter(filter_cond)
+                                    .order_by(order_attr).limit(5))
     dups = analysis_api.duplicates()
     readsvscov = analysis_api.readsvscov(db)
-    return render_template('index.html', dups=dups, readsvscov=readsvscov)
+    return render_template('index.html', dups=dups, readsvscov=readsvscov,
+                           most_dups=most_dups, least_mapped=least_mapped,
+                           least_complete=least_complete)
 
 
 @app.route('/samples')
