@@ -26,10 +26,10 @@
                   <td class="text-right">
                     {{ sample.read_pairs|millions if sample.reads_total }}
                   </td>
-                  <td class="text-right {{ 'bg-warning' if sample.mapped_percent < 0.95 }}">
+                  <td class="text-right {{ 'bg-warning' if sample.mapped_percent and sample.mapped_percent < 0.95 }}">
                     {{ sample.mapped_percent|percent if sample.mapped_percent }}
                   </td>
-                  <td class="text-right {{ 'bg-warning' if sample.duplicates_percent > 0.2 }}">
+                  <td class="text-right {{ 'bg-warning' if sample.duplicates_percent and sample.duplicates_percent > 0.2 }}">
                     {{ sample.duplicates_percent|percent if sample.duplicates_percent }}
                   </td>
                   <td class="text-right">{{ sample.coverage_target|round }}</td>
