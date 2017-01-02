@@ -10,13 +10,14 @@ log = logging.getLogger(__name__)
 
 def parse_versions(qcmetrics):
     """Parse our version from family section of data."""
-    versions = dict(
-        samtools=qcmetrics['program']['samtools']['version'],
-        gatk=str(qcmetrics['program']['gatk']['version']),
-        freebayes=qcmetrics['program']['freebayes']['version'],
-        genmod=str(qcmetrics['program']['genmod']['version']),
-        manta=str(qcmetrics['program']['manta']['version']),
-    )
+    versions = {}
+    programs = ['samtools', 'gatk', 'freebayes', 'genmod', 'manta']
+    for program in programs:
+        program_data = qcmetrics['program'].get(program)
+        if program_data:
+            versions[program] = str(program_data['version'])
+        else:
+            log.warn("missing version info for: %s", program)
     return versions
 
 
