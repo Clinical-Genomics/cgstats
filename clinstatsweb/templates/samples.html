@@ -1,44 +1,52 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <div class="container">
-    <div class="row">
-      <div class="panel panel-default">
-        <div class="table-responsive">
-          <table class="table table-hover">
-            <thead>
-              <tr>
-                <th>Sample</th>
-                <th>Sequencing</th>
-                <th>Sex</th>
-                <th>Read pairs</th>
-                <th>Mapped %</th>
-                <th>Duplicates %</th>
-                <th>Target coverage</th>
-              </tr>
-            </thead>
-            <tbody>
-              {% for sample in samples %}
-                <tr>
-                  <td>{{ sample.sample_id }}</td>
-                  <td>{{ sample.sequencing_type }}</td>
-                  <td>{{ sample.sex_predicted }}</td>
-                  <td class="text-right">
-                    {{ sample.read_pairs|millions if sample.reads_total }}
-                  </td>
-                  <td class="text-right {{ 'bg-warning' if sample.mapped_percent and sample.mapped_percent < 0.95 }}">
-                    {{ sample.mapped_percent|percent if sample.mapped_percent }}
-                  </td>
-                  <td class="text-right {{ 'bg-warning' if sample.duplicates_percent and sample.duplicates_percent > 0.2 }}">
-                    {{ sample.duplicates_percent|percent if sample.duplicates_percent }}
-                  </td>
-                  <td class="text-right">{{ sample.coverage_target|round }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
-        </div>
-      </div>
-    </div>
+  <div class="table-responsive">
+    <table id="floatingTable" class="table table-bordered table-hover">
+      <thead>
+        <tr>
+          <th>Sample</th>
+          <th>Sequencing</th>
+          <th>Sex</th>
+          <th>Read pairs</th>
+          <th>Mapped %</th>
+          <th>Duplicates %</th>
+          <th>Target coverage</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for sample in samples %}
+          <tr>
+            <td>{{ sample.sample_id }}</td>
+            <td>{{ sample.sequencing_type }}</td>
+            <td>{{ sample.sex_predicted }}</td>
+            <td class="text-right">
+              {{ sample.read_pairs|millions if sample.reads_total }}
+            </td>
+            <td class="text-right {{ 'bg-warning' if sample.mapped_percent and sample.mapped_percent < 0.95 }}">
+              {{ sample.mapped_percent|percent if sample.mapped_percent }}
+            </td>
+            <td class="text-right {{ 'bg-warning' if sample.duplicates_percent and sample.duplicates_percent > 0.2 }}">
+              {{ sample.duplicates_percent|percent if sample.duplicates_percent }}
+            </td>
+            <td class="text-right">{{ sample.coverage_target|round }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
   </div>
+{% endblock %}
+
+{% block scripts %}
+  {{ super() }}
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/sticky-table-headers/0.1.19/js/jquery.stickytableheaders.min.js"></script>
+
+  <script>
+    $(function () {
+      $("#floatingTable").stickyTableHeaders({
+        fixedOffset: $(".navbar-fixed-top")
+      });
+    })
+  </script>
 {% endblock %}
