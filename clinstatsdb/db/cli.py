@@ -76,5 +76,7 @@ def flowcells(context, limit, offset, sample):
 def samples(context, limit, offset, flowcell):
     """List samples in the database."""
     query = api.samples(flowcell_name=flowcell)
-    for sample in query.offset(offset).limit(limit):
+    if flowcell is None:
+        query = query.offset(offset).limit(limit)
+    for sample in query:
         click.echo(sample.lims_id)
