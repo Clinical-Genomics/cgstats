@@ -104,3 +104,7 @@ class Analysis(Model):
 
     samples = orm.relationship('AnalysisSample', cascade='all,delete',
                                backref='analysis')
+
+    @property
+    def family_id(self):
+        return self.analysis_id.split('-', 1)[-1]

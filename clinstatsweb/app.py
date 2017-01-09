@@ -56,3 +56,10 @@ def samples():
     """Show raw samples data."""
     samples_q = analysis_api.samples().limit(50)
     return render_template('samples.html', samples=samples_q)
+
+
+@app.route('/report')
+def report():
+    """Show qc report."""
+    samples_q = analysis_api.samples().limit(5)
+    return render_template('report.html', samples=samples_q)
