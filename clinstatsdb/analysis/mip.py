@@ -89,7 +89,7 @@ def process_all(analysis_id, sampleinfo, qcmetrics):
         log.info("adding sample: %s", sample_id)
         seq_type = sampleinfo['analysis_type'][sample_id]
         new_sample = build_sample(sample_id, sample_data, seq_type)
-        capture_kit = sampleinfo['sample'][new_sample.sample_id]['capture_kit']
+        capture_kit = sampleinfo['sample'][sample_id].get('capture_kit')
         new_sample.capture_kit = capture_kit
         new_analysis.samples.append(new_sample)
 
