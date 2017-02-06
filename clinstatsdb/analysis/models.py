@@ -17,6 +17,7 @@ class SampleFlowcell(Model):
     lane = Column(types.Integer)
     cbot_machine = Column(types.String(32))
     sequencing_machine = Column(types.String(32))
+    sequencing_date = Column(types.DateTime)
     run_mode = Column(types.String(32))
     sequencing_reagents_1 = Column(types.String(32))
     sequencing_reagents_2 = Column(types.String(32))
