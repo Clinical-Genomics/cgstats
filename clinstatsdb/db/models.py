@@ -48,6 +48,7 @@ class Sample(db):
     project_id = Column(Integer, ForeignKey('project.project_id'),
                         nullable=False)
     samplename = Column(String(255), nullable=False)
+    limsid = Column(String(255), nullable=True)
     barcode = Column(String(255), nullable=True)
     time = Column(DateTime, nullable=True)
 
