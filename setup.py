@@ -28,7 +28,7 @@ with open('requirements.txt') as f:
 
 setup(
     name='clinstatsdb',
-    version='0.13.3',
+    version='0.13.4',
     description='Models and access to clinstatsdb',
     author='Kenny Billiau',
     author_email='kenny.billiau@scilifelab.se',
