@@ -4,6 +4,8 @@
 from __future__ import print_function, division
 
 import xml.etree.cElementTree as et
+from bs4 import BeautifulSoup
+from pprint import pprint
 import sys
 import glob
 import re
@@ -20,7 +22,7 @@ def xpathsum(tree, xpath):
 
     """
     numbers = tree.findall(xpath)
-    return sum([ int(number.text) for number in numbers ])
+    return sum(( int(number.text) for number in numbers ))
 
 def get_barcode_summary(tree, project, sample, barcode):
     """Calculates following statistics from the DemultiplexingStats file
@@ -34,9 +36,9 @@ def get_barcode_summary(tree, project, sample, barcode):
     Returns: TODO
 
     """
-    barcodes = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//BarcodeCount".format(project=project, sample=sample, barcode=barcode))
-    perfect_barcodes = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//PerfectBarcodeCount".format(project=project, sample=sample, barcode=barcode))
-    one_mismatch_barcodes = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//OneMismatchBarcodeCount".format(project=project, sample=sample, barcode=barcode))
+    barcodes = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/BarcodeCount".format(project=project, sample=sample, barcode=barcode))
+    perfect_barcodes = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/PerfectBarcodeCount".format(project=project, sample=sample, barcode=barcode))
+    one_mismatch_barcodes = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/OneMismatchBarcodeCount".format(project=project, sample=sample, barcode=barcode))
 
     return {
         'barcodes': barcodes,
@@ -61,22 +63,22 @@ def get_sample_summary( tree, project, sample, barcode):
     Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
 
     """
-    raw_clusters = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/ClusterCount".format(project=project, sample=sample, barcode=barcode))
-    pf_clusters = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/ClusterCount".format(project=project, sample=sample, barcode=barcode))
+    raw_clusters = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Raw/ClusterCount".format(project=project, sample=sample, barcode=barcode))
+    pf_clusters = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/ClusterCount".format(project=project, sample=sample, barcode=barcode))
 
-    pf_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/Yield".format(project=project, sample=sample, barcode=barcode))
-    pf_read1_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='1']/Yield".format(project=project, sample=sample, barcode=barcode))
-    pf_read2_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='2']/Yield".format(project=project, sample=sample, barcode=barcode))
-    raw_yield = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/Read/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_read1_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='1']/Yield".format(project=project, sample=sample, barcode=barcode))
+    pf_read2_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='2']/Yield".format(project=project, sample=sample, barcode=barcode))
+    raw_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Raw/Read/Yield".format(project=project, sample=sample, barcode=barcode))
     #pf_clusters_pc = pf_yield / raw_yield
 
-    pf_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
-    #raw_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Raw/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
-    pf_read1_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='1']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
-    pf_read2_q30 = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read[@number='2']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    pf_q30 = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    #raw_q30 = xpathsum(tree, "./Stats/Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Raw/Read/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    pf_read1_q30 = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='1']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
+    pf_read2_q30 = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='2']/YieldQ30".format(project=project, sample=sample, barcode=barcode))
     #pf_q30_bases_pc = pf_q30 / pf_yield
 
-    pf_qscore_sum = xpathsum(tree, ".//Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']//Pf/Read/QualityScoreSum".format(project=project, sample=sample, barcode=barcode))
+    pf_qscore_sum = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read/QualityScoreSum".format(project=project, sample=sample, barcode=barcode))
     pf_qscore = pf_qscore_sum / pf_yield
 
     return {
@@ -97,13 +99,10 @@ def get_sample_summary( tree, project, sample, barcode):
     }
 
 
-def get_summary( tree):
-    """Calculates following statistics from the ConversionStats file, for a lane
-    * pf clusters
+def get_r1r2_summary(tree):
+    """Calculates following statistics from the ConversionStats file, for a lane, only of read1 and read specifically
     * pf yield
     * pf Q30
-    * raw Q30
-    * pf Q Score
 
     Args:
         tree (an elementTree): parsed XML as an elementTree
@@ -111,40 +110,57 @@ def get_summary( tree):
     Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
 
     """
-    raw_clusters = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/ClusterCount")
-    pf_clusters = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/ClusterCount")
+    pf_read1_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='1']/Yield")
+    pf_read2_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='2']/Yield")
 
-    pf_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/Yield")
-    pf_read1_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='1']/Yield")
-    pf_read2_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='2']/Yield")
-    raw_yield = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/Read/Yield")
-    pf_clusters_pc = pf_yield / raw_yield
+    pf_read1_q30 = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='1']/YieldQ30")
+    pf_read2_q30 = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='2']/YieldQ30")
 
-    pf_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/YieldQ30")
-    #raw_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Raw/Read/YieldQ30")
-    pf_read1_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='1']/YieldQ30")
-    pf_read2_q30 = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read[@number='2']/YieldQ30")
-    #pf_q30_bases_pc = pf_q30 / pf_yield
-
-    pf_qscore_sum = xpathsum(tree, ".//Project[@name='all']/Sample[@name='all']/Barcode[@name='all']//Pf/Read/QualityScoreSum")
-    pf_qscore = pf_qscore_sum / pf_yield
+    pf_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read/Yield")
+    raw_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Raw/Read/Yield")
 
     return {
-        #'pf_q30_bases_pc': pf_q30_bases_pc,
-        #'raw_q30': raw_q30,
-        #'pf_clusters_pc': pf_clusters_pc,
-        'raw_clusters': raw_clusters,
-        'raw_yield': raw_yield,
-        'pf_clusters': pf_clusters,
-        'pf_yield': pf_yield,
         'pf_read1_yield': pf_read1_yield,
         'pf_read2_yield': pf_read2_yield,
-        'pf_q30': pf_q30,
         'pf_read1_q30': pf_read1_q30,
         'pf_read2_q30': pf_read2_q30,
-        'pf_qscore_sum': pf_qscore_sum,
-        'pf_qscore': pf_qscore
+        'pf_yield': pf_yield,
+        'raw_yield': raw_yield
     }
+
+
+def get_summary(tree):
+    """Calculates following statistics from the ConversionStats file, for a lane
+    * raw clusters
+    * pf clusters
+    * pf yield
+    * pf clusters %
+    * pf Q30 %
+    * pf Q Score %
+
+    Args:
+        tree (an elementTree): parsed XML as an elementTree
+
+    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
+
+    """
+
+    raw_clusters = int(tree.find(".//table[@id='ReportTable']/tr[last()]/td[2]").text.strip().replace(',', ''))
+    pf_clusters = int(tree.find(".//table[@id='ReportTable']/tr[last()]/td[6]").text.strip().replace(',', ''))
+    #pf_yield = int(tree.find("./Stats/Flowcell/table[@id='ReportTable']/tr[last()]/td[7]").text.strip().replace(',', ''))
+    #pf_clusters_pc = float(tree.find("./Stats/Flowcell/table[@id='ReportTable']/tr[last()]/td[8]").text.strip().replace(',', ''))
+    pf_q30 = float(tree.find(".//table[@id='ReportTable']/tr[last()]/td[9]").text.strip().replace(',', ''))
+    pf_qscore = float(tree.find(".//table[@id='ReportTable']/tr[last()]/td[10]").text.strip().replace(',', ''))
+
+    rs = {
+        'raw_clusters': raw_clusters,
+        'pf_clusters': pf_clusters,
+    #    'pf_yield': pf_yield * 1000000, # reported in Mbases
+    #    'pf_clusters_pc': pf_clusters_pc,
+        'pf_q30_pc': pf_q30,
+        'pf_qscore_pc': pf_qscore
+    }
+    return rs
 
 def get_samplesheet( demux_dir, file_name='SampleSheet.csv', delim=','):
     """Reads in and parses a samplesheet. The samplesheet is found in the provided demux_dir.
@@ -279,8 +295,6 @@ def parse_samples(demux_dir):
     total_sample_summary = dict(zip(lanes.keys(), [ {} for t in xrange(len(lanes))]))
     for line in sample_sheet:
         total_sample_summary[ line['Lane'] ][ line['SampleID'] ] = {
-            #'pf_q30_bases_pc': 0,
-            #'pf_clusters_pc': 0,
             'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
@@ -349,11 +363,13 @@ def parse( demux_dir):
     # create a { 1: [], 2: [], ... } structure
     summaries = dict(zip(lanes, [ [] for t in xrange(len(lanes))])) # init ;)
 
+
     # get all the stats numbers
     for lane, lines in lanes.iteritems():
         for line in lines:
-            stats_files = glob.glob('%s/l%st??/Stats/ConversionStats.xml' % (demux_dir, lane))
-            index_files = glob.glob('%s/l%st??/Stats/DemultiplexingStats.xml' % (demux_dir, lane))
+            stats_files = glob.glob('{}/l{}t??/Reports/html/*/all/all/all/lane.html'.format(demux_dir, lane))
+            conversionstats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
+            index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
 
             if len(stats_files) == 0:
                 exit("No stats file found for lane {}".format(lane))
@@ -361,9 +377,16 @@ def parse( demux_dir):
             if len(index_files) == 0:
                 exit("No index stats file found for lane {}".format(lane))
 
-            for f in stats_files:
+            for f in conversionstats_files:
                 tree = et.parse(f)
-                summaries[ lane ].append(get_summary(tree))
+                summaries[ lane ].append(get_r1r2_summary(tree))
+
+            for f in stats_files:
+                soup = BeautifulSoup(open(f), 'html.parser')
+                tree = et.fromstring(soup.prettify())
+                rs = get_summary(tree)
+                rs.update({'filecount': 1})
+                summaries[ lane ].append(rs)
 
             for f in index_files:
                 tree = et.parse(f)
@@ -374,24 +397,22 @@ def parse( demux_dir):
     total_lane_summary = {}
     for line in sample_sheet:
         total_lane_summary[ line['Lane'] ] = {
-            #'pf_q30_bases_pc': 0,
-            #'pf_clusters_pc': 0,
             'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
             'pf_yield': 0,
             'pf_read1_yield': 0,
             'pf_read2_yield': 0,
-            'pf_q30': 0,
+            'pf_q30_pc': 0,
             'pf_read1_q30': 0,
             'pf_read2_q30': 0,
-            'pf_qscore_sum': 0,
-            'pf_qscore': 0,
+            'pf_qscore_pc': 0,
             'flowcell': line['FCID'],
             'samplename': line['SampleID'],
             'barcodes': 0,
             'perfect_barcodes': 0,
             'one_mismatch_barcodes': 0,
+            'filecount': 0
         }
 
     for lane, summary in summaries.items():
@@ -409,10 +430,10 @@ def parse( demux_dir):
             'pf_clusters':     summary['pf_clusters'],
             'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2),
             'pf_yield':        summary['pf_yield'],
-            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100, 2),
+            'pf_Q30':          round(summary['pf_q30_pc'] / summary['filecount'], 2),
             'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2),
             'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2),
-            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2),
+            'pf_qscore':       round(summary['pf_qscore_pc']/summary['filecount'], 2),
             'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100,
             'undetermined_proc': round(proc_undetermined[ summary['samplename'] ], 2) if summary['samplename'] in proc_undetermined else 0,
             'barcodes':         summary['barcodes'],
