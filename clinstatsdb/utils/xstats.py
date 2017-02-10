@@ -99,69 +99,6 @@ def get_sample_summary( tree, project, sample, barcode):
     }
 
 
-def get_r1r2_summary(tree):
-    """Calculates following statistics from the ConversionStats file, for a lane, only of read1 and read specifically
-    * pf yield
-    * pf Q30
-
-    Args:
-        tree (an elementTree): parsed XML as an elementTree
-
-    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
-
-    """
-    pf_read1_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='1']/Yield")
-    pf_read2_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='2']/Yield")
-
-    pf_read1_q30 = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='1']/YieldQ30")
-    pf_read2_q30 = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read[@number='2']/YieldQ30")
-
-    pf_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Pf/Read/Yield")
-    raw_yield = xpathsum(tree, "Flowcell/Project[@name='all']/Sample[@name='all']/Barcode[@name='all']/Lane/Tile/Raw/Read/Yield")
-
-    return {
-        'pf_read1_yield': pf_read1_yield,
-        'pf_read2_yield': pf_read2_yield,
-        'pf_read1_q30': pf_read1_q30,
-        'pf_read2_q30': pf_read2_q30,
-        'pf_yield': pf_yield,
-        'raw_yield': raw_yield
-    }
-
-
-def get_summary(tree):
-    """Calculates following statistics from the ConversionStats file, for a lane
-    * raw clusters
-    * pf clusters
-    * pf yield
-    * pf clusters %
-    * pf Q30 %
-    * pf Q Score %
-
-    Args:
-        tree (an elementTree): parsed XML as an elementTree
-
-    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield, pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
-
-    """
-
-    raw_clusters = int(tree.find(".//table[@id='ReportTable']/tr[last()]/td[2]").text.strip().replace(',', ''))
-    pf_clusters = int(tree.find(".//table[@id='ReportTable']/tr[last()]/td[6]").text.strip().replace(',', ''))
-    #pf_yield = int(tree.find("./Stats/Flowcell/table[@id='ReportTable']/tr[last()]/td[7]").text.strip().replace(',', ''))
-    #pf_clusters_pc = float(tree.find("./Stats/Flowcell/table[@id='ReportTable']/tr[last()]/td[8]").text.strip().replace(',', ''))
-    pf_q30 = float(tree.find(".//table[@id='ReportTable']/tr[last()]/td[9]").text.strip().replace(',', ''))
-    pf_qscore = float(tree.find(".//table[@id='ReportTable']/tr[last()]/td[10]").text.strip().replace(',', ''))
-
-    rs = {
-        'raw_clusters': raw_clusters,
-        'pf_clusters': pf_clusters,
-    #    'pf_yield': pf_yield * 1000000, # reported in Mbases
-    #    'pf_clusters_pc': pf_clusters_pc,
-        'pf_q30_pc': pf_q30,
-        'pf_qscore_pc': pf_qscore
-    }
-    return rs
-
 def get_samplesheet( demux_dir, file_name='SampleSheet.csv', delim=','):
     """Reads in and parses a samplesheet. The samplesheet is found in the provided demux_dir.
     Lines starting with #, [ and blank will be skipped.
@@ -199,7 +136,7 @@ def calc_undetermined( demux_dir):
 
     proc_undetermined = {}
     for sample_name, size in sizes.items():
-        proc_undetermined[ sample_name ] = 0.04 #float(size['u_size_of']) / size['size_of'] * 100
+        proc_undetermined[ sample_name ] = float(size['u_size_of']) / size['size_of'] * 100
 
     return proc_undetermined
 
@@ -225,7 +162,7 @@ def get_samples( sample_sheet):
     Args:
         sample_sheet (list of dicts): a samplesheet with each line a dict. The keys are the header, the values the split line
 
-    Returns (dict): sample is key, raw sample name is value
+    Returns (dict): sample is key, raw SampleSheet line is value
 
     """
     rs = {}
@@ -268,26 +205,34 @@ def parse_samples(demux_dir):
     # create a { 1: {}, 2: {}, ... } structure
     summaries = dict(zip(lanes.keys(), [ {} for t in xrange(len(lanes))])) # init ;)
 
+    # preload the stats files
+    et_stats_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
+    et_index_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
+    for lane in lanes.keys():
+        stats_files = glob.glob('%s/l%st??/Stats/ConversionStats.xml' % (demux_dir, lane))
+        index_files = glob.glob('%s/l%st??/Stats/DemultiplexingStats.xml' % (demux_dir, lane))
+
+        if len(stats_files) == 0:
+            exit("No stats file found for sample {}".format(sample))
+
+        if len(index_files) == 0:
+            exit("No index stats file found for sample {}".format(sample))
+
+        for f in stats_files:
+            et_stats_files[lane].append(et.parse(f))
+
+        for f in index_files:
+            et_index_files[lane].append(et.parse(f))
+
     # get all the stats numbers
     for sample, lines in samples.iteritems():
         for line in lines:
             if sample not in summaries[ line['Lane'] ]: summaries[ line['Lane'] ][ sample ] = [] # init some more
 
-            stats_files = glob.glob('%s/l%st??/Stats/ConversionStats.xml' % (demux_dir, line['Lane']))
-            index_files = glob.glob('%s/l%st??/Stats/DemultiplexingStats.xml' % (demux_dir, line['Lane']))
-
-            if len(stats_files) == 0:
-                exit("No stats file found for sample {}".format(sample))
-
-            if len(index_files) == 0:
-                exit("No index stats file found for sample {}".format(sample))
-
-            for f in stats_files:
-                tree = et.parse(f)
+            for tree in et_stats_files[ line['Lane'] ]:
                 summaries[ line['Lane'] ][ sample ].append(get_sample_summary(tree, line['Project'], line['SampleName'], line['index']))
 
-            for f in index_files:
-                tree = et.parse(f)
+            for tree in et_index_files[ line['Lane'] ]:
                 summaries[ line['Lane'] ][ sample ].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
 
     # sum the numbers over a lane
@@ -363,33 +308,32 @@ def parse( demux_dir):
     # create a { 1: [], 2: [], ... } structure
     summaries = dict(zip(lanes, [ [] for t in xrange(len(lanes))])) # init ;)
 
+    # preload the stats files
+    et_stats_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
+    et_index_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
+    for lane in lanes.keys():
+        stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
+        index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
+
+        if len(stats_files) == 0:
+            exit("No stats file found for lane {}".format(lane))
+
+        if len(index_files) == 0:
+            exit("No index stats file found for lane {}".format(lane))
+
+        for f in stats_files:
+            et_stats_files[lane].append(et.parse(f))
+
+        for f in index_files:
+            et_index_files[lane].append(et.parse(f))
 
     # get all the stats numbers
     for lane, lines in lanes.iteritems():
         for line in lines:
-            stats_files = glob.glob('{}/l{}t??/Reports/html/*/all/all/all/lane.html'.format(demux_dir, lane))
-            conversionstats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
-            index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
+            for tree in et_stats_files[ lane ]:
+                summaries[ lane ].append(get_sample_summary(tree, 'all', 'all', 'all'))
 
-            if len(stats_files) == 0:
-                exit("No stats file found for lane {}".format(lane))
-
-            if len(index_files) == 0:
-                exit("No index stats file found for lane {}".format(lane))
-
-            for f in conversionstats_files:
-                tree = et.parse(f)
-                summaries[ lane ].append(get_r1r2_summary(tree))
-
-            for f in stats_files:
-                soup = BeautifulSoup(open(f), 'html.parser')
-                tree = et.fromstring(soup.prettify())
-                rs = get_summary(tree)
-                rs.update({'filecount': 1})
-                summaries[ lane ].append(rs)
-
-            for f in index_files:
-                tree = et.parse(f)
+            for tree in et_index_files[ lane ]:
                 summaries[ lane ].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
 
     # sum the numbers over a lane
@@ -403,16 +347,16 @@ def parse( demux_dir):
             'pf_yield': 0,
             'pf_read1_yield': 0,
             'pf_read2_yield': 0,
-            'pf_q30_pc': 0,
+            'pf_q30': 0,
             'pf_read1_q30': 0,
             'pf_read2_q30': 0,
-            'pf_qscore_pc': 0,
+            'pf_qscore_sum': 0,
+            'pf_qscore': 0,
             'flowcell': line['FCID'],
             'samplename': line['SampleID'],
             'barcodes': 0,
             'perfect_barcodes': 0,
             'one_mismatch_barcodes': 0,
-            'filecount': 0
         }
 
     for lane, summary in summaries.items():
@@ -430,10 +374,10 @@ def parse( demux_dir):
             'pf_clusters':     summary['pf_clusters'],
             'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2),
             'pf_yield':        summary['pf_yield'],
-            'pf_Q30':          round(summary['pf_q30_pc'] / summary['filecount'], 2),
+            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100, 2),
             'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2),
             'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2),
-            'pf_qscore':       round(summary['pf_qscore_pc']/summary['filecount'], 2),
+            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2),
             'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100,
             'undetermined_proc': round(proc_undetermined[ summary['samplename'] ], 2) if summary['samplename'] in proc_undetermined else 0,
             'barcodes':         summary['barcodes'],
@@ -450,5 +394,4 @@ def main(argv):
 if __name__ == '__main__':
     main(sys.argv[1:])
 
-
-__ALL__ = [ 'parse' ]
+__ALL__ = [ 'parse', 'parse_samples' ]

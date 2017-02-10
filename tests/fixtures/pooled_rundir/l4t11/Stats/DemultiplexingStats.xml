@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Stats>
+  <Flowcell flowcell-id="H37GVALXX">
+    <Project name="default">
+      <Sample name="unknown">
+        <Barcode name="unknown">
+          <Lane number="4">
+            <BarcodeCount>76315943</BarcodeCount>
+            <PerfectBarcodeCount>76315943</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>0</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+        <Barcode name="all">
+          <Lane number="4">
+            <BarcodeCount>76315943</BarcodeCount>
+            <PerfectBarcodeCount>76315943</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>0</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+      </Sample>
+      <Sample name="all">
+        <Barcode name="all">
+          <Lane number="4">
+            <BarcodeCount>76315943</BarcodeCount>
+            <PerfectBarcodeCount>76315943</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>0</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+      </Sample>
+    </Project>
+    <Project name="518363">
+      <Sample name="518363">
+        <Barcode name="CGCTCATT">
+          <Lane number="4">
+            <BarcodeCount>234289609</BarcodeCount>
+            <PerfectBarcodeCount>127536421</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>106753188</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+        <Barcode name="all">
+          <Lane number="4">
+            <BarcodeCount>234289609</BarcodeCount>
+            <PerfectBarcodeCount>127536421</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>106753188</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+      </Sample>
+      <Sample name="all">
+        <Barcode name="all">
+          <Lane number="4">
+            <BarcodeCount>234289609</BarcodeCount>
+            <PerfectBarcodeCount>127536421</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>106753188</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+      </Sample>
+    </Project>
+    <Project name="all">
+      <Sample name="all">
+        <Barcode name="all">
+          <Lane number="4">
+            <BarcodeCount>310605552</BarcodeCount>
+            <PerfectBarcodeCount>203852364</PerfectBarcodeCount>
+            <OneMismatchBarcodeCount>106753188</OneMismatchBarcodeCount>
+          </Lane>
+        </Barcode>
+      </Sample>
+    </Project>
+  </Flowcell>
+</Stats>
