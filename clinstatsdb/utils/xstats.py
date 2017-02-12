@@ -227,13 +227,14 @@ def parse_samples(demux_dir):
     # get all the stats numbers
     for sample, lines in samples.iteritems():
         for line in lines:
-            if sample not in summaries[ line['Lane'] ]: summaries[ line['Lane'] ][ sample ] = [] # init some more
+            lane = line['Lane']
+            if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
 
-            for tree in et_stats_files[ line['Lane'] ]:
-                summaries[ line['Lane'] ][ sample ].append(get_sample_summary(tree, line['Project'], line['SampleName'], line['index']))
+            for tree in et_stats_files[lane]:
+                summaries[lane][sample].append(get_sample_summary(tree, line['Project'], line['SampleName'], line['index']))
 
             for tree in et_index_files[ line['Lane'] ]:
-                summaries[ line['Lane'] ][ sample ].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
+                summaries[lane][sample].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
@@ -329,12 +330,15 @@ def parse( demux_dir):
 
     # get all the stats numbers
     for lane, lines in lanes.iteritems():
-        for line in lines:
-            for tree in et_stats_files[ lane ]:
-                summaries[ lane ].append(get_sample_summary(tree, 'all', 'all', 'all'))
 
+        # only parse this on lane level
+        for tree in et_stats_files[ lane ]:
+            summaries[lane].append(get_sample_summary(tree, 'all', 'all', 'all'))
+
+        # we need barcode stats on sample level
+        for line in lines:
             for tree in et_index_files[ lane ]:
-                summaries[ lane ].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
+                summaries[lane].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
 
     # sum the numbers over a lane
     # create a { 1: {'raw_clusters': 0, ... } } structure
