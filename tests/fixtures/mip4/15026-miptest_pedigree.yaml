@@ -1,0 +1,44 @@
+default_gene_panels:
+  - OMIM
+family: 15026-miptest
+gene_panels:
+  - ENDO
+  - EP
+  - IEM
+  - IBMFS
+  - mtDNA
+  - MIT
+  - OMIM
+  - PIDCAD
+  - PID
+  - SKD
+owner: cust000
+samples:
+  - analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: 0.0
+    father: 0
+    mother: 0
+    phenotype: unaffected
+    sample_id: SER2202A3
+    sample_name: ADM994A2-miptest
+    sex: male
+  - analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: 0.0
+    father: SER2202A3
+    mother: SER2202A2
+    phenotype: affected
+    sample_id: SER2202A1
+    sample_name: ADM980A9-miptest
+    sex: male
+  - analysis_type: wes
+    capture_kit: Agilent_SureSelectCRE.V1
+    expected_coverage: 0.0
+    father: 0
+    mother: 0
+    phenotype: unaffected
+    sample_id: SER2202A2
+    sample_name: ADM980A10-miptest
+    sex: female
+

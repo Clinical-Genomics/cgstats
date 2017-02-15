@@ -45,6 +45,7 @@ TRASH*
 *.tar.gz
 .vagrant/
 dev/
+_DEVELOP/
 
 # SublimeText
 *.sublime-*
@@ -66,3 +67,4 @@ docs/_build
 
 # settings
 clinstatsdb/settings.py
+alembic.ini

@@ -23,6 +23,7 @@ class PyTest(TestCommand):
         import pytest
         sys.exit(pytest.main(self.test_args))
 
+
 with open('requirements.txt') as f:
     required = f.read().splitlines()
 
@@ -49,4 +50,21 @@ setup(
     ],
     platforms='any',
     license='BSD License',
+    entry_points={
+        'console_scripts': [
+            'clinstatsdb = clinstatsdb.cli:root',
+        ],
+        'clinstatsdb.subcommands.1': [
+            'init = clinstatsdb.initialize:init',
+            'show = clinstatsdb.db.cli:show',
+            'analysis = clinstatsdb.analysis.cli:analysis',
+            'sample = clinstatsdb.db.cli:sample',
+            'flowcells = clinstatsdb.db.cli:flowcells',
+            'samples = clinstatsdb.db.cli:samples',
+        ],
+        'clinstatsdb.models.1': [
+            'core = clinstatsdb.db.models',
+            'analysis = clinstatsdb.analysis.models',
+        ]
+    },
 )

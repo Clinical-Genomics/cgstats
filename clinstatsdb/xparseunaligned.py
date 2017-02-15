@@ -8,6 +8,7 @@ from .utils import xstats
 import pstats
 import cProfile
 
+
 def main(argv):
     
     #print(Supportparams.exists('/home/clinical/DEMUX//150703_D00134_0206_AH5HGFBCXX/Unaligned4/support.txt')) # 515

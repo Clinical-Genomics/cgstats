@@ -1,0 +1,502 @@
+---
+'family':
+  'family':
+    AnalysisDate: 2016-06-29T07:10:28
+    AnalysisRunStatus: Finished
+    AnalysisType: exomes
+    BCFFile:
+      Clinical:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.bcf
+      Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_BOTH.bcf
+      Research:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.bcf
+    HumanGenomeBuild:
+      Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/Homo_sapiens.GRCh37.d5.fasta
+      Source: GRCh
+      Version: '37'
+    InstanceTag:
+      - cust003
+    MIPVersion: v3.0.4
+    PedigreeFile:
+      Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/exomes/family/family_pedigree.txt
+    PedigreeFileAnalysis:
+      Path: tests/fixtures/qc_pedigree.yaml
+    Program:
+      Bcftools:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/freebayes
+        OutFile: family_sorted_md_rreal_brecal_freebayes_BOTH.vcf
+      Freebayes:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/freebayes
+        OutFile: family_sorted_md_rreal_brecal_freebayes_BOTH.vcf
+      GATK:
+        Version: '3.6'
+      Genmod:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+      InbreedingFactor:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/samplecheck
+        OutFile: family.het
+      Manta:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/manta
+        OutFile: family_sorted_md_rreal_brecal_manta_SV.vcf
+      PedigreeCheck:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_BOTH.vcf
+      PicardTools:
+        Version: 2.3.0(9a00c87b7ffdb01cfb5a0d6e76556146196babb8_1463071327)
+      QCCollect:
+        OutDirectory: tests/fixtures
+        OutFile: family_qcmetrics.yaml
+        QCCollectMetricsFile:
+          Path: tests/fixtures/family_qcmetrics.yaml
+      RankVariants:
+        Clinical:
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+        RankModel:
+          File: rank_model_cmms_v1.16.ini
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/rank_model_cmms_v1.16.ini
+          Version: '1.16'
+        Research:
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.vcf
+      SVCombineVariantCallSets:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/info/
+        OutFile: SVCombineVariantCallSets_family_SV.0.stderr.txt
+      SVGenmod:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+      SVRankVariants:
+        Clinical:
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+        RankModel:
+          File: svrank_model_cmms_v1.0.ini
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/svrank_model_cmms_v1.0.ini
+          Version: '1.0'
+        Research:
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.vcf
+      SVVCFParser:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_comb_vep_parsed_SV_1.vcf
+      SVVariantEffectPredictor:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_comb_vep_SV_1.vcf
+      SVVariantEffectPredictorSummary:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_comb_vep_SV_1.vcf_summary.html
+      Sambamba:
+        Version: 0.6.1
+      Samtools:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/samtools
+        OutFile: family_sorted_md_rreal_brecal_mpileup_BOTH.vcf
+      SexCheck:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/samplecheck
+        OutFile: family.sexcheck
+      SnpEff:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_BOTH_1.selected.vcf
+      VCFParser:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_BOTH_1.vcf
+      VariantAnnotationBlock:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/info/
+        OutFile: VariantAnnotationBlock_family.0.stderr.txt
+      VariantEffectPredictor:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_BOTH_1.vcf
+      VariantEffectPredictorSummary:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk
+        OutFile: family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_BOTH_1.vcf_summary.html
+      vt:
+        OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/info/
+        OutFile: VariantAnnotationBlock_family.0.stderr.txt
+    ResearchEthicalApproval: notApproved
+    SVBCFFile:
+      Clinical:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.selected.bcf
+      Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_SV.bcf
+      Research:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.bcf
+    SVVCFFile:
+      Clinical:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.selected.vcf
+      ReadyVcf:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_SV.vcf
+      Research:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_comb_vep_parsed_ranked_SV.vcf
+    SVVCFParser:
+      RangeFile:
+        Database:
+          cust000-Research.txt_Research:
+            Acronym: Research
+            CompleteName: Research
+            Date: 2015-03-01
+            FileName: cust000-Research.txt
+            GenomeBuild: GRCh37.p13
+            Version: '6.8'
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/cust000-Research.txt
+      SelectFile:
+        Database:
+          cust000-Clinical_master_list.txt_FullList:
+            Acronym: FullList
+            CompleteName: Clinical master list
+            Date: 2016-05-19
+            FileName: cust000-Clinical_master_list.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '18.0'
+          cust002-OMIM.txt_OMIM:
+            Acronym: OMIM
+            CompleteName: OMIM of 2016-04-15
+            Date: 2016-04-22
+            FileName: cust002-OMIM.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '58.0'
+          cust002-SKD.txt_SKD:
+            Acronym: SKD
+            CompleteName: Skeletal dysplasia
+            Date: 2016-04-22
+            FileName: cust002-SKD.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '54.0'
+          cust003-CMMS.txt_ENDO:
+            Acronym: ENDO
+            CompleteName: Endocrinology
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_EP:
+            Acronym: EP
+            CompleteName: Epilepsy
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_IEM:
+            Acronym: IEM
+            CompleteName: Inborn Errors of Metabolism
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_MIT:
+            Acronym: MIT
+            CompleteName: Mitochondrial nuclear
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-mtDNA.txt_mtDNA:
+            Acronym: mtDNA
+            CompleteName: Mitochondrial DNA
+            Date: 2016-04-25
+            FileName: cust003-mtDNA.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+          cust004-IBMFS.txt_IBMFS:
+            Acronym: IBMFS
+            CompleteName: Inherited Bone Marrow Failure Syndromes
+            Date: 2016-02-03
+            FileName: cust004-IBMFS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '9.1'
+          cust004-PID.txt_PID:
+            Acronym: PID
+            CompleteName: Primary Immune Deficiency
+            Date: 2016-02-02
+            FileName: cust004-PID.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+          cust004-PID.txt_PIDCAD:
+            Acronym: PIDCAD
+            CompleteName: PID Candidates
+            Date: 2016-02-02
+            FileName: cust004-PID.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/cust000-Clinical_master_list.txt
+    VCFFile:
+      Clinical:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.selected.vcf
+      ReadyVcf:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_BOTH.vcf
+      Research:
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/bwa/gatk/family_sorted_md_rreal_brecal_gvcf_vrecal_comb_vt_vep_parsed_snpeff_ranked_BOTH.vcf
+    VCFParser:
+      RangeFile:
+        Database:
+          cust000-Research.txt_Research:
+            Acronym: Research
+            CompleteName: Research
+            Date: 2015-03-01
+            FileName: cust000-Research.txt
+            GenomeBuild: GRCh37.p13
+            Version: '6.8'
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/cust000-Research.txt
+      SelectFile:
+        Database:
+          cust000-Clinical_master_list.txt_FullList:
+            Acronym: FullList
+            CompleteName: Clinical master list
+            Date: 2016-05-19
+            FileName: cust000-Clinical_master_list.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '18.0'
+          cust002-OMIM.txt_OMIM:
+            Acronym: OMIM
+            CompleteName: OMIM of 2016-04-15
+            Date: 2016-04-22
+            FileName: cust002-OMIM.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '58.0'
+          cust002-SKD.txt_SKD:
+            Acronym: SKD
+            CompleteName: Skeletal dysplasia
+            Date: 2016-04-22
+            FileName: cust002-SKD.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '54.0'
+          cust003-CMMS.txt_ENDO:
+            Acronym: ENDO
+            CompleteName: Endocrinology
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_EP:
+            Acronym: EP
+            CompleteName: Epilepsy
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_IEM:
+            Acronym: IEM
+            CompleteName: Inborn Errors of Metabolism
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-CMMS.txt_MIT:
+            Acronym: MIT
+            CompleteName: Mitochondrial nuclear
+            Date: 2016-04-25
+            FileName: cust003-CMMS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '7.0'
+          cust003-mtDNA.txt_mtDNA:
+            Acronym: mtDNA
+            CompleteName: Mitochondrial DNA
+            Date: 2016-04-25
+            FileName: cust003-mtDNA.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+          cust004-IBMFS.txt_IBMFS:
+            Acronym: IBMFS
+            CompleteName: Inherited Bone Marrow Failure Syndromes
+            Date: 2016-02-03
+            FileName: cust004-IBMFS.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '9.1'
+          cust004-PID.txt_PID:
+            Acronym: PID
+            CompleteName: Primary Immune Deficiency
+            Date: 2016-02-02
+            FileName: cust004-PID.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+          cust004-PID.txt_PIDCAD:
+            Acronym: PIDCAD
+            CompleteName: PID Candidates
+            Date: 2016-02-02
+            FileName: cust004-PID.txt
+            GenomeBuild: 'GRCh37.p13																											'
+            Version: '8.0'
+        Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/references_3.0/cust000-Clinical_master_list.txt
+    lastLogFilePath: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/mip_log/2016-06-29/mip.pl_2016-06-29T07:10:28.log
+    logFileDir: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/family/mip_log
+  sample:
+    Capture_kit:
+      - Agilent_SureSelect.V5
+    Father: '0'
+    File:
+      sample.141216_HB05PADXX_ACTTGA.lane1:
+        CramFile: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB05PADXX_ACTTGA.lane1_sorted.cram
+        ReadDirectionFile:
+          sample.141216_HB05PADXX_ACTTGA.lane1_1:
+            Date: 2014-12-16
+            Flow-cell: HB05PADXX
+            Lane: '1'
+            OriginalFileName: 1_141216_HB05PADXX_sample_ACTTGA_1.fastq.gz
+            OriginalFileNameNoEnding: 1_141216_HB05PADXX_sample_ACTTGA_1
+            ReadDirection: 1
+            RunBarcode: 141216_HB05PADXX_1_ACTTGA
+            SampleBarcode: ACTTGA
+          sample.141216_HB05PADXX_ACTTGA.lane1_2:
+            Date: 2014-12-16
+            Flow-cell: HB05PADXX
+            Lane: '1'
+            OriginalFileName: 1_141216_HB05PADXX_sample_ACTTGA_2.fastq.gz
+            OriginalFileNameNoEnding: 1_141216_HB05PADXX_sample_ACTTGA_2
+            ReadDirection: 2
+            RunBarcode: 141216_HB05PADXX_1_ACTTGA
+            SampleBarcode: ACTTGA
+        SequenceLength: '101'
+        SequenceRunType: Paired-end
+      sample.141216_HB05PADXX_ACTTGA.lane2:
+        CramFile: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB05PADXX_ACTTGA.lane2_sorted.cram
+        ReadDirectionFile:
+          sample.141216_HB05PADXX_ACTTGA.lane2_1:
+            Date: 2014-12-16
+            Flow-cell: HB05PADXX
+            Lane: '2'
+            OriginalFileName: 2_141216_HB05PADXX_sample_ACTTGA_1.fastq.gz
+            OriginalFileNameNoEnding: 2_141216_HB05PADXX_sample_ACTTGA_1
+            ReadDirection: 1
+            RunBarcode: 141216_HB05PADXX_2_ACTTGA
+            SampleBarcode: ACTTGA
+          sample.141216_HB05PADXX_ACTTGA.lane2_2:
+            Date: 2014-12-16
+            Flow-cell: HB05PADXX
+            Lane: '2'
+            OriginalFileName: 2_141216_HB05PADXX_sample_ACTTGA_2.fastq.gz
+            OriginalFileNameNoEnding: 2_141216_HB05PADXX_sample_ACTTGA_2
+            ReadDirection: 2
+            RunBarcode: 141216_HB05PADXX_2_ACTTGA
+            SampleBarcode: ACTTGA
+        SequenceLength: '101'
+        SequenceRunType: Paired-end
+      sample.141216_HB0BLADXX_ACTTGA.lane1:
+        CramFile: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB0BLADXX_ACTTGA.lane1_sorted.cram
+        ReadDirectionFile:
+          sample.141216_HB0BLADXX_ACTTGA.lane1_1:
+            Date: 2014-12-16
+            Flow-cell: HB0BLADXX
+            Lane: '1'
+            OriginalFileName: 1_141216_HB0BLADXX_sample_ACTTGA_1.fastq.gz
+            OriginalFileNameNoEnding: 1_141216_HB0BLADXX_sample_ACTTGA_1
+            ReadDirection: 1
+            RunBarcode: 141216_HB0BLADXX_1_ACTTGA
+            SampleBarcode: ACTTGA
+          sample.141216_HB0BLADXX_ACTTGA.lane1_2:
+            Date: 2014-12-16
+            Flow-cell: HB0BLADXX
+            Lane: '1'
+            OriginalFileName: 1_141216_HB0BLADXX_sample_ACTTGA_2.fastq.gz
+            OriginalFileNameNoEnding: 1_141216_HB0BLADXX_sample_ACTTGA_2
+            ReadDirection: 2
+            RunBarcode: 141216_HB0BLADXX_1_ACTTGA
+            SampleBarcode: ACTTGA
+        SequenceLength: '101'
+        SequenceRunType: Paired-end
+      sample.141216_HB0BLADXX_ACTTGA.lane2:
+        CramFile: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB0BLADXX_ACTTGA.lane2_sorted.cram
+        ReadDirectionFile:
+          sample.141216_HB0BLADXX_ACTTGA.lane2_1:
+            Date: 2014-12-16
+            Flow-cell: HB0BLADXX
+            Lane: '2'
+            OriginalFileName: 2_141216_HB0BLADXX_sample_ACTTGA_1.fastq.gz
+            OriginalFileNameNoEnding: 2_141216_HB0BLADXX_sample_ACTTGA_1
+            ReadDirection: 1
+            RunBarcode: 141216_HB0BLADXX_2_ACTTGA
+            SampleBarcode: ACTTGA
+          sample.141216_HB0BLADXX_ACTTGA.lane2_2:
+            Date: 2014-12-16
+            Flow-cell: HB0BLADXX
+            Lane: '2'
+            OriginalFileName: 2_141216_HB0BLADXX_sample_ACTTGA_2.fastq.gz
+            OriginalFileNameNoEnding: 2_141216_HB0BLADXX_sample_ACTTGA_2
+            ReadDirection: 2
+            RunBarcode: 141216_HB0BLADXX_2_ACTTGA
+            SampleBarcode: ACTTGA
+        SequenceLength: '101'
+        SequenceRunType: Paired-end
+    MostCompleteBAM:
+      Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/gatk/sample_lanes_1122_sorted_md_rreal_brecal.bam
+    Mother: '0'
+    Phenotype: '2'
+    Program:
+      BamStats:
+        sample.141216_HB05PADXX_ACTTGA.lane1:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa
+          OutFile: sample.141216_HB05PADXX_ACTTGA.lane1_sorted.stats
+        sample.141216_HB05PADXX_ACTTGA.lane2:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa
+          OutFile: sample.141216_HB05PADXX_ACTTGA.lane2_sorted.stats
+        sample.141216_HB0BLADXX_ACTTGA.lane1:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa
+          OutFile: sample.141216_HB0BLADXX_ACTTGA.lane1_sorted.stats
+        sample.141216_HB0BLADXX_ACTTGA.lane2:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa
+          OutFile: sample.141216_HB0BLADXX_ACTTGA.lane2_sorted.stats
+      Bwa:
+        sample.141216_HB05PADXX_ACTTGA.lane1:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/info/
+          OutFile: BwaMem_sample.0.stderr.txt
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB05PADXX_ACTTGA.lane1_sorted.cram
+        sample.141216_HB05PADXX_ACTTGA.lane2:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/info/
+          OutFile: BwaMem_sample.2.stderr.txt
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB05PADXX_ACTTGA.lane2_sorted.cram
+        sample.141216_HB0BLADXX_ACTTGA.lane1:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/info/
+          OutFile: BwaMem_sample.1.stderr.txt
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB0BLADXX_ACTTGA.lane1_sorted.cram
+        sample.141216_HB0BLADXX_ACTTGA.lane2:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/info/
+          OutFile: BwaMem_sample.3.stderr.txt
+          Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/sample.141216_HB0BLADXX_ACTTGA.lane2_sorted.cram
+      CalculateHsMetrics:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/coveragereport
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal_CalculateHsMetrics
+      Chanjo:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/coveragereport
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal_chanjoSexCheck.log
+      ChanjoSexCheck:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/coveragereport
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal.sexcheck
+      CollectMultipleMetrics:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/coveragereport
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal.alignment_summary_metrics
+      FastQC:
+        1_141216_HB05PADXX_sample_ACTTGA_1.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/1_141216_HB05PADXX_sample_ACTTGA_1_fastqc
+          OutFile: fastqc_data.txt
+        1_141216_HB05PADXX_sample_ACTTGA_2.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/1_141216_HB05PADXX_sample_ACTTGA_2_fastqc
+          OutFile: fastqc_data.txt
+        1_141216_HB0BLADXX_sample_ACTTGA_1.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/1_141216_HB0BLADXX_sample_ACTTGA_1_fastqc
+          OutFile: fastqc_data.txt
+        1_141216_HB0BLADXX_sample_ACTTGA_2.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/1_141216_HB0BLADXX_sample_ACTTGA_2_fastqc
+          OutFile: fastqc_data.txt
+        2_141216_HB05PADXX_sample_ACTTGA_1.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/2_141216_HB05PADXX_sample_ACTTGA_1_fastqc
+          OutFile: fastqc_data.txt
+        2_141216_HB05PADXX_sample_ACTTGA_2.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/2_141216_HB05PADXX_sample_ACTTGA_2_fastqc
+          OutFile: fastqc_data.txt
+        2_141216_HB0BLADXX_sample_ACTTGA_1.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/2_141216_HB0BLADXX_sample_ACTTGA_1_fastqc
+          OutFile: fastqc_data.txt
+        2_141216_HB0BLADXX_sample_ACTTGA_2.fastq.gz:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/fastqc/2_141216_HB0BLADXX_sample_ACTTGA_2_fastqc
+          OutFile: fastqc_data.txt
+      SambambaDepth:
+        sample_lanes_1122:
+          Bed:
+            Path: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/coveragereport/sample_lanes_1122_sorted_md_rreal_brecal_coverage.bed
+      VariantEval_All:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/gatk/varianteval
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal_gvcf_vrecal_comb_BOTH.vcf.varianteval
+      VariantEval_Exome:
+        sample_lanes_1122:
+          OutDirectory: /mnt/hds/proj/bioinfo/MIP_ANALYSIS/cust003/family/analysis/exomes/sample/bwa/gatk/varianteval
+          OutFile: sample_lanes_1122_sorted_md_rreal_brecal_gvcf_vrecal_comb_BOTH_exome.vcf.varianteval
+    Sex: 1
+

@@ -1,5 +1,4 @@
 #!/usr/bin/env python
 # encoding: utf-8
-from .store import connect
 from .models import (Demux, Project, Sample, Datasource, Demux, Flowcell,
-                     Unaligned, Version)
+                     Unaligned, Version, Model)

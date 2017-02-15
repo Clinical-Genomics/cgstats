@@ -1,5 +1,11 @@
+alchy
+click
 bumpversion==0.5.3
 pymysql
 PyYAML==3.11
-SQLAlchemy==1.0.9
+SQLAlchemy>=1.0.9
 wheel==0.26.0
+
+Flask-Alchy
+Flask-Bootstrap
+Flask

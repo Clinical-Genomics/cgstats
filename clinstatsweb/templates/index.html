@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <div class="container main">
+    <div class="row">
+      <div class="col-md-4">
+        {{ samples_panel('Most duplicates', most_dups, 'duplicates_percent') }}
+      </div>
+
+      <div class="col-md-4">
+        {{ samples_panel('Least mapped', least_mapped, 'mapped_percent') }}
+      </div>
+
+      <div class="col-md-4">
+        {{ samples_panel('Least completeness', least_complete, 'completeness_target_10') }}
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="percentDups"></div>
+      </div>
+    </div>
+
+    <div class="panel panel-default">
+      <div class="panel-body">
+        <div id="readsVsCoverage"></div>
+      </div>
+    </div>
+  </div>
+{% endblock %}
+
+{% block scripts %}
+    {{ super() }}
+
+    <script type="text/javascript" charset="utf-8" async defer>
+        $(function() {
+            $("#percentDups").highcharts({
+                chart: {
+                    type: "spline"
+                },
+                title: {
+                    text: "Percent duplicates"
+                },
+                yAxis: {
+                    title: {
+                        text: "Duplicates (%)"
+                    }
+                },
+                plotOptions: {
+                    spline: {
+                        marker: {
+                            enabled: true
+                        },
+                        tooltip: {
+                            headerFormat: '{series.name}: <b>{point.key}</b><br>',
+                            pointFormat: '{point.y} %'
+                        }
+                    }
+                },
+                series: [{
+                    name: "WGS",
+                    color: 'rgba(223, 83, 83, .5)',
+                    data: {{ dups.wgs|tojson|safe }}
+                }, {
+                    name: "WES",
+                    color: 'rgba(119, 152, 191, .5)',
+                    data: {{ dups.wes|tojson|safe }}
+                }]
+            })
+
+            $("#readsVsCoverage").highcharts({
+                chart: {
+                    type: 'scatter',
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: 'Reads vs. Target coverage'
+                },
+                xAxis: {
+                    title: {
+                        text: 'Total reads'
+                    }
+                },
+                yAxis: {
+                    title: {
+                        text: 'Target coverage'
+                    }
+                },
+                legend: {
+                    layout: 'vertical',
+                    align: 'right',
+                    verticalAlign: 'bottom',
+                    x: -70,
+                    y: -70,
+                    floating: true,
+                    backgroundColor: (Highcharts.theme && Highcharts.theme.legendBackgroundColor) || '#FFFFFF',
+                    borderWidth: 1
+                },
+                plotOptions: {
+                    scatter: {
+                        marker: {
+                            radius: 5
+                        },
+                        tooltip: {
+                            headerFormat: '<b>{series.name}</b><br>',
+                            pointFormat: '{point.x} reads, {point.y} %'
+                        }
+                    }
+                },
+                series: [{
+                    name: 'WGS',
+                    color: 'rgba(223, 83, 83, .5)',
+                    data: {{ readsvscov.wgs|tojson|safe }}
+                }, {
+                    name: 'WES',
+                    color: 'rgba(119, 152, 191, .5)',
+                    data: {{ readsvscov.wes|tojson|safe }}
+                }]
+            })
+        })
+    </script>
+{% endblock %}
+
+{% macro samples_panel(title, samples, value_attr) %}
+  <div class="panel panel-default">
+    <div class="panel-heading">{{ title }}</div>
+    <table class="table table-bordered">
+      <tbody>
+        {% for sample in samples %}
+          <tr>
+            <td>
+              {{ sample.sample_id }}
+              <span class="label label-info pull-right">
+                {{ sample.sequencing_type }}
+              </span>
+            </td>
+            <td>{{ sample.analysis.analyzed_at.date() }}</td>
+            <td class="text-right">{{ sample|attr(value_attr)|percent }} %</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+{% endmacro %}
