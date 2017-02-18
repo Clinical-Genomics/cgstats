@@ -84,3 +84,19 @@ def samples(context, limit, offset, flowcell):
         query = query.offset(offset).limit(limit)
     for sample in query:
         click.echo(sample.lims_id)
+
+
+@click.command()
+@click.argument('flowcell')
+@click.option('-p', '--project', help='project name')
+@click.pass_context
+def select(context, flowcell, project):
+    """List samples in the database."""
+    query = api.select(flowcell, project)
+
+#    print "sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore"
+#    for hit in hits:
+#        print hit['smp'] + "\t" + hit['flc'] + "\t" + hit['lanes'] + "\t" + hit['rds'] + "\t" + str(hit['readsum']) + "\t" + str(hit['yield']) + "\t" + str(hit['yieldsum']) + "\t" + str(hit['q30']) + "\t" + str(hit['meanq'])
+
+    for line in query:
+        click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))

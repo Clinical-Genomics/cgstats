@@ -61,6 +61,11 @@ setup(
             'sample = clinstatsdb.db.cli:sample',
             'flowcells = clinstatsdb.db.cli:flowcells',
             'samples = clinstatsdb.db.cli:samples',
+            #'add = clinstatsdb.db.cli:add',
+            #'xadd = clinstatsdb.db.cli:xadd',
+            #'delete = clinstatsdb.db.cli:delete',
+            'select = clinstatsdb.db.cli:select',
+            #'lanestats = clinstatsdb.db.cli:lanestats',
         ],
         'clinstatsdb.models.1': [
             'core = clinstatsdb.db.models',
