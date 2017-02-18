@@ -72,13 +72,19 @@ def select(flowcell, project_name=None):
 
     query = query.with_entities(
                   Sample.samplename, Flowcell.flowcellname,
-                  func.group_concat(Unaligned.lane).label('lanes'),
-                  func.group_concat(Unaligned.readcounts).label('reads'),
+                  func.group_concat(Unaligned.lane.op('ORDER BY')(Unaligned.lane)).label('lanes'),
+                  func.group_concat(
+                      Unaligned.readcounts.op('ORDER BY')(Unaligned.readcounts)).label('reads'),
                   func.sum(Unaligned.readcounts).label('readsum'),
-                  func.group_concat(Unaligned.yield_mb).label('yld'),
+                  func.group_concat(
+                      Unaligned.yield_mb.op('ORDER BY')(Unaligned.yield_mb)).label('yld'),
                   func.sum(Unaligned.yield_mb).label('yieldsum'),
-                  func.group_concat(func.truncate(Unaligned.q30_bases_pct, 2)).label('q30'),
-                  func.group_concat(func.truncate(Unaligned.mean_quality_score, 2)).label('meanq'),
+                  func.group_concat(
+                      func.truncate(Unaligned.q30_bases_pct, 2)
+                      .op('ORDER BY')(Unaligned.q30_bases_pct)).label('q30'),
+                  func.group_concat(
+                      func.truncate(Unaligned.mean_quality_score, 2)
+                      .op('ORDER BY')(Unaligned.mean_quality_score)).label('meanq'),
             )
 
     query = query.filter(Flowcell.flowcellname == flowcell)

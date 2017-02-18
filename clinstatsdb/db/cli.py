@@ -94,9 +94,6 @@ def select(context, flowcell, project):
     """List samples in the database."""
     query = api.select(flowcell, project)
 
-#    print "sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore"
-#    for hit in hits:
-#        print hit['smp'] + "\t" + hit['flc'] + "\t" + hit['lanes'] + "\t" + hit['rds'] + "\t" + str(hit['readsum']) + "\t" + str(hit['yield']) + "\t" + str(hit['yieldsum']) + "\t" + str(hit['q30']) + "\t" + str(hit['meanq'])
-
+    click.echo("sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
     for line in query:
         click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
