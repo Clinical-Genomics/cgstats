@@ -23,6 +23,9 @@ def get_sample(sample_id):
     """Get a unique demux sample."""
     pattern = SAMPLE_PATTERN.format(sample_id)
     query = Sample.query.filter(Sample.samplename.like(pattern))
+    if query.first() is None:
+        log.info("no results found, trying alternative query")
+        query = Sample.query.filter_by(samplename=sample_id)
     return query
 
 
@@ -34,6 +37,10 @@ def flowcells(sample=None):
         pattern = SAMPLE_PATTERN.format(sample)
         query = (query.join(Demux.unaligned, Unaligned.sample)
                       .filter(Sample.samplename.like(pattern)))
+        if query.first() is None:
+            log.info("no results found, trying alternative query")
+            query = (query.join(Demux.unaligned, Unaligned.sample)
+                          .filter(Sample.samplename=sample))
     return query
 
 
