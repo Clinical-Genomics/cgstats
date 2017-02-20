@@ -7,34 +7,13 @@ import os
 from glob import glob
 import logging
 import socket
-import yaml
-from os.path import expanduser
 
 from sqlalchemy import func
-from clinstatsdb.db.store import connect
 from clinstatsdb.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from clinstatsdb.utils import xstats
 
-__version__ = '3.42.7'
-
 logger = logging.getLogger(__name__)
 
-class Config:
-
-    def __init__(self, config_file):
-        with open(config_file, 'r') as ymlfile:
-            self.config = yaml.load(ymlfile)
-
-    def __getitem__(self, key):
-        """Simple array-based getter.
-
-        Args:
-            key (str): Gets the value for this key in the YAML file.
-
-        Returns (str, dict): returns the structure underneat this key.
-
-        """
-        return self.config[key]
 
 def gather_supportparams(run_dir):
     """Aggregates all the support params:
@@ -235,39 +214,14 @@ def get_nr_samples_lane(sample_sheet):
 
     return samples_lane
 
-def setup_logging(level='INFO'):
-    root_logger = logging.getLogger()
-    root_logger.setLevel(level)
+def add(manager, demux_dir):
+    """ Gathers and adds all data to cgstats. 
 
-    # customize formatter, align each column
-    template = "[%(asctime)s] %(name)-25s %(levelname)-8s %(message)s"
-    formatter = logging.Formatter(template)
-
-    # add a basic STDERR handler to the logger
-    console = logging.StreamHandler()
-    console.setLevel(level)
-    console.setFormatter(formatter)
-
-    root_logger.addHandler(console)
-    return root_logger
-
-def main(argv):
-
-    setup_logging(level='DEBUG')
-    demux_dir = argv[0]
-
-    try:
-        config_file = argv[1]
-    except IndexError:
-        config_file = expanduser("~/.clinical/databases.yaml")
-
-    config = Config(config_file)
-
-    SQL = connect(config['clinstats']['connection_string'])
-
-    if not Version.check(config['clinstats']['name'], config['clinstats']['version']):
-        logger.error('Wrong database!')
-        exit(1)
+    params:
+        manager (managerAlchamy): a manager object which can be used to query the DB
+        demux_dir (str): the demux dir of the run
+    returns: true on success!
+    """
 
     # ok, let's process the support params
     supportparams_id = Supportparams.exists(os.path.join(demux_dir, 'Unaligned'))
@@ -282,8 +236,8 @@ def main(argv):
         supportparams.sampleconfig = new_supportparams['sampleconfig']
         supportparams.time = new_supportparams['time']
 
-        SQL.add(supportparams)
-        SQL.flush()
+        manager.add(supportparams)
+        manager.flush()
         supportparams_id = supportparams.supportparams_id
 
     datasource_id = Datasource.exists(os.path.join(demux_dir, 'l1t11/Stats/ConversionStats.xml'))
@@ -299,8 +253,8 @@ def main(argv):
         datasource.time = func.now()
         datasource.supportparams_id = supportparams_id
 
-        SQL.add(datasource)
-        SQL.flush()
+        manager.add(datasource)
+        manager.flush()
         datasource_id = datasource.datasource_id
 
     full_flowcell_name = os.path.basename(os.path.normpath(demux_dir)).split('_')[-1]
@@ -314,8 +268,8 @@ def main(argv):
         flowcell.hiseqtype = 'hiseqx'
         flowcell.time = func.now()
 
-        SQL.add(flowcell)
-        SQL.flush()
+        manager.add(flowcell)
+        manager.flush()
         flowcell_id = flowcell.flowcell_id
 
     new_demux = gather_demux(demux_dir)
@@ -327,8 +281,8 @@ def main(argv):
         demux.basemask = new_demux['basemask']
         demux.time = func.now()
 
-        SQL.add(demux)
-        SQL.flush()
+        manager.add(demux)
+        manager.flush()
         demux_id = demux.demux_id
 
     project_id_of = {} # project name: project id
@@ -339,8 +293,8 @@ def main(argv):
             p.projectname = project_name
             p.time = func.now()
 
-            SQL.add(p)
-            SQL.flush()
+            manager.add(p)
+            manager.flush()
             project_id = p.project_id
 
         project_id_of[ project_name ] = project_id
@@ -359,8 +313,8 @@ def main(argv):
             s.barcode = sample['index']
             s.time = func.now()
 
-            SQL.add(s)
-            SQL.flush()
+            manager.add(s)
+            manager.flush()
             sample_id = s.sample_id
 
         if not Unaligned.exists(sample_id, demux_id, sample['Lane']):
@@ -388,10 +342,12 @@ def main(argv):
                 u.mean_quality_score = stats[ sample['SampleID'] ]['pf_qscore']
             u.time = func.now()
 
-            SQL.add(u)
+            manager.add(u)
 
-    SQL.flush()
-    SQL.commit()
+    manager.flush()
+    manager.commit()
+
+    return True
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    xadd(sys.argv[1:])

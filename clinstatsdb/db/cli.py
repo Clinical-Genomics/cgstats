@@ -2,8 +2,9 @@
 import logging
 import click
 
-from .models import Flowcell
+from .models import Flowcell, Version
 from . import api
+from . import xparse
 
 log = logging.getLogger(__name__)
 
@@ -97,3 +98,20 @@ def select(context, flowcell, project):
     click.echo("sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
     for line in query:
         click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
+
+
+@click.command()
+@click.argument('demux_dir')
+@click.option('-m', '--machine', click.Choice(['X', '2500']), help='machine type')
+@click.pass_context
+def add(context, machine, demux_dir):
+    """Add an X FC to cgstats."""
+
+    #if not Version.check(config['clinstats']['name'], config['clinstats']['version']):
+    #    logger.error('Wrong database!')
+    #    exit(1) # change to exception
+
+    manager = context.obj['manager']
+
+    if machine == 'X':
+        xparse.add(manager, demux_dir)

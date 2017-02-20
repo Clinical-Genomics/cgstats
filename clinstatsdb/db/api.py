@@ -16,7 +16,8 @@ def connect(uri):
     for models in pkg_resources.iter_entry_points('clinstatsdb.models.1'):
         models.load()
     log.debug('open connection to database: %s', uri)
-    manager = Manager(config=dict(SQLALCHEMY_DATABASE_URI=uri), Model=Model)
+    manager = Manager(config=dict(SQLALCHEMY_DATABASE_URI=uri), Model=Model,
+                      session_options=dict(autoflush=False))
     return manager
 
 
