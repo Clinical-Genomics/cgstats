@@ -40,7 +40,7 @@ def flowcells(sample=None):
         if query.first() is None:
             log.info("no results found, trying alternative query")
             query = (query.join(Demux.unaligned, Unaligned.sample)
-                          .filter(Sample.samplename=sample))
+                          .filter(Sample.samplename == sample))
     return query
 
 
