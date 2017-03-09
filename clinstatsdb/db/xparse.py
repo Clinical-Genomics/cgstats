@@ -11,6 +11,7 @@ import socket
 from sqlalchemy import func
 from clinstatsdb.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from clinstatsdb.utils import xstats
+from clinstatsdb.utils.utils import get_projects, gather_flowcell
 
 logger = logging.getLogger(__name__)
 
@@ -67,14 +68,13 @@ def gather_supportparams(run_dir):
     document_path = os.path.join(run_dir, 'Unaligned')
     if not os.path.isdir(document_path):
         logger.error("Unaligned dir not found at '%s'", document_path)
-        exit(1)
     else:
         rs['document_path'] = document_path
 
     return rs
 
-def gather_datasouce(run_dir):
-    """TODO: Docstring for gather_datasouce.
+def gather_datasource(run_dir):
+    """TODO: Docstring for gather_datasource.
 
     Args:
         run_dir (TODO): TODO
@@ -107,27 +107,6 @@ def gather_datasouce(run_dir):
 
     return rs
 
-def gather_flowcell(demux_dir):
-    """TODO: Docstring for gather_flowcell.
-
-    Args:
-        demux_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
-
-    rs = {} # result set
-
-    # get the flowcell name
-    full_flowcell_name = os.path.basename(os.path.normpath(demux_dir)).split('_')[-1]
-    rs['flowcellname'] = full_flowcell_name[1:]
-
-    # get the flowcell position: A|B
-    rs['flowcell_pos'] = full_flowcell_name[0]
-
-    return rs
-
 def gather_demux(demux_dir):
     """TODO: Docstring for gather_demux.
 
@@ -156,24 +135,6 @@ def gather_demux(demux_dir):
                 rs['basemask'] = split_line[basemask_params_pos + 1]
 
     return rs
-
-def get_projects(demux_dir):
-    """TODO: Docstring for get_projects.
-
-    Args:
-        demux_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
-
-    projects = []
-
-    project_dirs = glob(os.path.join(demux_dir, 'Unaligned', '*'))
-    for project_dir in project_dirs:
-        projects.append(os.path.basename(os.path.normpath(project_dir)).split('_')[1])
-
-    return projects
 
 def sanitize_sample(sample):
     """Removes the _nxdual9 index indication
@@ -215,7 +176,7 @@ def get_nr_samples_lane(sample_sheet):
     return samples_lane
 
 def add(manager, demux_dir):
-    """ Gathers and adds all data to cgstats. 
+    """ Gathers and adds all data to cgstats.
 
     params:
         manager (managerAlchamy): a manager object which can be used to query the DB
@@ -242,7 +203,7 @@ def add(manager, demux_dir):
 
     datasource_id = Datasource.exists(os.path.join(demux_dir, 'l1t11/Stats/ConversionStats.xml'))
     if not datasource_id:
-        new_datasource = gather_datasouce(demux_dir)
+        new_datasource = gather_datasource(demux_dir)
         datasource = Datasource()
         datasource.runname = new_datasource['runname']
         datasource.rundate = new_datasource['rundate']

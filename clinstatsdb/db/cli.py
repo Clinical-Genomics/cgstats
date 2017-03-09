@@ -115,3 +115,5 @@ def add(context, machine, demux_dir):
 
     if machine == 'X':
         xparse.add(manager, demux_dir)
+    if machine == '2500':
+        parse.add(manager, demux_dir)

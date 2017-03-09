@@ -1,303 +1,355 @@
-#!/usr/bin/python
-#
+#!/usr/bin/env python
+# encoding: utf-8
+
+from __future__ import print_function, division
+
 import sys
 import os
 import glob
 import time
 import re
 import socket
-from bs4 import BeautifulSoup
-from access import db
+import ast
 
-"""Parses demux stats to db.
-  usage: parsedemux.py  <BASEDIRECTORYforUNALIGNED> <UNALIGNEDsubdir> <samplesheetcsv> <config_file:optional>
-Args:
-  BASEDIRECTORYforUNALIGNED (str): path to demux directory
-  UNALIGNEDsubdir (str): subdir with demux data structure
-  pathtosamplesheetcsv (str): absolute path to samplesheet
-Returns:
-  Outputs what data have been added to database including row id for each table
-"""
+from datetime import datetime
 
-if (len(sys.argv)>4):
-  configfile = sys.argv[4]
-  if not os.path.isfile(configfile):
-    exit("Bad configfile")
-else:
-  if len(sys.argv) == 4:
-    configfile = 'None'
-  else:
-    print "usage: parsedemux.py <BASEDIRECTORYforUNALIGNED> <UNALIGNEDsubdir> <samplesheetcsv> <config_file:optional>"
-    exit(1)
-pars = db.readconfig(configfile)
-basedir = sys.argv[1]
-if not (basedir[-1:] == "/"):
-  basedir = basedir + "/"
-if not os.path.isdir(basedir):
-  exit("Bad basedir")
-unaligned = sys.argv[2]
-if not (unaligned[-1:] == "/"):
-  unaligned = unaligned + "/"
-if not os.path.isdir(basedir + unaligned):
-  exit("Bad unaligned dir")
-samplesheet = sys.argv[3]
-print samplesheet
-if not os.path.isfile(samplesheet):
-  exit("Bad samplesheet")
+from ..utils.utils import get_samplesheet, get_projects, gather_flowcell
+from path import Path
 
-print basedir, unaligned, samplesheet
+def gather_supportparams(demuxdir, unaligneddir):
+    """
+    """
+    support_file = demuxdir.joinpath(unaligneddir, 'support.txt')
 
-with db.dbconnect(pars['CLINICALDBHOST'], pars['CLINICALDBPORT'], pars['STATSDB'], 
-                      pars['CLINICALDBUSER'], pars['CLINICALDBPASSWD']) as dbc:
+    system_str = ""
+    command_str = ""
+    idstring = ""
+    program = ""
 
-  ver = dbc.versioncheck(pars['STATSDB'], pars['DBVERSION'])
+    lines = (line.strip() for line in open(support_file))
+    for line in lines:
+        if line.startswith('$_System'):
+            line = line.replace('$_System = ', '')
+            system_str += line + '\n'
+            continue
 
-  if not ver == 'True':
-    print "Wrong db " + pars['STATSDB'] + " v:" + pars['DBVERSION']
-    exit(0) 
-  else:
-    print "Correct db " + pars['STATSDB'] + " v:" + pars['DBVERSION']
+        if system_str:
+            if line.startswith("};"):
+                system_str += '}'
+                break
+            else:
+                system_str += line + '\n'
 
-  demux = (basedir + unaligned + "Basecall_Stats*")
-  demux_stat_dir = glob.glob(demux)[0]
-  if not os.path.isdir(demux_stat_dir): 
-    exit("Bad statistics dir")
-  if not (demux_stat_dir[-1:] == "/"):
-    demux_stat_dir = demux_stat_dir + "/"
+    system = ast.literal_eval(system_str)
 
-  if not os.path.isfile(basedir + unaligned + "support.txt"):
-    exit ("Bad support.txt")
-  support = open(basedir + unaligned + "support.txt")
-  support_lines = support.readlines()
-  support.close()
+    for line in lines:
+        if line.startswith('$_ID-string'):
+            idstring = line.replace("$_ID-string = '","")
+            idstring = idstring.replace("';","")
+        if line.startswith('$_Program'):
+            program = line.replace("$_Program = '","")
+            program = program.replace("';","")
+            break
 
-  demultistats = (demux_stat_dir + "Demultiplex_Stats.htm")
-  print demultistats
-  if not os.path.isfile(demultistats):
-    exit("Bad demux stats file")
-  soup = BeautifulSoup(open(demultistats))
+    for line in lines:
+        if line.startswith('$_Command-line'):
+            line = line.replace('$_Command-line = ', '')
+            command_str += line + '\n'
+            continue
 
-  h1fc = soup.find("h1")
-  fcentry = unicode(h1fc.string).encode('utf8')
-  fc = fcentry.replace("Flowcell: ","")
-#print basedir
-  baseparts = basedir.split("_")
-  Flowcellpos = baseparts[len(baseparts)-1]
-  Flowcellpos = Flowcellpos.replace(fc+"/","") 
-  dirs = basedir.split("/")
-  runname = dirs[len(dirs)-2]
-#print Flowcellpos
-  name_ = runname.split("_")
-  rundate = list(name_[0])
-  rundate = "20"+rundate[0]+rundate[1]+"-"+rundate[2]+rundate[3]+"-"+rundate[4]+rundate[5]
-  machine = name_[1]
-  print runname, rundate, machine
+        if command_str:
+            if line.startswith("];"):
+                command_str += ']'
+                break
+            else:
+                command_str += line + '\n'
 
-  system = ""
-  command = ""
-  idstring = ""
-  program = ""
-#print samplesheet
-  for line in range(1, len(support_lines)):
-    if re.match("^\$\_System", support_lines[line]):
-      while not (re.match("};", support_lines[line])):
-        system += support_lines[line]
-        line += 1
-    if re.match("^\$\_ID-string", support_lines[line]):
-      idstring += support_lines[line]
-    if re.match("^\$\_Program", support_lines[line]):
-      program += support_lines[line]
-    if re.match("^\$\_Command-line", support_lines[line]):
-      while not (re.match("];", support_lines[line])):
-        command += support_lines[line]
-        line += 1
+    c = ast.literal_eval(command_str)
+    # convert to a dict
+    command = dict(zip(*[iter(c)]*2))
 
-  Idstring = idstring.replace("$_ID-string = '","")
-  Idstring = Idstring.replace("';","")
-  Idstring = Idstring.strip()
-  Program = program.replace("$_Program = '","")
-  Program = Program.replace("';","")
-  Program = Program.strip()
-  sysentries = system.splitlines()
-  Systempid = sysentries[1]
-  Systempid = Systempid.replace("  'PID' : '","")
-  Systempid = Systempid.replace("',","")
-  Systemos = sysentries[2]
-  Systemos = Systemos.replace("  'OS' : '","")
-  Systemos = Systemos.replace("',","")
-  Systemperlv = sysentries[3]
-  Systemperlv = Systemperlv.replace("  'PERL_VERSION' : '","")
-  Systemperlv = Systemperlv.replace("',","")
-  Systemperlexe = sysentries[4]
-  Systemperlexe = Systemperlexe.replace("  'PERL_EXECUTABLE' : '","")
-  Systemperlexe = Systemperlexe.replace("'","")
-  commandline = command.replace("$_Command-line = [\n","")
+    samplesheet_path = str(demuxdir.joinpath('SampleSheet.csv'))
 
-  Samplesheet = open(samplesheet)
-  SampleSheet = Samplesheet.read()
-  for line in Samplesheet.readlines():
-    print "LINE", line
-    if re.match(",", line):
-      SampleSheet += line
-    line = line.strip()
-    print line
-  Samplesheet.close()
+    return {
+        'system': system,
+        'command': command,
+        'program': program,
+        'idstring': idstring,
+        'document_path': str(support_file),
+        'commandline': ' '.join([ program, ' '.join(c)]),
+        'sampleconfig_path': samplesheet_path,
+        'sampleconfig': ''.join(open(samplesheet_path).readlines()),
+        'time': datetime.fromtimestamp(support_file.getmtime())
+    }
 
-  print Idstring, Program, Systempid, Systemos, Systemperlv, Systemperlexe
-  print commandline, samplesheet
-  print SampleSheet
+def gather_datasource(demuxdir):
+    rs = {} # resultset
+
+    runname = demuxdir.normpath().basename()
+    name_parts = runname.split("_")
+
+    rs['runname'] = str(runname)
+    rs['rundate'] = name_parts[0]
+    rs['machine'] = name_parts[1]
+    rs['servername'] = socket.gethostname()
+
+    return rs
+
+def gather_demux(supportparams):
+    return supportparams['command']['--use-bases-mark']
+
+def add(manager, demuxdir, unaligneddir):
+    """TODO: Docstring for add.
+    Returns: TODO
+
+    """
+
+    demuxdir = Path(demuxdir)
+    demux_stats = glob(demuxdir.joinpath(unaligneddir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
+    samplesheet = get_samplesheet(demuxdir)
+
+    rs['document_path'] = demuxdir.joinpath(unaligneddir)
   
-  clas = commandline.split('\n')
-  isbm = False
-  for cla in clas:
-    if isbm:
-      bmask = cla.split("'")[1]
-      isbm = False
-    if cla == "  '--use-bases-mask',":
-      isbm = True
-  if not bmask:
-    exit("Bad basemask")
-  else:
-    print bmask
+    basemask = support_params['command']['--use-bases-mask']
 
-  now = time.strftime('%Y-%m-%d %H:%M:%S')
+    stats = stats.parse(demuxdir, unaligneddir)
 
-  """ Set up data for supportparams table """
+    supportparams_id = Supportparams.exists(os.path.join(demux_dir, unaligneddir))
+    new_supportparams = gather_supportparams(demuxdir, unaligneddir)
+    if not supportparams_id:
+        supportparams = Supportparams()
+        supportparams.document_path = new_supportparams['document_path']
+        supportparams.idstring = new_supportparams['idstring']
+        supportparams.program = new_supportparams['program']
+        supportparams.commandline = new_supportparams['commandline']
+        supportparams.sampleconfig_path = new_supportparams['sampleconfig_path']
+        supportparams.sampleconfig = new_supportparams['sampleconfig']
+        supportparams.time = new_supportparams['time']
 
-  getsupportquery = (""" SELECT supportparams_id FROM supportparams WHERE document_path = '""" + basedir + unaligned + 
-                    """support.txt' """)
-  print getsupportquery
-  indbsupport = dbc.generalquery(getsupportquery)
-  if not indbsupport:
-    print "Support parameters not yet added"
-    insertdict = { 'document_path': basedir + unaligned + 'support.txt', 'systempid': Systempid, 
-                   'systemos': Systemos, 'systemperlv': Systemperlv, 'systemperlexe': Systemperlexe,
-                   'idstring': Idstring, 'program': Program, 'commandline': commandline, 
-                   'sampleconfig_path': samplesheet, 'sampleconfig': SampleSheet, 'time': now }
-    outcome = dbc.sqlinsert('supportparams', insertdict)
-    supportparamsid = outcome['supportparams_id']
-  else:
-    supportparamsid = indbsupport[0]['supportparams_id']
-  print "Support " + basedir + unaligned + 'support.txt' + " exists in DB with supportparams_id: " + str(supportparamsid)
+        manager.add(supportparams)
+        manager.flush()
+        supportparams_id = supportparams.supportparams_id
 
-  """ Set up data for table datasource """
+    datasource_id = Datasource.exists(str(demux_stats))
+    if not datasource_id:
+        new_datasource = gather_datasource(demux_dir)
+        datasource = Datasource()
+        datasource.runname = new_datasource['runname']
+        datasource.rundate = new_datasource['rundate']
+        datasource.machine = new_datasource['machine']
+        datasource.server = new_datasource['servername']
+        datasource.document_path = str(demux_stats)
+        datasource.document_type = 'html'
+        datasource.time = func.now()
+        datasource.supportparams_id = supportparams_id
+
+        manager.add(datasource)
+        manager.flush()
+        datasource_id = datasource.datasource_id
+
+    flowcell_namepos = gather_flowcell(demuxdir)
+    flowcell_id   = Flowcell.exists(flowcell_namepos['name'])
+    if not flowcell_id:
+        flowcell = Flowcell()
+        flowcell.flowcellname = flowcell_namepos['name']
+        flowcell.flowcell_pos = flowcell_namepos['pos']
+        flowcell.hiseqtype = 'hiseqga'
+        flowcell.time = func.now()
+
+        manager.add(flowcell)
+        manager.flush()
+        flowcell_id = flowcell.flowcell_id
+
+    new_demux = gather_demux(new_supportparams)
+    demux_id = Demux.exists(flowcell_id, new_demux['basemask'])
+    if not demux_id:
+        demux = Demux()
+        demux.flowcell_id = flowcell_id
+        demux.datasource_id = datasource_id
+        demux.basemask = new_demux['basemask']
+        demux.time = func.now()
+
+        manager.add(demux)
+        manager.flush()
+        demux_id = demux.demux_id
+
+    project_id_of = {} # project name: project id
+    for project_name in get_projects(demux_dir):
+        project_id = Project.exists(project_name)
+        if not project_id:
+            p = Project()
+            p.projectname = project_name
+            p.time = func.now()
+
+            manager.add(p)
+            manager.flush()
+            project_id = p.project_id
+
+        project_id_of[ project_name ] = project_id
+
+    sample_sheet = get_sample_sheet(demuxdir)
+    stats = stats.parse(demuxdir, unaligneddir)
+    nr_samples_lane = get_nr_samples_lane(sample_sheet)
+    for sample in sample_sheet:
+        sample_id = Sample.exists(sample['SampleID'], sample['index'])
+        if not sample_id:
+            s = Sample()
+            s.project_id = project_id_of[ sample['Project'] ]
+            s.samplename = sample['SampleID']
+            s.limsid = sample['SampleID'].split('_')[0]
+            s.barcode = sample['index']
+            s.time = func.now()
+
+            manager.add(s)
+            manager.flush()
+            sample_id = s.sample_id
+
+        if not Unaligned.exists(sample_id, demux_id, sample['Lane']):
+            u = Unaligned()
+            u.sample_id = sample_id
+            u.demux_id = demux_id
+            u.lane = sample['Lane']
+            if nr_samples_lane[ sample['Lane'] ] > 1: # pooled!
+                stats_sample = stats_samples[ sample['Lane'] ][ sample['SampleID'] ]
+
+                u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
+                u.passed_filter_pct = stats_sample['pf_yield_pc']
+                u.readcounts = stats_sample['pf_clusters'] * 2
+                u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
+                u.perfect_indexreads_pct = round(stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5)
+                u.q30_bases_pct = stats_sample['pf_Q30']
+                u.mean_quality_score = stats_sample['pf_qscore']
+            else:
+                u.yield_mb = round(int(stats[ sample['SampleID'] ]['pf_yield']) / 1000000, 2)
+                u.passed_filter_pct = stats[ sample['SampleID'] ]['pf_yield_pc']
+                u.readcounts = stats[ sample['SampleID'] ]['pf_clusters'] * 2
+                u.raw_clusters_per_lane_pct = stats[ sample['SampleID'] ]['raw_clusters_pc']
+                u.perfect_indexreads_pct = round(stats[ sample['SampleID'] ]['perfect_barcodes'] / stats[ sample['SampleID'] ]['barcodes'] * 100, 5)
+                u.q30_bases_pct = stats[ sample['SampleID'] ]['pf_Q30']
+                u.mean_quality_score = stats[ sample['SampleID'] ]['pf_qscore']
+            u.time = func.now()
+
+            manager.add(u)
+
+    manager.flush()
+    manager.commit()
+
+    return True
+
+
+    getsupportquery = (""" SELECT supportparams_id FROM supportparams WHERE document_path = '""" + basedir + unaligned + 
+                      """support.txt' """)
+    indbsupport = dbc.generalquery(getsupportquery)
+    if not indbsupport:
+      insertdict = { 'document_path': basedir + unaligned + 'support.txt', 'systempid': Systempid, 
+                     'systemos': Systemos, 'systemperlv': Systemperlv, 'systemperlexe': Systemperlexe,
+                     'idstring': Idstring, 'program': Program, 'commandline': commandline, 
+                     'sampleconfig_path': samplesheet, 'sampleconfig': SampleSheet, 'time': now }
+      outcome = dbc.sqlinsert('supportparams', insertdict)
+      supportparamsid = outcome['supportparams_id']
+    else:
+      supportparamsid = indbsupport[0]['supportparams_id']
   
-  servername = socket.gethostname()
-  getdatasquery = """ SELECT datasource_id FROM datasource WHERE document_path = '""" + demultistats + """' """
-  print getdatasquery
-  indbdatas = dbc.generalquery(getdatasquery)
-  if not indbdatas:
-    print "Data source not yet added"
-    insertdict = { 'document_path': demultistats, 'runname': runname, 'rundate': rundate, 'machine': machine, 
-                   'supportparams_id': supportparamsid, 'server': servername, 'time': now }
-    outcome = dbc.sqlinsert('datasource', insertdict)
-    datasourceid = outcome['datasource_id']
-  else:
-    datasourceid = indbdatas[0]['datasource_id']
-  print "Datasource " + demultistats + " exists in DB with datasource_id: "+str(datasourceid)
-
-  """ Set up data for table flowcell """
-
-  getflowcellquery = """ SELECT flowcell_id FROM flowcell WHERE flowcellname = '""" + fc + """' """
-  indbfc = dbc.generalquery(getflowcellquery)
-  if not indbfc:
-    print "Flowcell not yet added"
-    insertdict = { 'flowcellname': fc, 'flowcell_pos': Flowcellpos, 'time': now }
-    outcome = dbc.sqlinsert('flowcell', insertdict)
-    flowcellid = outcome['flowcell_id']
-  else:
-    flowcellid = indbfc[0]['flowcell_id']
-  print "Flowcell " + fc + " exists in DB with flowcell_id: " + str(flowcellid)
-
-  """ Set up data for table demux """
+    """ Set up data for table datasource """
+    
+    servername = socket.gethostname()
+    getdatasquery = """ SELECT datasource_id FROM datasource WHERE document_path = '""" + demultistats + """' """
+    indbdatas = dbc.generalquery(getdatasquery)
+    if not indbdatas:
+      insertdict = { 'document_path': demultistats, 'runname': runname, 'rundate': rundate, 'machine': machine, 
+                     'supportparams_id': supportparamsid, 'server': servername, 'time': now }
+      outcome = dbc.sqlinsert('datasource', insertdict)
+      datasourceid = outcome['datasource_id']
+    else:
+      datasourceid = indbdatas[0]['datasource_id']
   
-  getdemuxquery = """ SELECT demux_id FROM demux WHERE flowcell_id = '""" + str(flowcellid) + """' 
-                      AND basemask = '""" + bmask + """' """
-  indbdemux = dbc.generalquery(getdemuxquery)
-  if not indbdemux:
-    print "Demux not yet added"
-    insertdict = { 'flowcell_id': flowcellid, 'datasource_id': datasourceid, 'basemask': bmask, 'time': now }
-    outcome = dbc.sqlinsert('demux', insertdict)
-    demuxid = outcome['demux_id']
-  else:
-    demuxid = indbdemux[0]['demux_id']
-  print "Demux with " + bmask + " from Flowcell: " + fc + " exists in DB with demux_id: " + str(demuxid)
-
-  """ Set up data for table project """
-
-  projects = {}
-  tables = soup.findAll("table")
-  rows = tables[1].findAll('tr')
-  for row in rows:
-    cols = row.findAll('td')
-    project = unicode(cols[6].string).encode('utf8')
-    getprojquery = """ SELECT project_id, time FROM project WHERE projectname = '""" + project + """' """
-    indbproj = dbc.generalquery(getprojquery)
-    if not indbproj:
-      print "Project not yet added"
-      insertdict = { 'projectname': project, 'time': now }
-      outcome = dbc.sqlinsert('project', insertdict)
-      projects[project] = outcome['project_id']
+    """ Set up data for table flowcell """
+  
+    getflowcellquery = """ SELECT flowcell_id FROM flowcell WHERE flowcellname = '""" + fc + """' """
+    indbfc = dbc.generalquery(getflowcellquery)
+    if not indbfc:
+      insertdict = { 'flowcellname': fc, 'flowcell_pos': Flowcellpos, 'time': now }
+      outcome = dbc.sqlinsert('flowcell', insertdict)
+      flowcellid = outcome['flowcell_id']
     else:
-      projects[project] = indbproj[0]['project_id']
-    print "Project " + project + " exists in DB with project_id: "+str(projects[project])
-
-  """ Set up data for table sample """
-
-  for var in projects:
-    print var, projects[var]
-  samples = {}
-  for row in rows:
-    cols = row.findAll('td')
-    samplename = unicode(cols[1].string).encode('utf8')
-    limsid = samplename.split('_')[0]
-    barcode = unicode(cols[3].string).encode('utf8')
-    project = unicode(cols[6].string).encode('utf8')
-    getsamplequery = """ SELECT sample_id FROM sample WHERE samplename = '""" + samplename + """' 
-                         AND barcode = '""" + barcode + """' """
-    indbsample = dbc.generalquery(getsamplequery)
-    if not indbsample:
-      print "Sample not yet added"
-      insertdict = { 'samplename': samplename, 'limsid': limsid, 'project_id': projects[project], 'barcode': barcode, 'time': now }
-      outcome = dbc.sqlinsert('sample', insertdict)
-      samples[samplename] = outcome['sample_id']
+      flowcellid = indbfc[0]['flowcell_id']
+  
+    """ Set up data for table demux """
+    
+    getdemuxquery = """ SELECT demux_id FROM demux WHERE flowcell_id = '""" + str(flowcellid) + """' 
+                        AND basemask = '""" + bmask + """' """
+    indbdemux = dbc.generalquery(getdemuxquery)
+    if not indbdemux:
+      insertdict = { 'flowcell_id': flowcellid, 'datasource_id': datasourceid, 'basemask': bmask, 'time': now }
+      outcome = dbc.sqlinsert('demux', insertdict)
+      demuxid = outcome['demux_id']
     else:
-      samples[samplename] = indbsample[0]['sample_id']
-    print "Sample " + samplename + " exists in DB with sample_id: "+str(samples[samplename])
-
-  """ Set up data for table unaligned """
-
-  for row in rows:
-    cols = row.findAll('td')
-    lane = unicode(cols[0].string).encode('utf8')
-    samplename = unicode(cols[1].string).encode('utf8')
-    barcode = unicode(cols[3].string).encode('utf8')
-    project = unicode(cols[6].string).encode('utf8')
-    yield_mb = unicode(cols[7].string).encode('utf8')
-    yield_mb = yield_mb.replace(",","")
-    passed_filter_pct = unicode(cols[8].string).encode('utf8')
-    Readcounts = unicode(cols[9].string).encode('utf8')
-    Readcounts = Readcounts.replace(",","")
-    raw_clusters_per_lane_pct = unicode(cols[10].string).encode('utf8')
-    perfect_indexreads_pct = unicode(cols[11].string).encode('utf8')
-    q30_bases_pct = unicode(cols[13].string).encode('utf8')
-    mean_quality_score = unicode(cols[14].string).encode('utf8')
-
-    getunalquery = """ SELECT unaligned_id FROM unaligned WHERE sample_id = '""" + str(samples[samplename]) + """' 
-                       AND lane = '""" + lane + """' AND demux_id = '""" + str(demuxid) + """' """
-    indbunal = dbc.generalquery(getunalquery)
-    if not indbunal:
-      print "UnalignedStats not yet added"
-      insertdict = { 'sample_id': samples[samplename], 'demux_id': str(demuxid), 'lane': lane, 
-                     'yield_mb': yield_mb, 'passed_filter_pct': passed_filter_pct, 'readcounts': Readcounts, 
-                      'raw_clusters_per_lane_pct': raw_clusters_per_lane_pct, 
-                      'perfect_indexreads_pct': perfect_indexreads_pct, 'q30_bases_pct': q30_bases_pct, 
-                      'mean_quality_score': mean_quality_score, 'time': now }
-      outcome = dbc.sqlinsert('unaligned', insertdict)
-      unalignedid = outcome['unaligned_id']
-    else:
-      unalignedid = indbunal[0]['unaligned_id']
-    print "Unaligned stats for sample " + samplename + " exists in DB with unaligned_id: " + str(unalignedid)
-
-
-  print now
+      demuxid = indbdemux[0]['demux_id']
+  
+    """ Set up data for table project """
+  
+    projects = {}
+    tables = soup.findAll("table")
+    rows = tables[1].findAll('tr')
+    for row in rows:
+      cols = row.findAll('td')
+      project = unicode(cols[6].string).encode('utf8')
+      getprojquery = """ SELECT project_id, time FROM project WHERE projectname = '""" + project + """' """
+      indbproj = dbc.generalquery(getprojquery)
+      if not indbproj:
+        insertdict = { 'projectname': project, 'time': now }
+        outcome = dbc.sqlinsert('project', insertdict)
+        projects[project] = outcome['project_id']
+      else:
+        projects[project] = indbproj[0]['project_id']
+  
+    """ Set up data for table sample """
+  
+    samples = {}
+    for row in rows:
+      cols = row.findAll('td')
+      samplename = unicode(cols[1].string).encode('utf8')
+      limsid = samplename.split('_')[0]
+      barcode = unicode(cols[3].string).encode('utf8')
+      project = unicode(cols[6].string).encode('utf8')
+      getsamplequery = """ SELECT sample_id FROM sample WHERE samplename = '""" + samplename + """' 
+                           AND barcode = '""" + barcode + """' """
+      indbsample = dbc.generalquery(getsamplequery)
+      if not indbsample:
+        insertdict = { 'samplename': samplename, 'limsid': limsid, 'project_id': projects[project], 'barcode': barcode, 'time': now }
+        outcome = dbc.sqlinsert('sample', insertdict)
+        samples[samplename] = outcome['sample_id']
+      else:
+        samples[samplename] = indbsample[0]['sample_id']
+  
+    """ Set up data for table unaligned """
+  
+    for row in rows:
+      cols = row.findAll('td')
+      lane = unicode(cols[0].string).encode('utf8')
+      samplename = unicode(cols[1].string).encode('utf8')
+      barcode = unicode(cols[3].string).encode('utf8')
+      project = unicode(cols[6].string).encode('utf8')
+      yield_mb = unicode(cols[7].string).encode('utf8')
+      yield_mb = yield_mb.replace(",","")
+      passed_filter_pct = unicode(cols[8].string).encode('utf8')
+      Readcounts = unicode(cols[9].string).encode('utf8')
+      Readcounts = Readcounts.replace(",","")
+      raw_clusters_per_lane_pct = unicode(cols[10].string).encode('utf8')
+      perfect_indexreads_pct = unicode(cols[11].string).encode('utf8')
+      q30_bases_pct = unicode(cols[13].string).encode('utf8')
+      mean_quality_score = unicode(cols[14].string).encode('utf8')
+  
+      getunalquery = """ SELECT unaligned_id FROM unaligned WHERE sample_id = '""" + str(samples[samplename]) + """' 
+                         AND lane = '""" + lane + """' AND demux_id = '""" + str(demuxid) + """' """
+      indbunal = dbc.generalquery(getunalquery)
+      if not indbunal:
+        insertdict = { 'sample_id': samples[samplename], 'demux_id': str(demuxid), 'lane': lane, 
+                       'yield_mb': yield_mb, 'passed_filter_pct': passed_filter_pct, 'readcounts': Readcounts, 
+                        'raw_clusters_per_lane_pct': raw_clusters_per_lane_pct, 
+                        'perfect_indexreads_pct': perfect_indexreads_pct, 'q30_bases_pct': q30_bases_pct, 
+                        'mean_quality_score': mean_quality_score, 'time': now }
+        outcome = dbc.sqlinsert('unaligned', insertdict)
+        unalignedid = outcome['unaligned_id']
+      else:
+        unalignedid = indbunal[0]['unaligned_id']

@@ -11,6 +11,8 @@ import glob
 import re
 import os
 
+from .utils import get_samplesheet
+
 def xpathsum(tree, xpath):
     """Sums all numbers found at these xpath nodes
 
@@ -98,27 +100,6 @@ def get_sample_summary( tree, project, sample, barcode):
         'pf_qscore': pf_qscore
     }
 
-
-def get_samplesheet( demux_dir, file_name='SampleSheet.csv', delim=','):
-    """Reads in and parses a samplesheet. The samplesheet is found in the provided demux_dir.
-    Lines starting with #, [ and blank will be skipped.
-    First line will be taken as the header.
-
-    Args:
-        demux_dir (path): FQ path of demux_dir
-        delim (str): the samplesheet delimiter
-
-    Returns (list of dicts):
-        Keys are the header, values the lines.
-
-    """
-    with open(demux_dir + '/' + file_name) as sample_sheet:
-        lines = [ line for line in sample_sheet.readlines() if not line.startswith(('#', '[')) and len(line) ] # skip comments and special headers
-        lines = [ line.strip().split(delim) for line in lines ] # read lines
-
-        header = lines[0]
-
-        return [ dict(zip(header, line)) for line in lines[1:] ]
 
 def calc_undetermined( demux_dir):
     sizes = {}
