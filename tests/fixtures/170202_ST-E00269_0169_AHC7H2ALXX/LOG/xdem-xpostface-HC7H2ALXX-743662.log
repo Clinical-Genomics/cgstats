@@ -1,0 +1,24 @@
+[20170205093510] VERSION 3.42.5
+[20170205093511] INDIR: /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX//
+[20170205093511] /home/hiseq.clinical/miniconda/envs/prod/bin/python /mnt/hds/proj/bioinfo/SCRIPTS//xcreatestats.py /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX// > /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///stats.txt
+[20170205093513] bash /mnt/hds/proj/bioinfo/SCRIPTS//xcreateunaligned.bash /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX// > /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///LOG/xcreateunaligned.20170205093513.log
+[20170205093514] bash /mnt/hds/proj/bioinfo/SCRIPTS//xundetermined.bash /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///
+/mnt/hds/proj/bioinfo/SCRIPTS//xundetermined.bash VERSION 3.42.5
+/mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 1
+Submitted batch job 743663
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 2
+Submitted batch job 743664
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 3
+Submitted batch job 743665
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 4
+Submitted batch job 743666
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 5
+Submitted batch job 743667
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 6
+Submitted batch job 743668
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 7
+Submitted batch job 743669
+sbatch -J 'xundetermined-HC7H2ALXX' /mnt/hds/proj/bioinfo/SCRIPTS//undetermined.batch /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX/// 8
+Submitted batch job 743670
+[20170205093514] date +'%Y%m%d%H%M%S' > /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///copycomplete.txt

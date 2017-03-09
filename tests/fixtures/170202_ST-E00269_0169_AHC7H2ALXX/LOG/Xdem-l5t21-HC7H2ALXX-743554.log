@@ -1,0 +1,51 @@
+[20170205073344] starting, will use /scratch/743554
+[20170205073344] INDIR: /mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX
+[20170205073344] OUTDIR: /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX//
+[20170205073344] LANE: 5
+[20170205073344] TILES: 21 22
+2017-02-05 07:33:44 [2529880] Command-line invocation: /usr/local/bin/bcl2fastq --version 
+2017-02-05 07:33:44 [2529880] INFO: Minimum log level: INFO
+2017-02-05 07:33:44 [2529880] INFO: Runfolder path: '/home/hiseq.clinical/'
+2017-02-05 07:33:44 [2529880] INFO: Input path: '/home/hiseq.clinical/Data/Intensities/BaseCalls/'
+2017-02-05 07:33:44 [2529880] INFO: Intensities path: '/home/hiseq.clinical/Data/Intensities/'
+2017-02-05 07:33:44 [2529880] INFO: Output path: '/home/hiseq.clinical/Data/Intensities/BaseCalls/'
+2017-02-05 07:33:44 [2529880] INFO: InterOp path: '/home/hiseq.clinical/InterOp/'
+2017-02-05 07:33:44 [2529880] INFO: Stats path: '/home/hiseq.clinical/Data/Intensities/BaseCalls/Stats/'
+2017-02-05 07:33:44 [2529880] INFO: Reports path: '/home/hiseq.clinical/Data/Intensities/BaseCalls/Reports/'
+2017-02-05 07:33:44 [2529880] INFO: Detected CPUs: 16
+2017-02-05 07:33:44 [2529880] INFO: Loading threads: 3
+2017-02-05 07:33:44 [2529880] INFO: Demultiplexing threads: 5
+2017-02-05 07:33:44 [2529880] INFO: Processing threads: 10
+2017-02-05 07:33:44 [2529880] INFO: Writing threads: 3
+2017-02-05 07:33:44 [2529880] INFO: Aggregated tiles: AUTO
+2017-02-05 07:33:44 [2529880] INFO: Allowed barcode mismatches: 1 
+2017-02-05 07:33:44 [2529880] INFO: Tiles: <ALL>
+2017-02-05 07:33:44 [2529880] INFO: Minimum trimmed read length: 32
+2017-02-05 07:33:44 [2529880] INFO: Use bases mask: <NONE>
+2017-02-05 07:33:44 [2529880] INFO: Mask short adapter reads: 10
+2017-02-05 07:33:44 [2529880] INFO: Adapter stringency: 0.9
+2017-02-05 07:33:44 [2529880] INFO: Ignore missing BCLs: NO
+2017-02-05 07:33:44 [2529880] INFO: Ignore missing filters: NO
+2017-02-05 07:33:44 [2529880] INFO: Ignore missing locs: NO
+2017-02-05 07:33:44 [2529880] INFO: Include non-PF clusters: NO
+2017-02-05 07:33:44 [2529880] INFO: Create FASTQs for index reads: NO
+2017-02-05 07:33:44 [2529880] INFO: Writing threads: 3
+BCL to FASTQ file converter
+bcl2fastq v2.15.0.4
+Copyright (c) 2007-2014 Illumina, Inc.
+[20170205073344] start copying
+[20170205074202] start demultiplexing one lane 5, part 21 22
+[20170205074202] /usr/local/bin/bcl2fastq -d 2 -r 4 -w 4 -p 14 --tiles s_5_21 --tiles s_5_22 -R /scratch/743554//mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX -o /scratch/743554/Xout --barcode-mismatches 1 --use-bases-mask Y151,I8,Y151
+[20170205081917] starting copy output
+[20170205081917] mkdir -p /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX//
+[20170205081917] mkdir -p /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//
+[20170205081917] cp -R /scratch/743554/Xout/Reports /scratch/743554/Xout/Stats /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//
+[20170205081917] cp /mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX/SampleSheet.csv /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///
+[20170205081917] mkdir -p /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Project_659262/Sample_SVE2274A8_TCCGCGAA
+[20170205081917] cp /scratch/743554/Xout/659262/SVE2274A8_TCCGCGAA/659262_S1_L005_R1_001.fastq.gz /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Project_659262/Sample_SVE2274A8_TCCGCGAA/659262_S1_L005_R1_001.fastq.gz
+[20170205082022] mkdir -p /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Project_659262/Sample_SVE2274A8_TCCGCGAA
+[20170205082022] cp /scratch/743554/Xout/659262/SVE2274A8_TCCGCGAA/659262_S1_L005_R2_001.fastq.gz /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Project_659262/Sample_SVE2274A8_TCCGCGAA/659262_S1_L005_R2_001.fastq.gz
+[20170205082118] cp /scratch/743554/Xout/Undetermined_S0_L005_R1_001.fastq.gz /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Undetermined_S0_L005_R1_001.fastq.gz
+[20170205082121] cp /scratch/743554/Xout/Undetermined_S0_L005_R2_001.fastq.gz /mnt/hds/proj/bioinfo/DEMUX/170202_ST-E00269_0169_AHC7H2ALXX///l5t21//Undetermined_S0_L005_R2_001.fastq.gz
+[20170205082124] Done copying output
+[20170205082137] Done removing temp files
