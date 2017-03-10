@@ -5,6 +5,7 @@ import pkg_resources
 from alchy import Manager
 
 from .models import Model, Sample, Flowcell, Demux, Datasource, Unaligned
+from sqlalchemy import or_
 
 SAMPLE_PATTERN = "{}\_%"
 log = logging.getLogger(__name__)
@@ -33,7 +34,11 @@ def flowcells(sample=None):
     if sample:
         pattern = SAMPLE_PATTERN.format(sample)
         query = (query.join(Demux.unaligned, Unaligned.sample)
-                      .filter(Sample.samplename.like(pattern)))
+                      .filter(
+                          or_(Sample.samplename.like(pattern),
+                              Sample.samplename.like("{}".format(sample)))
+                          )
+                      )
     return query
 
 
