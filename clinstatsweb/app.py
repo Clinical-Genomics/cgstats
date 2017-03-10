@@ -6,9 +6,9 @@ from flask import Flask, render_template
 from flask_alchy import Alchy
 from flask_bootstrap import Bootstrap
 
-from clinstatsdb.db import Model
-from clinstatsdb.analysis import api as analysis_api
-from clinstatsdb.analysis.models import AnalysisSample
+from cgstats.db import Model
+from cgstats.analysis import api as analysis_api
+from cgstats.analysis.models import AnalysisSample
 
 TEMPLATES_AUTO_RELOAD = True
 SQLALCHEMY_TRACK_MODIFICATIONS = False

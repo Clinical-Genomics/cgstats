@@ -5,7 +5,7 @@ import socket
 from datetime import datetime
 from path import Path
 
-from clinstatsdb.db.parse import gather_supportparams, gather_datasource
+from cgstats.db.parse import gather_supportparams, gather_datasource
 
 def test_gather_supportparams(rapid_run_dir):
     demuxdir = Path(rapid_run_dir)

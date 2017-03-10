@@ -9,9 +9,9 @@ import logging
 import socket
 
 from sqlalchemy import func
-from clinstatsdb.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
-from clinstatsdb.utils import xstats
-from clinstatsdb.utils.utils import get_projects, gather_flowcell
+from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
+from cgstats.utils import xstats
+from cgstats.utils.utils import get_projects, gather_flowcell
 
 logger = logging.getLogger(__name__)
 

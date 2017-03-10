@@ -1,4 +1,4 @@
-from clinstatsdb.utils import stats
+from cgstats.utils import stats
 
 def test_parse():
     assert stats.parse('tests/fixtures/150114_D00134_0168_AHB07NADXX', 'Unaligned') == {

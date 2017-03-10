@@ -1,4 +1,4 @@
-from clinstatsdb.utils import xstats
+from cgstats.utils import xstats
 
 def test_parse():
     assert xstats.parse('tests/fixtures/170202_ST-E00269_0169_AHC7H2ALXX/') == {

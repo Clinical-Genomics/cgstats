@@ -14,7 +14,7 @@ log = logging.getLogger(__name__)
 
 def connect(uri):
     """Connect to the database."""
-    for models in pkg_resources.iter_entry_points('clinstatsdb.models.1'):
+    for models in pkg_resources.iter_entry_points('cgstats.models.1'):
         models.load()
     log.debug('open connection to database: %s', uri)
     manager = Manager(config=dict(SQLALCHEMY_DATABASE_URI=uri), Model=Model,

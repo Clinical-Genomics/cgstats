@@ -103,22 +103,23 @@ setup(
     license='BSD License',
     entry_points={
         'console_scripts': [
-            'clinstatsdb = clinstatsdb.cli:root',
+            'cgstats = cgstats.cli:root',
         ],
-        'clinstatsdb.subcommands.1': [
-            'init = clinstatsdb.initialize:init',
-            'show = clinstatsdb.db.cli:show',
-            'analysis = clinstatsdb.analysis.cli:analysis',
-            'sample = clinstatsdb.db.cli:sample',
-            'flowcells = clinstatsdb.db.cli:flowcells',
-            'samples = clinstatsdb.db.cli:samples',
-            'add = clinstatsdb.db.cli:xadd',
-            'delete = clinstatsdb.db.cli:delete',
-            'select = clinstatsdb.db.cli:select',
+        'cgstats.subcommands.1': [
+            'init = cgstats.initialize:init',
+            'show = cgstats.db.cli:show',
+            'analysis = cgstats.analysis.cli:analysis',
+            'sample = cgstats.db.cli:sample',
+            'flowcells = cgstats.db.cli:flowcells',
+            'samples = cgstats.db.cli:samples',
+            'add = cgstats.db.cli:xadd',
+            #'delete = cgstats.db.cli:delete',
+            'select = cgstats.db.cli:select',
+            #'lanestats = cgstats.db.cli:lanestats',
         ],
-        'clinstatsdb.models.1': [
-            'core = clinstatsdb.db.models',
-            'analysis = clinstatsdb.analysis.models',
+        'cgstats.models.1': [
+            'core = cgstats.db.models',
+            'analysis = cgstats.analysis.models',
         ]
     },
 )

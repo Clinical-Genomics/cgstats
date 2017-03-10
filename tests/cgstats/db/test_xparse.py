@@ -4,7 +4,7 @@
 import socket
 from path import Path
 
-from clinstatsdb.db.xparse import gather_supportparams, gather_datasource
+from cgstats.db.xparse import gather_supportparams, gather_datasource
 
 def test_gather_supportparams(x_run_dir):
     assert gather_supportparams(x_run_dir) == {

@@ -7,8 +7,8 @@ import pkg_resources
 import click
 import yaml
 
-from clinstatsdb import __title__, __version__
-from clinstatsdb.db import api
+from cgstats import __title__, __version__
+from cgstats.db import api
 
 log = logging.getLogger(__name__)
 
@@ -70,7 +70,7 @@ class EntryPointsCLI(click.MultiCommand):
 
 
 @click.group(cls=EntryPointsCLI)
-@click.option('-c', '--config', default='~/.clinstatsdb.yaml',
+@click.option('-c', '--config', default='~/.cgstats.yaml',
               type=click.Path(), help='path to config file')
 @click.option('-d', '--database', help='path/URI of the SQL database')
 @click.option('-l', '--log-level', default='INFO', help='level to log at')

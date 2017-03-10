@@ -3,7 +3,7 @@ from fabric.api import run, cd, env
 from fabric.utils import puts
 
 env.use_ssh_config = True
-APP_NAME = 'clinstatsdb'
+APP_NAME = 'cgstats'
 
 
 def update():
