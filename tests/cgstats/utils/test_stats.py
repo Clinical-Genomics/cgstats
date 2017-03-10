@@ -1,7 +1,7 @@
 from cgstats.utils import stats
 
 def test_parse():
-    assert stats.parse('tests/fixtures/150114_D00134_0168_AHB07NADXX', 'Unaligned') == {
+    assert stats.parse('tests/fixtures/150114_D00134_0168_AHB07NADXX/Unaligned/Basecall_Stats_HB07NADXX/Demultiplex_Stats.htm') == {
         'basemask': 'Y101,I6n,Y101',
         'rundate': u'150114',
         'support': {

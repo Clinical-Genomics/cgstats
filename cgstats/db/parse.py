@@ -112,7 +112,7 @@ def add(manager, demuxdir, unaligneddir):
   
     basemask = support_params['command']['--use-bases-mask']
 
-    stats = stats.parse(demuxdir, unaligneddir)
+    stats = stats.parse(demux_stats)
 
     supportparams_id = Supportparams.exists(os.path.join(demux_dir, unaligneddir))
     new_supportparams = gather_supportparams(demuxdir, unaligneddir)

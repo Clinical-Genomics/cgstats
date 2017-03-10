@@ -42,7 +42,6 @@ setup(
     description='Models and access to clinstatsdb',
     long_description=long_description,
     # What does your project relate to? Separate with spaces.
-    description='CRUD commands for cgstats',
     author='Kenny Billiau',
     author_email='kenny.billiau@scilifelab.se',
     license='MIT',
@@ -56,21 +55,6 @@ setup(
 
     install_requires=required,
     cmdclass=dict(test=PyTest),
-
-    # To provide executable scripts, use entry points in preference to the
-    # "scripts" keyword. Entry points provide cross-platform support and
-    # allow pip to create the appropriate form of executable for the
-    # target platform.
-    entry_points={
-        'console_scripts': [
-            'cgstats = deliver.cli:crud',
-        ],
-        'createlinks.subcommands.3': [
-            'update = cgstats.cli:update',
-            'retrieve = cgstats.cli:retrieve',
-            'delete = cgstats.cli:delete',
-        ]
-    },
 
     # See: http://pypi.python.org/pypi?%3Aaction=list_classifiers
     classifiers=[
@@ -100,7 +84,6 @@ setup(
         'Environment :: Console',
     ],
     platforms='any',
-    license='BSD License',
     entry_points={
         'console_scripts': [
             'cgstats = cgstats.cli:root',
