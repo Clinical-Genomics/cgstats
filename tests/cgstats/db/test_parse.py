@@ -43,7 +43,7 @@ def test_gather_supportparams(rapid_run_dir):
                         'HB07NADXX,2,SIB914A11_sureselect11,hg19,GGCTAC,504910,N,R1,NN,504910\r\n'
                         'HB07NADXX,2,SIB914A12_sureselect12,hg19,CTTGTA,504910,N,R1,NN,504910\r\n'
                         'HB07NADXX,2,SIB914A15_sureselect15,hg19,GAAACC,504910,N,R1,NN,504910\r\n',
-        'time': datetime(2017, 3, 9, 11, 36, 45, 959657)
+        'time': datetime(2017, 3, 10, 16, 14, 55, 233857)
         }
 
 
