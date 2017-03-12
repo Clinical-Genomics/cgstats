@@ -9,7 +9,7 @@ def parse(demux_stats):
     """parses the Demultiplex_Stats.htm
 
     Args:
-        demuxdir (str): a path to demux dir of the run
+        demux_stats (str): a path to Demultiplex_Stats.htm of the run
         unaligneddir (str): name of the Unaligned dir
 
     Returns: TODO
