@@ -1,10 +1,10 @@
 alchy
 click
-bumpversion==0.5.3
+bumpversion
 pymysql
-PyYAML==3.11
-SQLAlchemy>=1.0.9
-wheel==0.26.0
+PyYAML
+SQLAlchemy
+wheel
 
 Flask-Alchy
 Flask-Bootstrap
