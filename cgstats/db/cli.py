@@ -5,6 +5,7 @@ import click
 from .models import Flowcell, Version
 from . import api
 from . import xparse
+from . import parse
 
 log = logging.getLogger(__name__)
 

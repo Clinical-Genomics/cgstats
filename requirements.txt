@@ -5,7 +5,7 @@ pymysql
 PyYAML
 SQLAlchemy
 wheel
-
+SQLAlchemy
 Flask-Alchy
 Flask-Bootstrap
 Flask

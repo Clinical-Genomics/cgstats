@@ -4,14 +4,13 @@
 from __future__ import print_function, division
 
 import xml.etree.cElementTree as et
-from bs4 import BeautifulSoup
-from pprint import pprint
-import sys
 import glob
 import re
 import os
 
-from .utils import get_samplesheet
+from path import Path
+
+from demux.utils import Samplesheet
 
 def xpathsum(tree, xpath):
     """Sums all numbers found at these xpath nodes
@@ -121,38 +120,6 @@ def calc_undetermined( demux_dir):
 
     return proc_undetermined
 
-def get_lanes( sample_sheet):
-    """Get the lanes from the SampleSheet
-
-    Args:
-        sample_sheet (list of dicts): a samplesheet with each line a dict. The keys are the header, the values the split line
-
-    Returns (dict of lists): lane is key, list of lines as value
-
-    """
-    rs = {}
-    for line in sample_sheet:
-        if line['Lane'] not in rs: rs[ line['Lane'] ] = []
-        rs[ line['Lane'] ].append(line)
-
-    return rs
-
-def get_samples( sample_sheet):
-    """Gets the samples from a sample sheet.
-
-    Args:
-        sample_sheet (list of dicts): a samplesheet with each line a dict. The keys are the header, the values the split line
-
-    Returns (dict): sample is key, raw SampleSheet line is value
-
-    """
-    rs = {}
-    for line in sample_sheet:
-        if line['SampleID'] not in rs: rs[ line['SampleID'] ] = []
-        rs[ line['SampleID'] ].append(line)
-
-    return rs
-
 def get_raw_clusters_lane(total_sample_summary):
     """TODO: Docstring for get_raw_clusters_lane.
 
@@ -176,22 +143,22 @@ def parse_samples(demux_dir):
         demux_dir (str): the DEMUX dir
 
     """
-    sample_sheet = get_samplesheet(demux_dir)
-    samples = get_samples(sample_sheet)
-    lanes = get_lanes(sample_sheet)
+    samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
+    samples = list(set(samplesheet.samples()))
+    lanes = list(set(samplesheet.column('Lane')))
 
     # get all % undetermined indexes / sample
     proc_undetermined = calc_undetermined(demux_dir)
 
     # create a { 1: {}, 2: {}, ... } structure
-    summaries = dict(zip(lanes.keys(), [ {} for t in xrange(len(lanes))])) # init ;)
+    summaries = dict(zip(lanes, [ {} for t in xrange(len(lanes))])) # init ;)
 
     # preload the stats files
-    et_stats_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
-    et_index_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
-    for lane in lanes.keys():
-        stats_files = glob.glob('%s/l%st??/Stats/ConversionStats.xml' % (demux_dir, lane))
-        index_files = glob.glob('%s/l%st??/Stats/DemultiplexingStats.xml' % (demux_dir, lane))
+    et_stats_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    et_index_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    for lane in lanes:
+        stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
+        index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
 
         if len(stats_files) == 0:
             exit("No stats file found for sample {}".format(sample))
@@ -206,8 +173,8 @@ def parse_samples(demux_dir):
             et_index_files[lane].append(et.parse(f))
 
     # get all the stats numbers
-    for sample, lines in samples.iteritems():
-        for line in lines:
+    for sample in samples:
+        for line in samplesheet.lines_per_column('SampleID', sample):
             lane = line['Lane']
             if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
 
@@ -219,8 +186,8 @@ def parse_samples(demux_dir):
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
-    total_sample_summary = dict(zip(lanes.keys(), [ {} for t in xrange(len(lanes))]))
-    for line in sample_sheet:
+    total_sample_summary = dict(zip(lanes, [ {} for t in xrange(len(lanes))]))
+    for line in samplesheet.lines():
         total_sample_summary[ line['Lane'] ][ line['SampleID'] ] = {
             'raw_clusters': 0,
             'raw_yield': 0,
@@ -281,8 +248,8 @@ def parse( demux_dir):
 
     """
 
-    sample_sheet = get_samplesheet(demux_dir)
-    lanes = get_lanes(sample_sheet)
+    samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
+    lanes = list(set(samplesheet.column('Lane')))
 
     # get all % undetermined indexes / sample
     proc_undetermined = calc_undetermined(demux_dir)
@@ -291,9 +258,9 @@ def parse( demux_dir):
     summaries = dict(zip(lanes, [ [] for t in xrange(len(lanes))])) # init ;)
 
     # preload the stats files
-    et_stats_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
-    et_index_files = dict(zip(lanes.keys(), [ [] for t in xrange(len(lanes))]))
-    for lane in lanes.keys():
+    et_stats_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    et_index_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    for lane in lanes:
         stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
         index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
 
@@ -310,21 +277,21 @@ def parse( demux_dir):
             et_index_files[lane].append(et.parse(f))
 
     # get all the stats numbers
-    for lane, lines in lanes.iteritems():
+    for lane in lanes:
 
         # only parse this on lane level
-        for tree in et_stats_files[ lane ]:
+        for tree in et_stats_files[lane]:
             summaries[lane].append(get_sample_summary(tree, 'all', 'all', 'all'))
 
         # we need barcode stats on sample level
-        for line in lines:
+        for line in samplesheet.lines_per_column('Lane', lane):
             for tree in et_index_files[ lane ]:
                 summaries[lane].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
 
     # sum the numbers over a lane
     # create a { 1: {'raw_clusters': 0, ... } } structure
     total_lane_summary = {}
-    for line in sample_sheet:
+    for line in samplesheet.lines():
         total_lane_summary[ line['Lane'] ] = {
             'raw_clusters': 0,
             'raw_yield': 0,
@@ -371,12 +338,5 @@ def parse( demux_dir):
         }
 
     return rs
-
-def main(argv):
-    from pprint import pprint
-    pprint(parse(argv[0]))
-
-if __name__ == '__main__':
-    main(sys.argv[1:])
 
 __ALL__ = [ 'parse', 'parse_samples' ]
