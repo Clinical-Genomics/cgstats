@@ -39,8 +39,8 @@ def flowcells(sample=None):
                       .filter(
                           or_(Sample.samplename.like(pattern),
                               Sample.samplename.like("{}".format(sample)))
-                          )
                       )
+                )
     return query
 
 
