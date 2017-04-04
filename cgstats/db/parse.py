@@ -14,8 +14,10 @@ from datetime import datetime
 
 from path import Path
 
-from ..utils.utils import get_projects, gather_flowcell
 from demux.utils import Samplesheet
+from cgstats.utils import stats as hiseqstats
+from cgstats.utils.utils import get_projects, gather_flowcell
+from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 
 def gather_supportparams(demuxdir, unaligneddir):
     """
@@ -107,14 +109,14 @@ def add(manager, demuxdir, unaligneddir):
     """
 
     demuxdir = Path(demuxdir)
-    demux_stats = glob(demuxdir.joinpath(unaligneddir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
+    demux_stats = glob.glob(demuxdir.joinpath(unaligneddir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
 
     samplesheet_path = demuxdir.joinpath('SampleSheet.csv')
     samplesheet = Samplesheet(samplesheet_path)
 
-    stats = stats.parse(demux_stats)
+    stats = hiseqstats.parse(demux_stats)
 
-    supportparams_id = Supportparams.exists(os.path.join(demux_dir, unaligneddir))
+    supportparams_id = Supportparams.exists(demuxdir.joinpath(unaligneddir))
     new_supportparams = gather_supportparams(demuxdir, unaligneddir)
     if not supportparams_id:
         supportparams = Supportparams()
@@ -187,7 +189,6 @@ def add(manager, demuxdir, unaligneddir):
 
         project_id_of[ project_name ] = project_id
 
-    stats = stats.parse(demuxdir, unaligneddir)
     for line in samplesheet.lines():
         sample_id = Sample.exists(line['SampleID'], line['index'])
         if not sample_id:
@@ -226,7 +227,7 @@ def add(manager, demuxdir, unaligneddir):
     return True
 
 
-    #getsupportquery = (""" SELECT supportparams_id FROM supportparams WHERE document_path = '""" + basedir + unaligned + 
+    #getsupportquery = (""" SELECT supportparams_id FROM supportparams WHERE document_path = '""" + basedir + unaligned +
     #                  """support.txt' """)
     #indbsupport = dbc.generalquery(getsupportquery)
     #if not indbsupport:

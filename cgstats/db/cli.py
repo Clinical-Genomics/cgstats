@@ -103,9 +103,10 @@ def select(context, flowcell, project):
 
 @click.command()
 @click.argument('demux_dir')
-@click.option('-m', '--machine', click.Choice(['X', '2500']), help='machine type')
+@click.option('-m', '--machine', type=click.Choice(['X', '2500']), help='machine type')
+@click.option('-u', '--unaligned', help='the ungaligned dir name')
 @click.pass_context
-def add(context, machine, demux_dir):
+def add(context, machine, demux_dir, unaligned):
     """Add an X FC to cgstats."""
 
     #if not Version.check(config['clinstats']['name'], config['clinstats']['version']):
@@ -117,4 +118,4 @@ def add(context, machine, demux_dir):
     if machine == 'X':
         xparse.add(manager, demux_dir)
     if machine == '2500':
-        parse.add(manager, demux_dir)
+        parse.add(manager, demux_dir, unaligned)
