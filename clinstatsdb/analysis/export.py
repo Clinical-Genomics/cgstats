@@ -12,8 +12,12 @@ def fillin_data(existing_data, case_data, samples_data):
 
     # fill in sample data
     for sample_data in existing_data['samples']:
-        new_data = samples_data[sample_data['id']]
-        sample_data.update(new_data)
+        if sample_data['id'] in samples_data:
+            new_data = samples_data[sample_data['id']]
+            sample_data.update(new_data)
+        else:
+            log.warn("skipping sample: %s", sample_data['id'])
+            existing_data['samples'].remove(sample_data)
 
     return existing_data
 
