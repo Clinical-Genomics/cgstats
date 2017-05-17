@@ -10,14 +10,19 @@ def fillin_data(existing_data, case_data, samples_data):
     """Fill in data about a case with cgstats data."""
     existing_data.update(case_data)
 
-    # fill in sample data
+    # filter out samples that are not in the analysis
+    relevant_samples = []
     for sample_data in existing_data['samples']:
         if sample_data['id'] in samples_data:
-            new_data = samples_data[sample_data['id']]
-            sample_data.update(new_data)
+            relevant_samples.append(sample_data)
         else:
             log.warn("skipping sample: %s", sample_data['id'])
-            existing_data['samples'].remove(sample_data)
+    existing_data['samples'] = relevant_samples
+
+    # fill in sample data
+    for sample_data in existing_data['samples']:
+        new_data = samples_data[sample_data['id']]
+        sample_data.update(new_data)
 
     return existing_data
 
