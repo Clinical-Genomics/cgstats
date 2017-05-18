@@ -12,6 +12,7 @@ import socket
 import ast
 from datetime import datetime
 
+from sqlalchemy import func
 from path import Path
 
 from demux.utils import Samplesheet
@@ -68,8 +69,11 @@ def gather_supportparams(demuxdir, unaligneddir):
                 command_str += line + '\n'
 
     c = ast.literal_eval(command_str)
-    # convert to a dict
-    command = dict(zip(*[iter(c)]*2))
+
+    command = {
+        '--sample-sheet': c[ c.index('--sample-sheet') + 1],
+        '--use-bases-mask': c[ c.index('--use-bases-mask') + 1],
+    }
 
     samplesheet_path = str(demuxdir.joinpath('SampleSheet.csv'))
     samplesheet = Samplesheet(samplesheet_path)
@@ -99,25 +103,25 @@ def gather_datasource(demuxdir):
 
     return rs
 
-def gather_demux(supportparams):
-    return supportparams['command']['--use-bases-mark']
+def get_basemask(supportparams):
+    return supportparams['command']['--use-bases-mask']
 
-def add(manager, demuxdir, unaligneddir):
+def add(manager, demux_dir, unaligned_dir):
     """TODO: Docstring for add.
     Returns: TODO
 
     """
 
-    demuxdir = Path(demuxdir)
-    demux_stats = glob.glob(demuxdir.joinpath(unaligneddir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
+    demux_dir = Path(demux_dir)
+    demux_stats = glob.glob(demux_dir.joinpath(unaligned_dir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
 
-    samplesheet_path = demuxdir.joinpath('SampleSheet.csv')
+    samplesheet_path = demux_dir.joinpath('SampleSheet.csv')
     samplesheet = Samplesheet(samplesheet_path)
 
     stats = hiseqstats.parse(demux_stats)
 
-    supportparams_id = Supportparams.exists(demuxdir.joinpath(unaligneddir))
-    new_supportparams = gather_supportparams(demuxdir, unaligneddir)
+    supportparams_id = Supportparams.exists(demux_dir.joinpath(unaligned_dir))
+    new_supportparams = gather_supportparams(demux_dir, unaligned_dir)
     if not supportparams_id:
         supportparams = Supportparams()
         supportparams.document_path = new_supportparams['document_path']
@@ -149,7 +153,7 @@ def add(manager, demuxdir, unaligneddir):
         manager.flush()
         datasource_id = datasource.datasource_id
 
-    flowcell_namepos = gather_flowcell(demuxdir)
+    flowcell_namepos = gather_flowcell(demux_dir)
     flowcell_id   = Flowcell.exists(flowcell_namepos['name'])
     if not flowcell_id:
         flowcell = Flowcell()
@@ -162,13 +166,13 @@ def add(manager, demuxdir, unaligneddir):
         manager.flush()
         flowcell_id = flowcell.flowcell_id
 
-    new_demux = gather_demux(new_supportparams)
-    demux_id = Demux.exists(flowcell_id, new_demux['basemask'])
+    basemask = get_basemask(new_supportparams)
+    demux_id = Demux.exists(flowcell_id, basemask)
     if not demux_id:
         demux = Demux()
         demux.flowcell_id = flowcell_id
         demux.datasource_id = datasource_id
-        demux.basemask = new_demux['basemask']
+        demux.basemask = basemask
         demux.time = func.now()
 
         manager.add(demux)
@@ -176,7 +180,7 @@ def add(manager, demuxdir, unaligneddir):
         demux_id = demux.demux_id
 
     project_id_of = {} # project name: project id
-    for project_name in get_projects(demux_dir):
+    for project_name in get_projects(demux_dir, unaligned_dir):
         project_id = Project.exists(project_name)
         if not project_id:
             p = Project()
@@ -190,39 +194,39 @@ def add(manager, demuxdir, unaligneddir):
         project_id_of[ project_name ] = project_id
 
     for line in samplesheet.lines():
-        sample_id = Sample.exists(line['SampleID'], line['index'])
+        sample_id = Sample.exists(line['SampleID'], line['Index'])
         if not sample_id:
             s = Sample()
-            s.project_id = project_id_of[ line['Project'] ]
+            s.project_id = project_id_of[ line['SampleProject'] ]
             s.samplename = line['SampleID']
             s.limsid = line['SampleID'].split('_')[0]
-            s.barcode = line['index']
+            s.barcode = line['Index']
             s.time = func.now()
 
             manager.add(s)
             manager.flush()
             sample_id = s.sample_id
 
-        if not Unaligned.exists(sample_id, demux_id, sample['Lane']):
+        if not Unaligned.exists(sample_id, demux_id, line['Lane']):
             u = Unaligned()
             u.sample_id = sample_id
             u.demux_id = demux_id
-            u.lane = sample['Lane']
-            stats_sample = stats_samples[ sample['Lane'] ][ sample['SampleID'] ]
+            u.lane = line['Lane']
+            stats_sample = stats[line['Lane']][line['SampleID']]
 
-            u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
-            u.passed_filter_pct = stats_sample['pf_yield_pc']
-            u.readcounts = stats_sample['pf_clusters'] * 2
+            u.yield_mb = int(stats_sample['yield_mb'])
+            u.passed_filter_pct = stats_sample['pf_pc']
+            u.readcounts = stats_sample['readcounts'] * 2
             u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
-            u.perfect_indexreads_pct = round(stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5)
-            u.q30_bases_pct = stats_sample['pf_Q30']
-            u.mean_quality_score = stats_sample['pf_qscore']
+            u.perfect_indexreads_pct = stats_sample['perfect_barcodes_pc']
+            u.q30_bases_pct = stats_sample['q30_bases_pc']
+            u.mean_quality_score = stats_sample['mean_quality_score']
             u.time = func.now()
 
             manager.add(u)
 
-    #manager.flush()
-    #manager.commit()
+    manager.flush()
+    manager.commit()
 
     return True
 

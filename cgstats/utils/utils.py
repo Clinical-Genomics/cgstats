@@ -2,6 +2,7 @@
 # encoding: utf-8
 
 from path import Path
+from glob import glob
 
 def get_projects(demux_dir, unaligned_dir='Unaligned'):
     """TODO: Docstring for get_projects.
@@ -14,10 +15,13 @@ def get_projects(demux_dir, unaligned_dir='Unaligned'):
     """
 
     projects = []
-
-    project_dirs = glob(os.path.join(demux_dir, unaligned_dir, '*'))
+ 
+    project_dirs = glob(Path(demux_dir).joinpath(unaligned_dir, '*'))
     for project_dir in project_dirs:
-        projects.append(os.path.basename(os.path.normpath(project_dir)).split('_')[1])
+        project = Path(project_dir).normpath().basename()
+        if project.startswith('Project_'):
+            project = project.split('_')[1]
+            projects.append(project)
 
     return projects
 

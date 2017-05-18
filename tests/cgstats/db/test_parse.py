@@ -5,7 +5,7 @@ import socket
 from datetime import datetime
 from path import Path
 
-from cgstats.db.parse import gather_supportparams, gather_datasource
+from cgstats.db.parse import gather_supportparams, gather_datasource, get_basemask
 
 def test_gather_supportparams(rapid_run_dir):
     demuxdir = Path(rapid_run_dir)
@@ -13,10 +13,7 @@ def test_gather_supportparams(rapid_run_dir):
         'idstring': 'bcl2fastq-1.8.4',
         'program': '/usr/local/bin/configureBclToFastq.pl',
         'command': {
-            '--output-dir': 'DEMUX/150114_D00134_0168_AHB07NADXX/Unaligned',
-            '--fastq-cluster-count': '0',
             '--sample-sheet': 'tests/fixtures/150114_D00134_0168_AHB07NADXX/Data/Intensities/BaseCalls/SampleSheet.csv',
-            '--input-dir': 'tests/fixtures/150114_D00134_0168_AHB07NADXX/Data/Intensities/BaseCalls',
             '--use-bases-mask': 'Y101,I6n,Y101'
         },
         'system': {
@@ -55,6 +52,11 @@ def test_gather_datasource(rapid_run_dir):
         'servername': socket.gethostname()
     }
 
-#'basemask': 'Y101,I6n,Y101',
+def test_get_basemask(rapid_run_dir):
+    demuxdir = Path(rapid_run_dir)
+    supportparams = gather_supportparams(demuxdir, 'Unaligned')
+
+    assert get_basemask(supportparams) == 'Y101,I6n,Y101'
+
 #        'flowcell_pos': u'A',
 #        'flowcell': 'HB07NADXX',
