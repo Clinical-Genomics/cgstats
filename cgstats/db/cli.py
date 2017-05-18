@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 import logging
 import click
+from path import Path
+from glob import glob
 
 from .models import Flowcell, Version
 from . import api
@@ -105,9 +107,10 @@ def select(context, flowcell, project):
 @click.argument('demux_dir')
 @click.option('-m', '--machine', type=click.Choice(['X', '2500']), help='machine type')
 @click.option('-u', '--unaligned', help='the unaligned dir name')
+@click.option('-a', '--all-unaligned', is_flag=True, help='add all Unaligned* dirs')
 @click.pass_context
-def add(context, machine, demux_dir, unaligned):
-    """Add an X FC to cgstats."""
+def add(context, machine, demux_dir, unaligned, all_unaligned):
+    """Add a FC to cgstats."""
 
     #if not Version.check(config['clinstats']['name'], config['clinstats']['version']):
     #    logger.error('Wrong database!')
@@ -118,4 +121,11 @@ def add(context, machine, demux_dir, unaligned):
     if machine == 'X':
         xparse.add(manager, demux_dir)
     if machine == '2500':
-        parse.add(manager, demux_dir, unaligned)
+        if all_unaligned:
+            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            for unaligned in unaligned_dirs:
+                log.info('Adding {}.'.format(unaligned))
+                parse.add(manager, demux_dir, unaligned)
+        else:
+            log.info('Adding {}.'.format(unaligned))
+            parse.add(manager, demux_dir, unaligned)
