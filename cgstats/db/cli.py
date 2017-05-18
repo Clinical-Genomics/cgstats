@@ -104,7 +104,7 @@ def select(context, flowcell, project):
 @click.command()
 @click.argument('demux_dir')
 @click.option('-m', '--machine', type=click.Choice(['X', '2500']), help='machine type')
-@click.option('-u', '--unaligned', help='the ungaligned dir name')
+@click.option('-u', '--unaligned', help='the unaligned dir name')
 @click.pass_context
 def add(context, machine, demux_dir, unaligned):
     """Add an X FC to cgstats."""

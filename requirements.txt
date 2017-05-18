@@ -3,7 +3,6 @@ click
 bumpversion
 pymysql
 PyYAML
-SQLAlchemy
 wheel
 SQLAlchemy
 Flask-Alchy
