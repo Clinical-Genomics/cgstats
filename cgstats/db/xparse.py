@@ -218,9 +218,9 @@ def add(manager, demux_dir):
         manager.flush()
         datasource_id = datasource.datasource_id
 
-    full_flowcell_name = os.path.basename(os.path.normpath(demux_dir)).split('_')[-1]
-    flowcell_name = full_flowcell_name[1:]
-    flowcell_pos  = full_flowcell_name[0]
+    flowcell_namepos = gather_flowcell(demux_dir)
+    flowcell_name = flowcell_namepos['name']
+    flowcell_pos  = flowcell_namepos['pos']
     flowcell_id   = Flowcell.exists(flowcell_name)
     if not flowcell_id:
         flowcell = Flowcell()

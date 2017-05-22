@@ -145,7 +145,7 @@ def parse_samples(demux_dir):
     """
     samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
     samples = list(set(samplesheet.samples()))
-    lanes = list(set(samplesheet.column('Lane')))
+    lanes = list(set(samplesheet.column('lane')))
 
     # get all % undetermined indexes / sample
     proc_undetermined = calc_undetermined(demux_dir)
@@ -173,22 +173,23 @@ def parse_samples(demux_dir):
             et_index_files[lane].append(et.parse(f))
 
     # get all the stats numbers
+    #import ipdb; ipdb.set_trace()
     for sample in samples:
-        for line in samplesheet.lines_per_column('SampleID', sample):
-            lane = line['Lane']
+        for line in samplesheet.lines_per_column('sample_id', sample):
+            lane = line['lane']
             if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
 
             for tree in et_stats_files[lane]:
-                summaries[lane][sample].append(get_sample_summary(tree, line['Project'], line['SampleName'], line['index']))
+                summaries[lane][sample].append(get_sample_summary(tree, line['project'], line['sample_name'], line['index']))
 
-            for tree in et_index_files[ line['Lane'] ]:
-                summaries[lane][sample].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
+            for tree in et_index_files[ line['lane'] ]:
+                summaries[lane][sample].append(get_barcode_summary(tree, line['project'], line['sample_name'], line['index']))
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
     total_sample_summary = dict(zip(lanes, [ {} for t in xrange(len(lanes))]))
     for line in samplesheet.lines():
-        total_sample_summary[ line['Lane'] ][ line['SampleID'] ] = {
+        total_sample_summary[ line['lane'] ][ line['sample_id'] ] = {
             'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
@@ -200,9 +201,9 @@ def parse_samples(demux_dir):
             'pf_read2_q30': 0,
             'pf_qscore_sum': 0,
             'pf_qscore': 0,
-            'flowcell': line['FCID'],
-            'samplename': line['SampleID'],
-            'lane': line['Lane'],
+            'flowcell': line['fcid'],
+            'samplename': line['sample_id'],
+            'lane': line['lane'],
             'barcodes': 0,
             'perfect_barcodes': 0,
             'one_mismatch_barcodes': 0,
@@ -249,7 +250,7 @@ def parse( demux_dir):
     """
 
     samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
-    lanes = list(set(samplesheet.column('Lane')))
+    lanes = list(set(samplesheet.column('lane')))
 
     # get all % undetermined indexes / sample
     proc_undetermined = calc_undetermined(demux_dir)
@@ -284,15 +285,15 @@ def parse( demux_dir):
             summaries[lane].append(get_sample_summary(tree, 'all', 'all', 'all'))
 
         # we need barcode stats on sample level
-        for line in samplesheet.lines_per_column('Lane', lane):
+        for line in samplesheet.lines_per_column('lane', lane):
             for tree in et_index_files[ lane ]:
-                summaries[lane].append(get_barcode_summary(tree, line['Project'], line['SampleName'], line['index']))
+                summaries[lane].append(get_barcode_summary(tree, line['project'], line['sample_name'], line['index']))
 
     # sum the numbers over a lane
     # create a { 1: {'raw_clusters': 0, ... } } structure
     total_lane_summary = {}
     for line in samplesheet.lines():
-        total_lane_summary[ line['Lane'] ] = {
+        total_lane_summary[ line['lane'] ] = {
             'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
@@ -304,8 +305,8 @@ def parse( demux_dir):
             'pf_read2_q30': 0,
             'pf_qscore_sum': 0,
             'pf_qscore': 0,
-            'flowcell': line['FCID'],
-            'samplename': line['SampleID'],
+            'flowcell': line['fcid'],
+            'samplename': line['sample_id'],
             'barcodes': 0,
             'perfect_barcodes': 0,
             'one_mismatch_barcodes': 0,

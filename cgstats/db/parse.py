@@ -15,7 +15,7 @@ from datetime import datetime
 from sqlalchemy import func
 from path import Path
 
-from demux.utils import Samplesheet
+from demux.utils import HiSeq2500Samplesheet
 from cgstats.utils import stats as hiseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
 from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
@@ -76,7 +76,7 @@ def gather_supportparams(demuxdir, unaligneddir):
     }
 
     samplesheet_path = str(demuxdir.joinpath('SampleSheet.csv'))
-    samplesheet = Samplesheet(samplesheet_path)
+    samplesheet = HiSeq2500Samplesheet(samplesheet_path)
 
     return {
         'system': system,
@@ -154,11 +154,13 @@ def add(manager, demux_dir, unaligned_dir):
         datasource_id = datasource.datasource_id
 
     flowcell_namepos = gather_flowcell(demux_dir)
-    flowcell_id   = Flowcell.exists(flowcell_namepos['name'])
+    flowcell_name = flowcell_namepos['name']
+    flowcell_pos  = flowcell_namepos['pos']
+    flowcell_id   = Flowcell.exists(flowcell_name)
     if not flowcell_id:
         flowcell = Flowcell()
-        flowcell.flowcellname = flowcell_namepos['name']
-        flowcell.flowcell_pos = flowcell_namepos['pos']
+        flowcell.flowcellname = flowcell_name
+        flowcell.flowcell_pos = flowcell_pos
         flowcell.hiseqtype = 'hiseqga'
         flowcell.time = func.now()
 
@@ -194,7 +196,7 @@ def add(manager, demux_dir, unaligned_dir):
         project_id_of[ project_name ] = project_id
 
     for line in samplesheet.lines():
-        sample_id = Sample.exists(line['SampleID'], line['Index'])
+        sample_id = Sample.exists(samplesheet.cell(line, 'sample_id'), line['Index'])
         if not sample_id:
             s = Sample()
             s.project_id = project_id_of[ line['SampleProject'] ]
@@ -216,7 +218,7 @@ def add(manager, demux_dir, unaligned_dir):
 
             u.yield_mb = int(stats_sample['yield_mb'])
             u.passed_filter_pct = stats_sample['pf_pc']
-            u.readcounts = stats_sample['readcounts'] * 2
+            u.readcounts = stats_sample['readcounts']
             u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
             u.perfect_indexreads_pct = stats_sample['perfect_barcodes_pc']
             u.q30_bases_pct = stats_sample['q30_bases_pc']
@@ -230,20 +232,6 @@ def add(manager, demux_dir, unaligned_dir):
 
     return True
 
-
-    #getsupportquery = (""" SELECT supportparams_id FROM supportparams WHERE document_path = '""" + basedir + unaligned +
-    #                  """support.txt' """)
-    #indbsupport = dbc.generalquery(getsupportquery)
-    #if not indbsupport:
-    #  insertdict = { 'document_path': basedir + unaligned + 'support.txt', 'systempid': Systempid, 
-    #                 'systemos': Systemos, 'systemperlv': Systemperlv, 'systemperlexe': Systemperlexe,
-    #                 'idstring': Idstring, 'program': Program, 'commandline': commandline, 
-    #                 'sampleconfig_path': samplesheet, 'sampleconfig': SampleSheet, 'time': now }
-    #  outcome = dbc.sqlinsert('supportparams', insertdict)
-    #  supportparamsid = outcome['supportparams_id']
-    #else:
-    #  supportparamsid = indbsupport[0]['supportparams_id']
-  
     #""" Set up data for table datasource """
     #
     #servername = socket.gethostname()
