@@ -116,7 +116,7 @@ def add(manager, demux_dir, unaligned_dir):
     demux_stats = glob.glob(demux_dir.joinpath(unaligned_dir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
 
     samplesheet_path = demux_dir.joinpath('SampleSheet.csv')
-    samplesheet = Samplesheet(samplesheet_path)
+    samplesheet = HiSeq2500Samplesheet(samplesheet_path)
 
     stats = hiseqstats.parse(demux_stats)
 
@@ -146,7 +146,7 @@ def add(manager, demux_dir, unaligned_dir):
         datasource.server = new_datasource['servername']
         datasource.document_path = str(demux_stats)
         datasource.document_type = 'html'
-        datasource.time = func.now()
+        datasource.time = datetime.fromtimestamp(Path(demux_stats).getmtime())
         datasource.supportparams_id = supportparams_id
 
         manager.add(datasource)
@@ -196,25 +196,25 @@ def add(manager, demux_dir, unaligned_dir):
         project_id_of[ project_name ] = project_id
 
     for line in samplesheet.lines():
-        sample_id = Sample.exists(samplesheet.cell(line, 'sample_id'), line['Index'])
+        sample_id = Sample.exists(line['sample_id'], line['index'])
         if not sample_id:
             s = Sample()
-            s.project_id = project_id_of[ line['SampleProject'] ]
-            s.samplename = line['SampleID']
-            s.limsid = line['SampleID'].split('_')[0]
-            s.barcode = line['Index']
+            s.project_id = project_id_of[ line['project'] ]
+            s.samplename = line['sample_id']
+            s.limsid = line['sample_id'].split('_')[0]
+            s.barcode = line['index']
             s.time = func.now()
 
             manager.add(s)
             manager.flush()
             sample_id = s.sample_id
 
-        if not Unaligned.exists(sample_id, demux_id, line['Lane']):
+        if not Unaligned.exists(sample_id, demux_id, line['lane']):
             u = Unaligned()
             u.sample_id = sample_id
             u.demux_id = demux_id
-            u.lane = line['Lane']
-            stats_sample = stats[line['Lane']][line['SampleID']]
+            u.lane = line['lane']
+            stats_sample = stats[line['lane']][line['sample_id']]
 
             u.yield_mb = int(stats_sample['yield_mb'])
             u.passed_filter_pct = stats_sample['pf_pc']
@@ -231,107 +231,3 @@ def add(manager, demux_dir, unaligned_dir):
     manager.commit()
 
     return True
-
-    #""" Set up data for table datasource """
-    #
-    #servername = socket.gethostname()
-    #getdatasquery = """ SELECT datasource_id FROM datasource WHERE document_path = '""" + demultistats + """' """
-    #indbdatas = dbc.generalquery(getdatasquery)
-    #if not indbdatas:
-    #  insertdict = { 'document_path': demultistats, 'runname': runname, 'rundate': rundate, 'machine': machine, 
-    #                 'supportparams_id': supportparamsid, 'server': servername, 'time': now }
-    #  outcome = dbc.sqlinsert('datasource', insertdict)
-    #  datasourceid = outcome['datasource_id']
-    #else:
-    #  datasourceid = indbdatas[0]['datasource_id']
-  
-    #""" Set up data for table flowcell """
-  
-    #getflowcellquery = """ SELECT flowcell_id FROM flowcell WHERE flowcellname = '""" + fc + """' """
-    #indbfc = dbc.generalquery(getflowcellquery)
-    #if not indbfc:
-    #  insertdict = { 'flowcellname': fc, 'flowcell_pos': Flowcellpos, 'time': now }
-    #  outcome = dbc.sqlinsert('flowcell', insertdict)
-    #  flowcellid = outcome['flowcell_id']
-    #else:
-    #  flowcellid = indbfc[0]['flowcell_id']
-  
-    #""" Set up data for table demux """
-    #
-    #getdemuxquery = """ SELECT demux_id FROM demux WHERE flowcell_id = '""" + str(flowcellid) + """' 
-    #                    AND basemask = '""" + bmask + """' """
-    #indbdemux = dbc.generalquery(getdemuxquery)
-    #if not indbdemux:
-    #  insertdict = { 'flowcell_id': flowcellid, 'datasource_id': datasourceid, 'basemask': bmask, 'time': now }
-    #  outcome = dbc.sqlinsert('demux', insertdict)
-    #  demuxid = outcome['demux_id']
-    #else:
-    #  demuxid = indbdemux[0]['demux_id']
-  
-    #""" Set up data for table project """
-  
-    #projects = {}
-    #tables = soup.findAll("table")
-    #rows = tables[1].findAll('tr')
-    #for row in rows:
-    #  cols = row.findAll('td')
-    #  project = unicode(cols[6].string).encode('utf8')
-    #  getprojquery = """ SELECT project_id, time FROM project WHERE projectname = '""" + project + """' """
-    #  indbproj = dbc.generalquery(getprojquery)
-    #  if not indbproj:
-    #    insertdict = { 'projectname': project, 'time': now }
-    #    outcome = dbc.sqlinsert('project', insertdict)
-    #    projects[project] = outcome['project_id']
-    #  else:
-    #    projects[project] = indbproj[0]['project_id']
-  
-    #""" Set up data for table sample """
-  
-    #samples = {}
-    #for row in rows:
-    #  cols = row.findAll('td')
-    #  samplename = unicode(cols[1].string).encode('utf8')
-    #  limsid = samplename.split('_')[0]
-    #  barcode = unicode(cols[3].string).encode('utf8')
-    #  project = unicode(cols[6].string).encode('utf8')
-    #  getsamplequery = """ SELECT sample_id FROM sample WHERE samplename = '""" + samplename + """' 
-    #                       AND barcode = '""" + barcode + """' """
-    #  indbsample = dbc.generalquery(getsamplequery)
-    #  if not indbsample:
-    #    insertdict = { 'samplename': samplename, 'limsid': limsid, 'project_id': projects[project], 'barcode': barcode, 'time': now }
-    #    outcome = dbc.sqlinsert('sample', insertdict)
-    #    samples[samplename] = outcome['sample_id']
-    #  else:
-    #    samples[samplename] = indbsample[0]['sample_id']
-  
-    #""" Set up data for table unaligned """
-  
-    #for row in rows:
-    #  cols = row.findAll('td')
-    #  lane = unicode(cols[0].string).encode('utf8')
-    #  samplename = unicode(cols[1].string).encode('utf8')
-    #  barcode = unicode(cols[3].string).encode('utf8')
-    #  project = unicode(cols[6].string).encode('utf8')
-    #  yield_mb = unicode(cols[7].string).encode('utf8')
-    #  yield_mb = yield_mb.replace(",","")
-    #  passed_filter_pct = unicode(cols[8].string).encode('utf8')
-    #  Readcounts = unicode(cols[9].string).encode('utf8')
-    #  Readcounts = Readcounts.replace(",","")
-    #  raw_clusters_per_lane_pct = unicode(cols[10].string).encode('utf8')
-    #  perfect_indexreads_pct = unicode(cols[11].string).encode('utf8')
-    #  q30_bases_pct = unicode(cols[13].string).encode('utf8')
-    #  mean_quality_score = unicode(cols[14].string).encode('utf8')
-  
-    #  getunalquery = """ SELECT unaligned_id FROM unaligned WHERE sample_id = '""" + str(samples[samplename]) + """' 
-    #                     AND lane = '""" + lane + """' AND demux_id = '""" + str(demuxid) + """' """
-    #  indbunal = dbc.generalquery(getunalquery)
-    #  if not indbunal:
-    #    insertdict = { 'sample_id': samples[samplename], 'demux_id': str(demuxid), 'lane': lane, 
-    #                   'yield_mb': yield_mb, 'passed_filter_pct': passed_filter_pct, 'readcounts': Readcounts, 
-    #                    'raw_clusters_per_lane_pct': raw_clusters_per_lane_pct, 
-    #                    'perfect_indexreads_pct': perfect_indexreads_pct, 'q30_bases_pct': q30_bases_pct, 
-    #                    'mean_quality_score': mean_quality_score, 'time': now }
-    #    outcome = dbc.sqlinsert('unaligned', insertdict)
-    #    unalignedid = outcome['unaligned_id']
-    #  else:
-    #    unalignedid = indbunal[0]['unaligned_id']
