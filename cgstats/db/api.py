@@ -80,17 +80,17 @@ def select(flowcell, project_name=None):
                   Sample.samplename, Flowcell.flowcellname,
                   func.group_concat(Unaligned.lane.op('ORDER BY')(Unaligned.lane)).label('lanes'),
                   func.group_concat(
-                      Unaligned.readcounts.op('ORDER BY')(Unaligned.readcounts)).label('reads'),
+                      Unaligned.readcounts.op('ORDER BY')(Unaligned.lane)).label('reads'),
                   func.sum(Unaligned.readcounts).label('readsum'),
                   func.group_concat(
-                      Unaligned.yield_mb.op('ORDER BY')(Unaligned.yield_mb)).label('yld'),
+                      Unaligned.yield_mb.op('ORDER BY')(Unaligned.lane)).label('yld'),
                   func.sum(Unaligned.yield_mb).label('yieldsum'),
                   func.group_concat(
                       func.truncate(Unaligned.q30_bases_pct, 2)
-                      .op('ORDER BY')(Unaligned.q30_bases_pct)).label('q30'),
+                      .op('ORDER BY')(Unaligned.lane)).label('q30'),
                   func.group_concat(
                       func.truncate(Unaligned.mean_quality_score, 2)
-                      .op('ORDER BY')(Unaligned.mean_quality_score)).label('meanq'),
+                      .op('ORDER BY')(Unaligned.lane)).label('meanq'),
             )
 
     query = query.filter(Flowcell.flowcellname == flowcell)
