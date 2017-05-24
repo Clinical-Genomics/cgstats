@@ -63,14 +63,14 @@ class Project(Model):
 class Sample(Model):
 
     sample_id = Column(types.Integer, primary_key=True)
-    project_id = Column(ForeignKey('project.project_id'), nullable=False)
+    project_id = Column(ForeignKey('project.project_id', ondelete='CASCADE'), nullable=False)
     samplename = Column(types.String(255), nullable=False)
     customerid = Column(types.String(255))
     limsid = Column(types.String(255))
     barcode = Column(types.String(255))
     time = Column(types.DateTime)
 
-    project = orm.relationship('Project', single_parent=True, cascade='all, delete, delete-orphan', backref=orm.backref('samples'))
+    project = orm.relationship('Project', single_parent=True, backref=orm.backref('samples'))
 
     @property
     def lims_id(self):
@@ -140,7 +140,7 @@ class Supportparams(Model):
 class Datasource(Model):
 
     datasource_id = Column(types.Integer, primary_key=True)
-    supportparams_id = Column(ForeignKey('supportparams.supportparams_id'),
+    supportparams_id = Column(ForeignKey('supportparams.supportparams_id', ondelete='CASCADE'),
                               nullable=False)
     runname = Column(types.String(255))
     machine = Column(types.String(255))
@@ -183,14 +183,14 @@ class Demux(Model):
                                        name='demux_ibuk_1'),)
 
     demux_id = Column(types.Integer, primary_key=True)
-    flowcell_id = Column(ForeignKey('flowcell.flowcell_id'), nullable=False)
-    datasource_id = Column(ForeignKey('datasource.datasource_id'), nullable=False)
+    flowcell_id = Column(ForeignKey('flowcell.flowcell_id', ondelete='CASCADE'), nullable=False)
+    datasource_id = Column(ForeignKey('datasource.datasource_id', ondelete='CASCADE'), nullable=False)
     basemask = Column(types.String(255))
     time = Column(types.DateTime)
 
     datasource = orm.relationship('Datasource', backref=orm.backref('demuxes'))
     flowcell = orm.relationship('Flowcell', backref=orm.backref('demuxes'))
-    unaligned = orm.relation('Unaligned', cascade='delete, delete-orphan', backref=orm.backref('demux'))
+    unaligned = orm.relation('Unaligned', backref=orm.backref('demux'))
 
     @staticmethod
     def exists(flowcell_id, basemask):
@@ -222,7 +222,7 @@ class Flowcell(Model):
     hiseqtype = Column(types.String(255), nullable=False)
     time = Column(types.DateTime)
 
-    datasource = orm.relationship('Demux', cascade='delete', backref=orm.backref('flowcells'))
+    demux = orm.relationship('Demux', backref=orm.backref('flowcells'))
 
     @staticmethod
     def exists(flowcell_name):
@@ -246,8 +246,8 @@ class Flowcell(Model):
 class Unaligned(Model):
 
     unaligned_id = Column(types.Integer, primary_key=True)
-    sample_id = Column(ForeignKey('sample.sample_id'), nullable=False)
-    demux_id = Column(ForeignKey('demux.demux_id'), nullable=False)
+    sample_id = Column(ForeignKey('sample.sample_id', ondelete='CASCADE'), nullable=False)
+    demux_id = Column(ForeignKey('demux.demux_id', ondelete='CASCADE'), nullable=False)
     lane = Column(types.Integer)
     yield_mb = Column(types.Integer)
     passed_filter_pct = Column(types.Numeric(10, 5))

@@ -4,7 +4,7 @@ import click
 from path import Path
 from glob import glob
 
-from .models import Flowcell, Version
+from .models import Flowcell, Version, Sample, Demux, Unaligned
 from . import api
 from . import xparse
 from . import parse
@@ -136,10 +136,20 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
 @click.option('-s', '--sample', help='sample to remove')
 @click.pass_context
 def delete(context, flowcell, basemask, sample):
-    manager = context.obj['manager']
 
     if flowcell:
-        rs = Flowcell.query.filter_by(flowcellname=flowcell).all()
+        rs = Flowcell.query.filter_by(flowcellname=flowcell)
 
-    manager.delete(rs)
-    manager.commit()
+    if basemask:
+        rs = Demux.query.filter_by(basemask=basemask)
+
+    if sample:
+        rs = Sample.query.filter_by(limsid=sample)
+        if flowcell:
+            rs = rs.join(Unaligned).join(Demux).join(Flowcell).filter_by(flowcellname=flowcell)
+
+    rs = rs.all()
+    manager = context.obj['manager']
+    if click.confirm("Are you sure you want to delete {}?".format(rs)):
+        manager.delete(rs)
+        manager.commit()
