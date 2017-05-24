@@ -129,3 +129,17 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
         else:
             log.info('Adding {}.'.format(unaligned))
             parse.add(manager, demux_dir, unaligned)
+
+@click.command()
+@click.option('-f', '--flowcell', help='flowcell to remove')
+@click.option('-b', '--basemask', help='demux with given basemask to remove')
+@click.option('-s', '--sample', help='sample to remove')
+@click.pass_context
+def delete(context, flowcell, basemask, sample):
+    manager = context.obj['manager']
+
+    if flowcell:
+        rs = Flowcell.query.filter_by(flowcellname=flowcell).all()
+
+    manager.delete(rs)
+    manager.commit()

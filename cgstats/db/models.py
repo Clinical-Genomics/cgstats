@@ -70,7 +70,7 @@ class Sample(Model):
     barcode = Column(types.String(255))
     time = Column(types.DateTime)
 
-    project = orm.relationship('Project', backref=orm.backref('samples'))
+    project = orm.relationship('Project', single_parent=True, cascade='all, delete, delete-orphan', backref=orm.backref('samples'))
 
     @property
     def lims_id(self):
@@ -190,6 +190,7 @@ class Demux(Model):
 
     datasource = orm.relationship('Datasource', backref=orm.backref('demuxes'))
     flowcell = orm.relationship('Flowcell', backref=orm.backref('demuxes'))
+    unaligned = orm.relation('Unaligned', cascade='delete, delete-orphan', backref=orm.backref('demux'))
 
     @staticmethod
     def exists(flowcell_id, basemask):
@@ -221,7 +222,7 @@ class Flowcell(Model):
     hiseqtype = Column(types.String(255), nullable=False)
     time = Column(types.DateTime)
 
-    datasource = orm.relationship('Demux', backref=orm.backref('flowcells'))
+    datasource = orm.relationship('Demux', cascade='delete', backref=orm.backref('flowcells'))
 
     @staticmethod
     def exists(flowcell_name):
@@ -257,7 +258,7 @@ class Unaligned(Model):
     mean_quality_score = Column(types.Numeric(10, 5))
     time = Column(types.DateTime)
 
-    demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
+    #demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
     sample = orm.relationship('Sample', backref=orm.backref('unaligned'))
 
     @staticmethod

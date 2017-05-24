@@ -96,7 +96,7 @@ setup(
             'flowcells = cgstats.db.cli:flowcells',
             'samples = cgstats.db.cli:samples',
             'add = cgstats.db.cli:add',
-            #'delete = cgstats.db.cli:delete',
+            'delete = cgstats.db.cli:delete',
             'select = cgstats.db.cli:select',
             #'lanestats = cgstats.db.cli:lanestats',
         ],
