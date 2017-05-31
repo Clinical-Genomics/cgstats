@@ -141,6 +141,9 @@ def delete(context, flowcell, basemask, sample):
         rs = Flowcell.query.filter_by(flowcellname=flowcell)
 
     if basemask:
+        if not flowcell:
+            click.echo('Missing flowcell parameter', err=True)
+            context.abort()
         rs = Demux.query.filter_by(basemask=basemask)
 
     if sample:
