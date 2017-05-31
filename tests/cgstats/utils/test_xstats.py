@@ -1,7 +1,7 @@
 from cgstats.utils import xstats
 
-def test_parse():
-    assert xstats.parse('tests/fixtures/170202_ST-E00269_0169_AHC7H2ALXX/') == {
+def test_parse(x_run_dir):
+    assert xstats.parse(x_run_dir) == {
         'SVE2274A10_TCTCGCGC': {'barcodes': 475692348,
                                 'flowcell': 'HC7H2ALXX',
                                 'lane': '7',
@@ -132,8 +132,8 @@ def test_parse():
                                 'undetermined_proc': 0}}
 
 
-def test_parse_samples():
-    assert xstats.parse_samples('tests/fixtures/170202_ST-E00269_0169_AHC7H2ALXX/') == {
+def test_parse_samples(x_run_dir):
+    assert xstats.parse_samples(x_run_dir) == {
             '1': {'SVE2274A2_TCCGCGAA': {'barcodes': 481129304,
                               'flowcell': 'HC7H2ALXX',
                               'lane': '1',
@@ -264,8 +264,8 @@ def test_parse_samples():
                                'undetermined_proc': 0}}}
 
 
-def test_parse_pooled():
-    assert xstats.parse('tests/fixtures/161125_ST-E00269_0150_AH37GVALXX/') == {
+def test_parse_pooled(x_pooled_run_dir):
+    assert xstats.parse(x_pooled_run_dir) == {
             'MIC2051A644_ACGATCAG': {'barcodes': 419722973,
                           'flowcell': 'H37GVALXX',
                           'lane': '8',
@@ -348,8 +348,8 @@ def test_parse_pooled():
                       'undetermined_proc': 0}}
 
 
-def test_parse_samples_pooled():
-    assert xstats.parse_samples('tests/fixtures/161125_ST-E00269_0150_AH37GVALXX/') == {
+def test_parse_samples_pooled(x_pooled_run_dir):
+    assert xstats.parse_samples(x_pooled_run_dir) == {
             '1': {'SVE2105A1_dual11': {'barcodes': 437047823,
                             'flowcell': 'H37GVALXX',
                             'lane': '1',

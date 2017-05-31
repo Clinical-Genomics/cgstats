@@ -57,6 +57,3 @@ def test_get_basemask(rapid_run_dir):
     supportparams = gather_supportparams(demuxdir, 'Unaligned')
 
     assert get_basemask(supportparams) == 'Y101,I6n,Y101'
-
-#        'flowcell_pos': u'A',
-#        'flowcell': 'HB07NADXX',
