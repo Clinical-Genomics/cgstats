@@ -1,6 +1,10 @@
 # -*- coding: utf-8 -*-
 import pytest
+from copy import copy
+import sqlalchemy as sa
+from sqlalchemy.engine.url import make_url
 
+from cgstats.db import api
 
 @pytest.fixture
 def x_run_dir():
@@ -10,3 +14,30 @@ def x_run_dir():
 def rapid_run_dir():
     return 'tests/fixtures/150114_D00134_0168_AHB07NADXX'
 
+@pytest.fixture(scope="session")
+def sql_manager(request):
+    config_url = request.config.getoption('--sqlalchemy-connect-url')
+
+    # get the databse from the URL
+    sa_url = copy(make_url(config_url))
+    database = sa_url.database
+    sa_url.database = None
+
+    engine = sa.create_engine(sa_url)
+    engine.execute("CREATE DATABASE IF NOT EXISTS {}".format(database))
+
+    manager = api.connect(config_url)
+    manager.create_all()
+
+    def fin():
+        print("Removing database")
+        manager.rollback()
+        engine.execute("DROP DATABASE {}".format(database))
+    
+    request.addfinalizer(fin)
+    yield manager
+
+def pytest_addoption(parser):
+    parser.addoption("--sqlalchemy-connect-url", action="store",
+                     default=None,
+                     help="Name of the database to connect to")
