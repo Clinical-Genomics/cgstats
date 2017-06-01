@@ -4,7 +4,7 @@
 import socket
 from path import Path
 
-from cgstats.db.xparse import gather_supportparams, gather_datasource
+from cgstats.db.xparse import gather_supportparams, gather_datasource, gather_demux
 
 def test_gather_supportparams(x_run_dir):
     assert gather_supportparams(x_run_dir) == {
@@ -35,10 +35,7 @@ def test_gather_datasource(x_run_dir):
             'document_path': str(Path(x_run_dir).joinpath('l1t11/Stats/ConversionStats.xml'))
     }
 
-def test_flowcell(x_run_dir):
-    pass
-
 def test_gather_demux(x_run_dir):
-    pass
-
-
+    assert gather_demux(x_run_dir) == {
+        'basemask': 'Y151,I8,Y151'
+    }
