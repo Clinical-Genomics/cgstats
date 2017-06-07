@@ -71,6 +71,7 @@ class Sample(Model):
     time = Column(types.DateTime)
 
     project = orm.relationship('Project', single_parent=True, backref=orm.backref('samples'))
+    unaligned = orm.relationship('Unaligned', cascade='all, delete-orphan', backref=orm.backref('sample'))
 
     @property
     def lims_id(self):
@@ -98,6 +99,48 @@ class Sample(Model):
                         .filter_by(samplename=sample_name)
                         .filter_by(barcode=barcode).one())
             return rs.sample_id
+        except NoResultFound:
+            return False
+
+
+class Unaligned(Model):
+
+    unaligned_id = Column(types.Integer, primary_key=True)
+    sample_id = Column(ForeignKey('sample.sample_id', ondelete='CASCADE'), nullable=False)
+    demux_id = Column(ForeignKey('demux.demux_id', ondelete='CASCADE'), nullable=False)
+    lane = Column(types.Integer)
+    yield_mb = Column(types.Integer)
+    passed_filter_pct = Column(types.Numeric(10, 5))
+    readcounts = Column(types.Integer)
+    raw_clusters_per_lane_pct = Column(types.Numeric(10, 5))
+    perfect_indexreads_pct = Column(types.Numeric(10, 5))
+    q30_bases_pct = Column(types.Numeric(10, 5))
+    mean_quality_score = Column(types.Numeric(10, 5))
+    time = Column(types.DateTime)
+
+    #demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
+    #sample = orm.relationship('Sample', single_parent=True, cascade='all, delete-orphan', passive_deletes=True, backref=orm.backref('unaligned'))
+
+    @staticmethod
+    def exists(sample_id, demux_id, lane):
+        """Checks if an Unaligned entry already exists
+
+        Args:
+            sample_id (int): sample id
+            demux_id (int): demux id
+            lane (int): lane in which the sample ran
+
+        Returns:
+            int: unaligned_id on exists
+            False: on not exists
+
+        """
+        try:
+            rs = (Unaligned.query
+                           .filter_by(sample_id=sample_id)
+                           .filter_by(demux_id=demux_id)
+                           .filter_by(lane=lane).one())
+            return rs.unaligned_id
         except NoResultFound:
             return False
 
@@ -188,9 +231,11 @@ class Demux(Model):
     basemask = Column(types.String(255))
     time = Column(types.DateTime)
 
-    datasource = orm.relationship('Datasource', backref=orm.backref('demuxes'))
-    flowcell = orm.relationship('Flowcell', backref=orm.backref('demuxes'))
-    unaligned = orm.relation('Unaligned', backref=orm.backref('demux'))
+    datasource = orm.relationship('Datasource', cascade='all', backref=orm.backref('demuxes'))
+    flowcell = orm.relationship('Flowcell', cascade='all', backref=orm.backref('demuxes'))
+    unaligned = orm.relation('Unaligned', single_parent=True, cascade='all, delete-orphan', backref=orm.backref('demux'))
+    # add the viewonly attribute to make sure the Session.delete(demux) works
+    samples = orm.relation('Sample', secondary='unaligned', viewonly=True, cascade='all', backref=orm.backref('demuxes'))
 
     @staticmethod
     def exists(flowcell_id, basemask):
@@ -239,48 +284,6 @@ class Flowcell(Model):
         try:
             rs = Flowcell.query.filter_by(flowcellname=flowcell_name).one()
             return rs.flowcell_id
-        except NoResultFound:
-            return False
-
-
-class Unaligned(Model):
-
-    unaligned_id = Column(types.Integer, primary_key=True)
-    sample_id = Column(ForeignKey('sample.sample_id', ondelete='CASCADE'), nullable=False)
-    demux_id = Column(ForeignKey('demux.demux_id', ondelete='CASCADE'), nullable=False)
-    lane = Column(types.Integer)
-    yield_mb = Column(types.Integer)
-    passed_filter_pct = Column(types.Numeric(10, 5))
-    readcounts = Column(types.Integer)
-    raw_clusters_per_lane_pct = Column(types.Numeric(10, 5))
-    perfect_indexreads_pct = Column(types.Numeric(10, 5))
-    q30_bases_pct = Column(types.Numeric(10, 5))
-    mean_quality_score = Column(types.Numeric(10, 5))
-    time = Column(types.DateTime)
-
-    #demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
-    sample = orm.relationship('Sample', backref=orm.backref('unaligned'))
-
-    @staticmethod
-    def exists(sample_id, demux_id, lane):
-        """Checks if an Unaligned entry already exists
-
-        Args:
-            sample_id (int): sample id
-            demux_id (int): demux id
-            lane (int): lane in which the sample ran
-
-        Returns:
-            int: unaligned_id on exists
-            False: on not exists
-
-        """
-        try:
-            rs = (Unaligned.query
-                           .filter_by(sample_id=sample_id)
-                           .filter_by(demux_id=demux_id)
-                           .filter_by(lane=lane).one())
-            return rs.unaligned_id
         except NoResultFound:
             return False
 
