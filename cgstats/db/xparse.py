@@ -8,12 +8,18 @@ from glob import glob
 import logging
 import socket
 
+from path import Path
 from sqlalchemy import func
+
 from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import xstats
 from cgstats.utils.utils import get_projects, gather_flowcell
 
 logger = logging.getLogger(__name__)
+
+
+class NoLogsFoundError(Exception):
+    pass
 
 
 def gather_supportparams(run_dir):
@@ -42,10 +48,13 @@ def gather_supportparams(run_dir):
     rs = {} # result set
 
     # get some info from bcl2 fastq
-    logfilenames = glob(os.path.join(run_dir, 'LOG', 'Xdem-l?t??-*.log')) # should yield one result
+    run_dir = Path(run_dir)
+    logfile = run_dir.joinpath('LOG', 'Xdem-l?t??-*.log')
+    logfilenames = glob(logfile) # should yield one result
     if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for %s', os.path.join(run_dir, 'LOG', 'Xdem-l?t??-*.log'))
-        exit(1)
+        logger.error('No log files found! Looking for {}'.format(logfile))
+        import errno
+        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
     with open(logfilenames[0], 'r') as logfile:
         for line in logfile.readlines():
@@ -60,12 +69,12 @@ def gather_supportparams(run_dir):
                 rs['program'] = split_line[1] # get the executed program
 
     # get the sample sheet and it's contents
-    samplesheet_path = os.path.join(run_dir, 'SampleSheet.csv')
+    samplesheet_path = run_dir.joinpath('SampleSheet.csv')
     rs['sampleconfig_path'] = samplesheet_path
     rs['sampleconfig'] = ''.join(open(samplesheet_path, 'r').readlines())
 
     # get the unaligned dir
-    document_path = os.path.join(run_dir, 'Unaligned')
+    document_path = run_dir.joinpath('Unaligned')
     if not os.path.isdir(document_path):
         logger.error("Unaligned dir not found at '%s'", document_path)
     else:

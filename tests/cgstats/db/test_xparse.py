@@ -2,11 +2,16 @@
 # -*- coding: utf-8 -*-
 
 import socket
+import pytest
 from path import Path
 
 from cgstats.db.xparse import gather_supportparams, gather_datasource, gather_demux
 
-def test_gather_supportparams(x_run_dir):
+def test_gather_supportparams(x_run_dir, x_pooled_missing_logs_run_dir):
+
+    with pytest.raises(IOError):
+        gather_supportparams(x_pooled_missing_logs_run_dir)
+
     assert gather_supportparams(x_run_dir) == {
             'idstring': 'bcl2fastq v2.15.0.4',
             'commandline': '/usr/local/bin/bcl2fastq -d 2 -r 4 -w 4 -p 14 --tiles s_1_11 --tiles s_1_12 -R /scratch/743545//mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX -o /scratch/743545/Xout --barcode-mismatches 1 --use-bases-mask Y151,I8,Y151',
