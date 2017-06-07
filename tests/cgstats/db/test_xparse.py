@@ -7,10 +7,13 @@ from path import Path
 
 from cgstats.db.xparse import gather_supportparams, gather_datasource, gather_demux
 
-def test_gather_supportparams(x_run_dir, x_pooled_missing_logs_run_dir):
+def test_gather_supportparams(x_run_dir, x_pooled_missing_logs_run_dir, x_pooled_missing_unaligned_run_dir):
 
     with pytest.raises(IOError):
         gather_supportparams(x_pooled_missing_logs_run_dir)
+
+    with pytest.raises(IOError):
+        gather_supportparams(x_pooled_missing_unaligned_run_dir)
 
     assert gather_supportparams(x_run_dir) == {
             'idstring': 'bcl2fastq v2.15.0.4',
@@ -31,7 +34,11 @@ def test_gather_supportparams(x_run_dir, x_pooled_missing_logs_run_dir):
             'document_path': str(Path(x_run_dir).joinpath('Unaligned'))
     }
 
-def test_gather_datasource(x_run_dir):
+def test_gather_datasource(x_run_dir, x_pooled_missing_logs_run_dir):
+
+    with pytest.raises(IOError):
+        gather_datasource(x_pooled_missing_logs_run_dir)
+
     assert gather_datasource(x_run_dir) == {
             'runname': str(Path(x_run_dir).normpath().basename()),
             'rundate': '170202',
@@ -40,7 +47,11 @@ def test_gather_datasource(x_run_dir):
             'document_path': str(Path(x_run_dir).joinpath('l1t11/Stats/ConversionStats.xml'))
     }
 
-def test_gather_demux(x_run_dir):
+def test_gather_demux(x_run_dir, x_pooled_missing_logs_run_dir):
+
+    with pytest.raises(IOError):
+        gather_demux(x_pooled_missing_logs_run_dir)
+
     assert gather_demux(x_run_dir) == {
         'basemask': 'Y151,I8,Y151'
     }

@@ -76,7 +76,9 @@ def gather_supportparams(run_dir):
     # get the unaligned dir
     document_path = run_dir.joinpath('Unaligned')
     if not os.path.isdir(document_path):
-        logger.error("Unaligned dir not found at '%s'", document_path)
+        logger.error("Unaligned dir not found at '{}'".format(document_path))
+        import errno
+        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
         rs['document_path'] = document_path
 
@@ -92,10 +94,11 @@ def gather_datasource(run_dir):
 
     """
 
+    run_dir = Path(run_dir)
     rs = {} # result set
 
     # get the run name
-    rs['runname'] = os.path.basename(os.path.normpath(run_dir))
+    rs['runname'] = run_dir.normpath().basename()
 
     # get the run date
     rs['rundate'] = rs['runname'].split('_')[0]
@@ -107,16 +110,17 @@ def gather_datasource(run_dir):
     rs['servername'] = socket.gethostname()
 
     # get the stats file
-    document_path = os.path.join(run_dir, 'l1t11/Stats/ConversionStats.xml')
-    if not os.path.isfile(document_path):
+    document_path = run_dir.joinpath('l1t11/Stats/ConversionStats.xml')
+    if not document_path.isfile():
         logger.error("Stats file not found at '%s'", document_path)
-        exit(1)
+        import errno
+        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
         rs['document_path'] = document_path
 
     return rs
 
-def gather_demux(demux_dir):
+def gather_demux(run_dir):
     """TODO: Docstring for gather_demux.
 
     Args:
@@ -129,10 +133,13 @@ def gather_demux(demux_dir):
     rs = {} # result set
 
     # get some info from bcl2 fastq
-    logfilenames = glob(os.path.join(demux_dir, 'LOG', 'Xdem-l1t11-*.log')) # should yield one result
+    run_dir = Path(run_dir)
+    logfile = run_dir.joinpath('LOG', 'Xdem-l?t??-*.log')
+    logfilenames = glob(logfile) # should yield one result
     if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for %s', os.path.join(demux_dir, 'LOG', 'Xdem-l1t11-*.log'))
-        exit(1)
+        logger.error('No log files found! Looking for {}'.format(logfile))
+        import errno
+        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
     with open(logfilenames[0], 'r') as logfile:
         for line in logfile.readlines():

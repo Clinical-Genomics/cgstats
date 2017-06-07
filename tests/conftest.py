@@ -16,7 +16,11 @@ def x_pooled_run_dir():
 
 @pytest.fixture
 def x_pooled_missing_logs_run_dir():
-    return 'tests/fixtures/missing_logs/161125_ST-E00269_0150_AH37GVALXX'
+    return 'tests/fixtures/missing/all/161125_ST-E00269_0150_AH37GVALXX'
+
+@pytest.fixture
+def x_pooled_missing_unaligned_run_dir():
+    return 'tests/fixtures/missing/Unaligned/161125_ST-E00269_0150_AH37GVALXX'
 
 @pytest.fixture
 def rapid_run_dir():
