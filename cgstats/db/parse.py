@@ -83,7 +83,7 @@ def gather_supportparams(demuxdir, unaligneddir):
         'command': command,
         'program': program,
         'idstring': idstring,
-        'document_path': str(support_file),
+        'document_path': str(demuxdir.joinpath(unaligneddir)),
         'commandline': ' '.join([ program, ' '.join(c)]),
         'sampleconfig_path': samplesheet_path,
         'sampleconfig': samplesheet.raw(),

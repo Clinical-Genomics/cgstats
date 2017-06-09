@@ -36,6 +36,8 @@ class Project(Model):
     comment = Column(types.Text)
     time = Column(types.DateTime, nullable=False)
 
+    samples = orm.relationship('Sample', cascade='all', backref=orm.backref('project'))
+
     def __repr__(self):
         return (u"{self.__class__.__name__}: {self.project_id}"
                 .format(self=self))
@@ -70,7 +72,6 @@ class Sample(Model):
     barcode = Column(types.String(255))
     time = Column(types.DateTime)
 
-    project = orm.relationship('Project', single_parent=True, backref=orm.backref('samples'))
     unaligned = orm.relationship('Unaligned', cascade='all, delete-orphan', backref=orm.backref('sample'))
 
     @property
@@ -148,7 +149,7 @@ class Unaligned(Model):
 class Supportparams(Model):
 
     supportparams_id = Column(types.Integer, primary_key=True)
-    document_path = Column(types.String(255), nullable=False)
+    document_path = Column(types.String(255), nullable=False, unique=True)
     systempid = Column(types.String(255))
     systemos = Column(types.String(255))
     systemperlv = Column(types.String(255))
@@ -159,6 +160,9 @@ class Supportparams(Model):
     sampleconfig_path = Column(types.String(255))
     sampleconfig = Column(types.Text)
     time = Column(types.DateTime)
+
+    def __repr__(self):
+        return (u'{self.__class__.__name__}: {self.document_path}'.format(self=self))
 
     @staticmethod
     def exists(document_path):
@@ -194,7 +198,7 @@ class Datasource(Model):
     server = Column(types.String(255))
     time = Column(types.DateTime)
 
-    supportparams = orm.relationship('Supportparams',
+    supportparams = orm.relationship('Supportparams', cascade='all',
                                      backref=orm.backref('datasources'))
 
     def __repr__(self):
@@ -232,7 +236,6 @@ class Demux(Model):
     time = Column(types.DateTime)
 
     datasource = orm.relationship('Datasource', cascade='all', backref=orm.backref('demuxes'))
-    flowcell = orm.relationship('Flowcell', cascade='all', backref=orm.backref('demuxes'))
     unaligned = orm.relation('Unaligned', single_parent=True, cascade='all, delete-orphan', backref=orm.backref('demux'))
     # add the viewonly attribute to make sure the Session.delete(demux) works
     samples = orm.relation('Sample', secondary='unaligned', viewonly=True, cascade='all', backref=orm.backref('demuxes'))
@@ -267,7 +270,7 @@ class Flowcell(Model):
     hiseqtype = Column(types.String(255), nullable=False)
     time = Column(types.DateTime)
 
-    demux = orm.relationship('Demux', backref=orm.backref('flowcells'))
+    demux = orm.relationship('Demux', cascade='all', backref=orm.backref('flowcell'))
 
     @staticmethod
     def exists(flowcell_name):

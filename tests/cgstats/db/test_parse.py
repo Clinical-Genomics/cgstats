@@ -22,7 +22,7 @@ def test_gather_supportparams(rapid_run_dir):
             'PERL_VERSION': 'v5.10.1',
             'PERL_EXECUTABLE': '/usr/bin/perl'
         },
-        'document_path': str(demuxdir.joinpath('Unaligned', 'support.txt')),
+        'document_path': str(demuxdir.joinpath('Unaligned')),
         'commandline': '/usr/local/bin/configureBclToFastq.pl --sample-sheet tests/fixtures/150114_D00134_0168_AHB07NADXX/Data/Intensities/BaseCalls/SampleSheet.csv --use-bases-mask Y101,I6n,Y101 --fastq-cluster-count 0 --input-dir tests/fixtures/150114_D00134_0168_AHB07NADXX/Data/Intensities/BaseCalls --output-dir DEMUX/150114_D00134_0168_AHB07NADXX/Unaligned',
         'sampleconfig_path': str(demuxdir.joinpath('SampleSheet.csv')),
         'sampleconfig': 'FCID,Lane,SampleID,SampleRef,Index,Description,Control,Recipe,Operator,SampleProject\n'
@@ -40,7 +40,7 @@ def test_gather_supportparams(rapid_run_dir):
                         'HB07NADXX,2,SIB914A11_sureselect11,hg19,GGCTAC,504910,N,R1,NN,504910\n'
                         'HB07NADXX,2,SIB914A12_sureselect12,hg19,CTTGTA,504910,N,R1,NN,504910\n'
                         'HB07NADXX,2,SIB914A15_sureselect15,hg19,GAAACC,504910,N,R1,NN,504910',
-        'time': datetime(2017, 3, 10, 16, 14, 55, 233857)
+        'time': datetime.fromtimestamp(demuxdir.joinpath('Unaligned', 'support.txt').getmtime()) # can't really test this
         }
 
 

@@ -26,7 +26,7 @@ def x_pooled_missing_unaligned_run_dir():
 def rapid_run_dir():
     return 'tests/fixtures/150114_D00134_0168_AHB07NADXX'
 
-@pytest.fixture(scope="session")
+@pytest.fixture(scope="function")
 def sql_manager(request):
     config_url = request.config.getoption('--sqlalchemy-connect-url')
 
