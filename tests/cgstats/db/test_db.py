@@ -11,6 +11,8 @@ from cgstats.db import api
 
 wgs_sample_count = 8
 wes_sample_count = 7
+wes8_sample_count = 10
+wes9_sample_count = 8
 wgs_lane_count = 8
 wes_lane_count = 2
 
@@ -119,7 +121,7 @@ def test_db_delete_sample(sql_manager, rapid_run_dir, x_run_dir):
     assert len(demuxes) == 2
     assert len(datasources) == 2
 
-def test_db_delete_demux(sql_manager, rapid_run_dir, x_run_dir):
+def test_db_delete_demux(sql_manager, rapid_run_dir, x_run_dir, mixed_rapid_run_dir):
     """ Add a rapid and an X flowcell. Delete the demux row of the rapid.
     This should remove all rows from all tables related to the rapid flowcell.
     """
@@ -149,6 +151,35 @@ def test_db_delete_demux(sql_manager, rapid_run_dir, x_run_dir):
     assert len(flowcells) == 2 # does not automatically delete FC when it's an orphan
     assert len(datasources) == 1
     assert len(supportparams) == 1
+
+    # now the most important test: add a variable length index rapid FC and remove one demux
+    parse.add(sql_manager, mixed_rapid_run_dir, 'Unaligned8', 'SampleSheet8.csv')
+    parse.add(sql_manager, mixed_rapid_run_dir, 'Unaligned9', 'SampleSheet9.csv')
+
+    # are the demuxes there?
+    demux8 = Demux.query.filter(Demux.basemask == 'Y126,I8,I8,Y126').all()
+    demux9 = Demux.query.filter(Demux.basemask == 'Y126,I8,n8,Y126').all()
+    assert len(demux8) == 1
+    assert len(demux9) == 1
+
+    # let's remove one demux
+    sql_manager.delete(demux8)
+    sql_manager.commit()
+
+    # ok, do we have the counts ...
+    demux = Demux.query.all()
+    unaligneds = Unaligned.query.join(Sample).all()
+    samples = Sample.query.all()
+    flowcells = Flowcell.query.all()
+    datasources = Datasource.query.all()
+    supportparams = Supportparams.query.all()
+    assert len(demux) == 2
+    assert len(unaligneds) == wgs_sample_count + wes9_sample_count * wes_lane_count
+    assert len(samples) == wgs_sample_count + wes9_sample_count
+    assert len(flowcells) == 3
+    assert len(datasources) == 2
+    assert len(supportparams) == 2
+
 
 def test_db_delete_flowcell(sql_manager, rapid_run_dir, x_run_dir, x_pooled_run_dir):
     """ Add a rapid and a X flowclel. Delete the X flowcell.

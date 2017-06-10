@@ -106,7 +106,7 @@ def gather_datasource(demuxdir):
 def get_basemask(supportparams):
     return supportparams['command']['--use-bases-mask']
 
-def add(manager, demux_dir, unaligned_dir):
+def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv'):
     """TODO: Docstring for add.
     Returns: TODO
 
@@ -115,7 +115,7 @@ def add(manager, demux_dir, unaligned_dir):
     demux_dir = Path(demux_dir)
     demux_stats = glob.glob(demux_dir.joinpath(unaligned_dir, 'Basecall_Stats_*', 'Demultiplex_Stats.htm'))[0]
 
-    samplesheet_path = demux_dir.joinpath('SampleSheet.csv')
+    samplesheet_path = demux_dir.joinpath(samplesheet_name)
     samplesheet = HiSeq2500Samplesheet(samplesheet_path)
 
     stats = hiseqstats.parse(demux_stats)
