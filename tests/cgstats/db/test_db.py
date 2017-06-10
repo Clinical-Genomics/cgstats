@@ -6,7 +6,7 @@ from path import Path
 from cgstats.utils.utils import gather_flowcell
 from cgstats.db import parse
 from cgstats.db import xparse
-from cgstats.db.models import Flowcell, Sample, Demux, Unaligned, Datasource, Supportparams
+from cgstats.db.models import Flowcell, Sample, Demux, Unaligned, Datasource, Supportparams, Project
 from cgstats.db import api
 
 wgs_sample_count = 8
@@ -20,19 +20,20 @@ def test_db_add(sql_manager, rapid_run_dir, x_run_dir):
 
     * do we get the right amount of counts for all tables?
     * check the presence of a randomly chosen sample.
-    * add the rapid flowcell again. Duplicates?
+    * add the flowcells again. Duplicates?
     """
 
     def _count_all_tables():
         # ok, do we have the right counts ...
         samples = Sample.query.all()
+        projects = Project.query.all()
         flowcells = Flowcell.query.all()
         demuxes = Demux.query.all()
         unaligneds = Unaligned.query.all()
         datasources = Datasource.query.all()
         supportparams = Supportparams.query.all()
-        print(supportparams)
         assert len(samples) == wgs_sample_count + wes_sample_count
+        assert len(projects) == 4
         assert len(flowcells) == 2
         assert len(demuxes) == 2
 
@@ -56,6 +57,7 @@ def test_db_add(sql_manager, rapid_run_dir, x_run_dir):
 
     # let's add it again and check if we have duplicates
     parse.add(sql_manager, rapid_run_dir, unaligned)
+    xparse.add(sql_manager, x_run_dir)
     samples = Sample.query.filter_by(limsid='SIB914A11').all()
     assert len(samples) == 1
 
