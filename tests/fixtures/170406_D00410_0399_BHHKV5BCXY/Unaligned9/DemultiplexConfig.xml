@@ -1,0 +1,33 @@
+<DemultiplexConfig>
+  <Software Version="bcl2fastq-1.8.4" CmdAndArgs="/usr/local/bin/configureBclToFastq.pl --sample-sheet /home/clinical/RUNS/170406_D00410_0399_BHHKV5BCXY/Data/Intensities/BaseCalls/SampleSheet.csv --ignore-missing-bcl --ignore-missing-stats --use-bases-mask Y126,I8,n8,Y126 --fastq-cluster-count 0 --input-dir /home/clinical/RUNS/170406_D00410_0399_BHHKV5BCXY/Data/Intensities/BaseCalls --output-dir /home/clinical/DEMUX/170406_D00410_0399_BHHKV5BCXY/Unaligned9" Name="configureBclToFastq.pl">
+    <Software Version="1.18.64.0" Name="RTA">
+      <Software Version="1.18.64.0" Name="RTA">
+        <Software Version="2.2.58" Platform="HiSeq" Name="HiSeq Control Software" />
+      </Software>
+    </Software>
+  </Software>
+  <FlowcellInfo ID="HHKV5BCXY" Operator="Emilia Ottosson" Recipe="" Desc="">
+    <Lane Number="1">
+      <Sample ProjectId="294760" Control="N" Index="AACGTGAT" SampleId="SVE2478A3" Desc="2-106140" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="AACTCACC" SampleId="SVE2539A1" Desc="2-106142" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="ATCCTGTA" SampleId="SVE2544A1" Desc="2-106147" Ref="hg19" />
+      <Sample ProjectId="115393" Control="N" Index="ATTGGCTC" SampleId="SVE2496A1" Desc="2-106141" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="CAGATCTG" SampleId="SVE2539A3" Desc="2-106143" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="CTGTAGCC" SampleId="SVE2544A2" Desc="2-106145" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="GCTAACGA" SampleId="SVE2539A2" Desc="2-106144" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="GCTCGGTA" SampleId="SVE2544A3" Desc="2-106146" Ref="hg19" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane1" Desc="Clusters with unmatched barcodes for lane 1" Ref="unknown" />
+    </Lane>
+    <Lane Number="2">
+      <Sample ProjectId="294760" Control="N" Index="AACGTGAT" SampleId="SVE2478A3" Desc="2-106140" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="AACTCACC" SampleId="SVE2539A1" Desc="2-106142" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="ATCCTGTA" SampleId="SVE2544A1" Desc="2-106147" Ref="hg19" />
+      <Sample ProjectId="115393" Control="N" Index="ATTGGCTC" SampleId="SVE2496A1" Desc="2-106141" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="CAGATCTG" SampleId="SVE2539A3" Desc="2-106143" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="CTGTAGCC" SampleId="SVE2544A2" Desc="2-106145" Ref="hg19" />
+      <Sample ProjectId="920822" Control="N" Index="GCTAACGA" SampleId="SVE2539A2" Desc="2-106144" Ref="hg19" />
+      <Sample ProjectId="445285" Control="N" Index="GCTCGGTA" SampleId="SVE2544A3" Desc="2-106146" Ref="hg19" />
+      <Sample ProjectId="Undetermined_indices" Control="N" Index="Undetermined" SampleId="lane2" Desc="Clusters with unmatched barcodes for lane 2" Ref="unknown" />
+    </Lane>
+  </FlowcellInfo>
+</DemultiplexConfig>
