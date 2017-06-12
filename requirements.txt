@@ -1,10 +1,16 @@
-alchy
-click
-bumpversion
-pymysql
-PyYAML
-wheel
-SQLAlchemy
+Flask
 Flask-Alchy
 Flask-Bootstrap
-Flask
+PyYAML
+SQLAlchemy
+alchy
+alembic
+beautifulsoup
+bs4
+bumpversion
+click
+path.py
+pymysql
+pytest
+wheel
+-e git+https://github.com/Clinical-Genomics/demultiplexing.git#egg=demux 

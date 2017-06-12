@@ -30,7 +30,7 @@ with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
     long_description = f.read()
 
 with open('requirements.txt') as f:
-    required = f.read().splitlines()
+    required = [ line for line in f.read().splitlines() if not line.startswith('-e') ]
 
 setup(
     name='cgstats',

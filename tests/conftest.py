@@ -51,7 +51,7 @@ def sql_manager(request):
         engine.execute("DROP DATABASE {}".format(database))
     
     request.addfinalizer(fin)
-    yield manager
+    return manager
 
 def pytest_addoption(parser):
     parser.addoption("--sqlalchemy-connect-url", action="store",
