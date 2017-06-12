@@ -5,7 +5,6 @@ PyYAML
 SQLAlchemy
 alchy
 alembic
-beautifulsoup
 bs4
 bumpversion
 click
