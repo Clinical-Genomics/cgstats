@@ -1,0 +1,14 @@
+language: python
+python:
+    - "3.5"
+services:
+    - mysql
+
+script:
+    - pytest tests/ --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+
+install:
+    - pip install -r requirements.txt -e .
+
+notification:
+    email: false
