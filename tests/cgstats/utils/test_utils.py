@@ -3,8 +3,9 @@
 
 from cgstats.utils.utils import get_projects, gather_flowcell
 
-def test_get_projects(rapid_run_dir):
+def test_get_projects(rapid_run_dir, miseq_run_dir):
     assert sorted(get_projects(rapid_run_dir, 'Unaligned')) == sorted(['454557', '504910', '959191'])
+    assert sorted(get_projects(miseq_run_dir, 'Unaligned-Y301I8I8Y301')) == ['Uppsala_WGS']
 
 def test_gather_flowcell_rapid(rapid_run_dir):
     assert gather_flowcell(rapid_run_dir) == {'pos': 'A', 'name': 'HB07NADXX'}

@@ -30,6 +30,10 @@ def rapid_run_dir():
 def mixed_rapid_run_dir():
     return 'tests/fixtures/170406_D00410_0399_BHHKV5BCXY'
 
+@pytest.fixture
+def miseq_run_dir():
+    return 'tests/fixtures/170609_M03284_0061_000000000-B59L9'
+
 @pytest.fixture(scope="function")
 def sql_manager(request):
     config_url = request.config.getoption('--sqlalchemy-connect-url')

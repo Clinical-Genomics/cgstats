@@ -20,7 +20,7 @@ def get_projects(demux_dir, unaligned_dir='Unaligned'):
     for project_dir in project_dirs:
         project = Path(project_dir).normpath().basename()
         if project.startswith('Project_'):
-            project = project.split('_')[1]
+            project = project.split('_', 1)[1]
             projects.append(project)
 
     return projects
