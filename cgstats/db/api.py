@@ -25,7 +25,8 @@ def connect(uri):
 def get_sample(sample_id):
     """Get a unique demux sample."""
     pattern = SAMPLE_PATTERN.format(sample_id)
-    query = Sample.query.filter(Sample.samplename.like(pattern))
+    query = Sample.query.filter(or_(Sample.samplename.like(pattern),
+                                    Sample.samplename == sample_id))
     return query
 
 
@@ -36,11 +37,8 @@ def flowcells(sample=None):
     if sample:
         pattern = SAMPLE_PATTERN.format(sample)
         query = (query.join(Demux.unaligned, Unaligned.sample)
-                      .filter(
-                          or_(Sample.samplename.like(pattern),
-                              Sample.samplename.like("{}".format(sample)))
-                      )
-                )
+                      .filter(or_(Sample.samplename.like(pattern),
+                                  Sample.samplename == sample)))
     return query
 
 

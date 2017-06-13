@@ -6,6 +6,7 @@ import click
 import json
 import yaml
 
+from .export import export_run
 from .models import Analysis
 from .mip import process_all
 
@@ -80,31 +81,7 @@ def test_analysis(sampleinfo):
 def export(context, condense, existing_data):
     """Export interesting data about a case."""
     existing = yaml.load(existing_data)
-    case_id = existing['case_id']
-    analysis_obj = Analysis.query.filter_by(analysis_id=case_id).first()
-    if analysis_obj is None:
-        log.error('analysis not found in database')
-        context.abort()
-    case_data = {
-        'pipeline': analysis_obj.pipeline,
-        'pipeline_version': analysis_obj.pipeline_version,
-        'analysis_date': analysis_obj.analyzed_at,
-    }
-    samples_data = {}
-    for sample_obj in analysis_obj.samples:
-        sample_data = {
-            'sequencing_type': sample_obj.sequencing_type,
-            'sex_predicted': sample_obj.sex_predicted,
-            'read_pairs': sample_obj.read_pairs,
-            'mapped': sample_obj.mapped_percent,
-            'duplicates': sample_obj.duplicates_percent,
-            'target_coverage': sample_obj.coverage_target,
-            'target_completeness': sample_obj.completeness_target_10,
-        }
-        samples_data[sample_obj.sample_id] = sample_data
-
-    new_data = fillin_data(existing, case_data, samples_data)
-
+    new_data = export_run(context.obj['manager'], existing)
     if condense:
         raw_dump = json.dumps(new_data, default=json_serial)
     else:
