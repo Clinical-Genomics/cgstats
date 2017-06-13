@@ -38,7 +38,7 @@ setup(
     # Versions should comply with PEP440. For a discussion on
     # single-sourcing the version across setup.py and the project code,
     # see http://packaging.python.org/en/latest/tutorial.html#version
-    version='0.14.5',
+    version='1.0.0',
     description='Models and access to cgstats',
     long_description=long_description,
     # What does your project relate to? Separate with spaces.
