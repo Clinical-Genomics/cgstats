@@ -129,7 +129,7 @@ def get_raw_clusters_lane(total_sample_summary):
     Returns: TODO
 
     """
-    raw_clusters_lane = dict(zip(total_sample_summary.keys(), [ 0 for t in xrange(len(total_sample_summary.keys())) ])) # lane: raw_clusters
+    raw_clusters_lane = dict(zip(total_sample_summary.keys(), [ 0 for t in range(len(total_sample_summary.keys())) ])) # lane: raw_clusters
     for lane, sample_summary in total_sample_summary.items():
         for sample, summary in sample_summary.items():
             raw_clusters_lane[ lane ] += summary['raw_clusters']
@@ -151,11 +151,11 @@ def parse_samples(demux_dir):
     proc_undetermined = calc_undetermined(demux_dir)
 
     # create a { 1: {}, 2: {}, ... } structure
-    summaries = dict(zip(lanes, [ {} for t in xrange(len(lanes))])) # init ;)
+    summaries = {lane_key: {} for lane_key in lanes}
 
     # preload the stats files
-    et_stats_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
-    et_index_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    et_stats_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
+    et_index_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
     for lane in lanes:
         stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
         index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
@@ -187,7 +187,7 @@ def parse_samples(demux_dir):
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
-    total_sample_summary = dict(zip(lanes, [ {} for t in xrange(len(lanes))]))
+    total_sample_summary = dict(zip(lanes, [ {} for t in range(len(lanes))]))
     for line in samplesheet.lines():
         total_sample_summary[ line['lane'] ][ line['sample_id'] ] = {
             'raw_clusters': 0,
@@ -217,7 +217,7 @@ def parse_samples(demux_dir):
 
     raw_clusters_lane = get_raw_clusters_lane(total_sample_summary)
 
-    rs= dict(zip(lanes, [ {} for t in xrange(len(lanes))]))
+    rs= dict(zip(lanes, [ {} for t in range(len(lanes))]))
     for lane, sample_summary in total_sample_summary.items():
         for sample, summary in sample_summary.items():
             rs[ lane ][ summary['samplename'] ] = {
@@ -256,11 +256,11 @@ def parse( demux_dir):
     proc_undetermined = calc_undetermined(demux_dir)
 
     # create a { 1: [], 2: [], ... } structure
-    summaries = dict(zip(lanes, [ [] for t in xrange(len(lanes))])) # init ;)
+    summaries = dict(zip(lanes, [ [] for t in range(len(lanes))])) # init ;)
 
     # preload the stats files
-    et_stats_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
-    et_index_files = dict(zip(lanes, [ [] for t in xrange(len(lanes))]))
+    et_stats_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
+    et_index_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
     for lane in lanes:
         stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
         index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
