@@ -1,4 +1,4 @@
-#CLINSTATSDB
+#CGSTATS
 Models and access to clinstatsdb
 
 

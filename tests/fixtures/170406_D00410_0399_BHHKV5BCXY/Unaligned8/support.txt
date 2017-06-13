@@ -1,0 +1,347 @@
+# This file contains information about your system that is useful for
+# diagnosing a problem you may have. For technical assistance, please
+# contact the Illumina Customer Support team <techsupport@illumina.com>
+# and send them this file.
+
+$_System = {
+  'PID' : '25303',
+  'OS' : 'linux',
+  'PERL_VERSION' : 'v5.10.1',
+  'PERL_EXECUTABLE' : '/usr/bin/perl'
+};
+
+$_ID-string = 'bcl2fastq-1.8.4';
+
+$_Program = '/usr/local/bin/configureBclToFastq.pl';
+
+$_Command-line = [
+  '--sample-sheet',
+  '/home/clinical/RUNS/170406_D00410_0399_BHHKV5BCXY/Data/Intensities/BaseCalls/SampleSheet.csv',
+  '--ignore-missing-bcl',
+  '--ignore-missing-stats',
+  '--use-bases-mask',
+  'Y126,I8,I8,Y126',
+  '--fastq-cluster-count',
+  '0',
+  '--input-dir',
+  '/home/clinical/RUNS/170406_D00410_0399_BHHKV5BCXY/Data/Intensities/BaseCalls',
+  '--output-dir',
+  '/home/clinical/DEMUX/170406_D00410_0399_BHHKV5BCXY/Unaligned8'
+];
+
+$_Locations = [
+  '/usr/local/lib/bcl2fastq-1.8.4/perl',
+  '/usr/local/lib64/perl5',
+  '/usr/local/share/perl5',
+  '/usr/lib64/perl5/vendor_perl',
+  '/usr/share/perl5/vendor_perl',
+  '/usr/lib64/perl5',
+  '/usr/share/perl5',
+  '.'
+];
+
+$_Modules = [
+  '/usr/lib64/perl5/Config.pm',
+  '/usr/lib64/perl5/Config_git.pl',
+  '/usr/lib64/perl5/Config_heavy.pl',
+  '/usr/lib64/perl5/Cwd.pm',
+  '/usr/lib64/perl5/Data/Dumper.pm',
+  '/usr/lib64/perl5/DynaLoader.pm',
+  '/usr/lib64/perl5/Fcntl.pm',
+  '/usr/lib64/perl5/File/Glob.pm',
+  '/usr/lib64/perl5/IO.pm',
+  '/usr/lib64/perl5/IO/File.pm',
+  '/usr/lib64/perl5/IO/Handle.pm',
+  '/usr/lib64/perl5/IO/Seekable.pm',
+  '/usr/lib64/perl5/List/Util.pm',
+  '/usr/lib64/perl5/POSIX.pm',
+  '/usr/lib64/perl5/Scalar/Util.pm',
+  '/usr/lib64/perl5/XML/Parser.pm',
+  '/usr/lib64/perl5/XML/Parser/Expat.pm',
+  '/usr/lib64/perl5/XML/Parser/Style/Tree.pm',
+  '/usr/lib64/perl5/XSLoader.pm',
+  '/usr/lib64/perl5/auto/POSIX/autosplit.ix',
+  '/usr/lib64/perl5/auto/POSIX/load_imports.al',
+  '/usr/lib64/perl5/lib.pm',
+  '/usr/lib64/perl5/re.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Alignment.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Alignment/Config.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/BaseCalls.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Common/IOLib.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Common/Log.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Common/Utils.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/DemultiplexConfig.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/Dx.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/SampleSheet.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/SampleSheet/Csv.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/SampleSheet/Make.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Demultiplex/SampleSheet/Xml.pm',
+  '/usr/local/lib/bcl2fastq-1.8.4/perl/Casava/Intensities.pm',
+  '/usr/share/perl5/AutoLoader.pm',
+  '/usr/share/perl5/Carp.pm',
+  '/usr/share/perl5/Exporter.pm',
+  '/usr/share/perl5/Exporter/Heavy.pm',
+  '/usr/share/perl5/File/Basename.pm',
+  '/usr/share/perl5/File/Copy.pm',
+  '/usr/share/perl5/File/Path.pm',
+  '/usr/share/perl5/File/Spec.pm',
+  '/usr/share/perl5/File/Spec/Unix.pm',
+  '/usr/share/perl5/Getopt/Long.pm',
+  '/usr/share/perl5/Pod/Escapes.pm',
+  '/usr/share/perl5/Pod/InputObjects.pm',
+  '/usr/share/perl5/Pod/Parser.pm',
+  '/usr/share/perl5/Pod/Select.pm',
+  '/usr/share/perl5/Pod/Simple.pm',
+  '/usr/share/perl5/Pod/Simple/BlackBox.pm',
+  '/usr/share/perl5/Pod/Simple/LinkSection.pm',
+  '/usr/share/perl5/Pod/Text.pm',
+  '/usr/share/perl5/Pod/Usage.pm',
+  '/usr/share/perl5/SelectSaver.pm',
+  '/usr/share/perl5/Symbol.pm',
+  '/usr/share/perl5/Term/ANSIColor.pm',
+  '/usr/share/perl5/Text/ParseWords.pm',
+  '/usr/share/perl5/Tie/Hash.pm',
+  '/usr/share/perl5/UNIVERSAL.pm',
+  '/usr/share/perl5/XML/Simple.pm',
+  '/usr/share/perl5/base.pm',
+  '/usr/share/perl5/bytes.pm',
+  '/usr/share/perl5/constant.pm',
+  '/usr/share/perl5/integer.pm',
+  '/usr/share/perl5/overload.pm',
+  '/usr/share/perl5/strict.pm',
+  '/usr/share/perl5/unicore/Canonical.pl',
+  '/usr/share/perl5/unicore/Exact.pl',
+  '/usr/share/perl5/unicore/PVA.pl',
+  '/usr/share/perl5/unicore/To/Fold.pl',
+  '/usr/share/perl5/unicore/lib/gc_sc/Digit.pl',
+  '/usr/share/perl5/unicore/lib/gc_sc/SpacePer.pl',
+  '/usr/share/perl5/utf8.pm',
+  '/usr/share/perl5/utf8_heavy.pl',
+  '/usr/share/perl5/vars.pm',
+  '/usr/share/perl5/warnings.pm',
+  '/usr/share/perl5/warnings/register.pm'
+];
+
+$_Environment = {
+  'QTINC' : '/usr/lib64/qt-3.3/include',
+  'SSH_CLIENT' : '130.237.80.45 52126 22',
+  'CVS_RSH' : 'ssh',
+  'LESSOPEN' : '||/usr/bin/lesspipe.sh %s',
+  'PWD' : '/home/clinical/RUNS/170406_D00410_0399_BHHKV5BCXY',
+  'SELINUX_ROLE_REQUESTED' : '',
+  'SELINUX_USE_CURRENT_RANGE' : '',
+  'LANG' : 'en_US.UTF-8',
+  'USER' : 'hiseq.clinical',
+  'G_BROKEN_FILENAMES' : '1',
+  'LOGNAME' : 'hiseq.clinical',
+  'SHLVL' : '3',
+  'SELINUX_LEVEL_REQUESTED' : '',
+  'QTLIB' : '/usr/lib64/qt-3.3/lib',
+  'PATH' : '/home/hiseq.clinical/miniconda2/bin/:/home/hiseq.clinical/.virtualenv/mysql/bin:/home/hiseq.clinical/.virtualenv/mysql/bin:/usr/lib64/qt-3.3/bin:/opt/rh/python27/root/usr/bin/:/usr/local/bin:/bin:/usr/bin:/usr/local/sbin:/usr/sbin:/sbin:/opt/dell/srvadmin/bin',
+  'VIRTUAL_ENV' : '/home/hiseq.clinical/.virtualenv/mysql',
+  'HISTSIZE' : '1000',
+  'TERM' : 'screen',
+  'SSH_TTY' : '/dev/pts/0',
+  'HOME' : '/home/hiseq.clinical',
+  'CONDA_ENV_PATH' : '/home/hiseq.clinical/miniconda2/envs/nipt',
+  'SSH_CONNECTION' : '130.237.80.45 52126 130.237.80.51 22',
+  'MAIL' : '/var/spool/mail/hiseq.clinical',
+  'QTDIR' : '/usr/lib64/qt-3.3',
+  'CONDA_DEFAULT_ENV' : 'nipt',
+  'WINDOW' : '0',
+  'STY' : '22988.pts-0.clinical-preproc',
+  'HOSTNAME' : 'clinical-preproc.scilifelab.se',
+  '_' : '/usr/local/bin/configureBclToFastq.pl',
+  'LS_COLORS' : 'rs=0:di=38;5;27:ln=38;5;51:mh=44;38;5;15:pi=40;38;5;11:so=38;5;13:do=38;5;5:bd=48;5;232;38;5;11:cd=48;5;232;38;5;3:or=48;5;232;38;5;9:mi=05;48;5;232;38;5;15:su=48;5;196;38;5;15:sg=48;5;11;38;5;16:ca=48;5;196;38;5;226:tw=48;5;10;38;5;16:ow=48;5;10;38;5;21:st=48;5;21;38;5;15:ex=38;5;34:*.tar=38;5;9:*.tgz=38;5;9:*.arj=38;5;9:*.taz=38;5;9:*.lzh=38;5;9:*.lzma=38;5;9:*.tlz=38;5;9:*.txz=38;5;9:*.zip=38;5;9:*.z=38;5;9:*.Z=38;5;9:*.dz=38;5;9:*.gz=38;5;9:*.lz=38;5;9:*.xz=38;5;9:*.bz2=38;5;9:*.tbz=38;5;9:*.tbz2=38;5;9:*.bz=38;5;9:*.tz=38;5;9:*.deb=38;5;9:*.rpm=38;5;9:*.jar=38;5;9:*.rar=38;5;9:*.ace=38;5;9:*.zoo=38;5;9:*.cpio=38;5;9:*.7z=38;5;9:*.rz=38;5;9:*.jpg=38;5;13:*.jpeg=38;5;13:*.gif=38;5;13:*.bmp=38;5;13:*.pbm=38;5;13:*.pgm=38;5;13:*.ppm=38;5;13:*.tga=38;5;13:*.xbm=38;5;13:*.xpm=38;5;13:*.tif=38;5;13:*.tiff=38;5;13:*.png=38;5;13:*.svg=38;5;13:*.svgz=38;5;13:*.mng=38;5;13:*.pcx=38;5;13:*.mov=38;5;13:*.mpg=38;5;13:*.mpeg=38;5;13:*.m2v=38;5;13:*.mkv=38;5;13:*.ogm=38;5;13:*.mp4=38;5;13:*.m4v=38;5;13:*.mp4v=38;5;13:*.vob=38;5;13:*.qt=38;5;13:*.nuv=38;5;13:*.wmv=38;5;13:*.asf=38;5;13:*.rm=38;5;13:*.rmvb=38;5;13:*.flc=38;5;13:*.avi=38;5;13:*.fli=38;5;13:*.flv=38;5;13:*.gl=38;5;13:*.dl=38;5;13:*.xcf=38;5;13:*.xwd=38;5;13:*.yuv=38;5;13:*.cgm=38;5;13:*.emf=38;5;13:*.axv=38;5;13:*.anx=38;5;13:*.ogv=38;5;13:*.ogx=38;5;13:*.aac=38;5;45:*.au=38;5;45:*.flac=38;5;45:*.mid=38;5;45:*.midi=38;5;45:*.mka=38;5;45:*.mp3=38;5;45:*.mpc=38;5;45:*.ogg=38;5;45:*.ra=38;5;45:*.wav=38;5;45:*.axa=38;5;45:*.oga=38;5;45:*.spx=38;5;45:*.xspf=38;5;45:',
+  'SHELL' : '/bin/bash',
+  'TERMCAP' : 'SC|screen|VT 100/ANSI X3.64 virtual terminal:\\
+	:DO=\\E[%dB:LE=\\E[%dD:RI=\\E[%dC:UP=\\E[%dA:bs:bt=\\E[Z:\\
+	:cd=\\E[J:ce=\\E[K:cl=\\E[H\\E[J:cm=\\E[%i%d;%dH:ct=\\E[3g:\\
+	:do=^J:nd=\\E[C:pt:rc=\\E8:rs=\\Ec:sc=\\E7:st=\\EH:up=\\EM:\\
+	:le=^H:bl=^G:cr=^M:it#8:ho=\\E[H:nw=\\EE:ta=^I:is=\\E)0:\\
+	:li#76:co#343:am:xn:xv:LP:sr=\\EM:al=\\E[L:AL=\\E[%dL:\\
+	:cs=\\E[%i%d;%dr:dl=\\E[M:DL=\\E[%dM:dc=\\E[P:DC=\\E[%dP:\\
+	:im=\\E[4h:ei=\\E[4l:mi:IC=\\E[%d@:ks=\\E[?1h\\E=:\\
+	:ke=\\E[?1l\\E>:vi=\\E[?25l:ve=\\E[34h\\E[?25h:vs=\\E[34l:\\
+	:ti=\\E[?1049h:te=\\E[?1049l:us=\\E[4m:ue=\\E[24m:so=\\E[3m:\\
+	:se=\\E[23m:mb=\\E[5m:md=\\E[1m:mr=\\E[7m:me=\\E[m:ms:\\
+	:Co#8:pa#64:AF=\\E[3%dm:AB=\\E[4%dm:op=\\E[39;49m:AX:\\
+	:vb=\\Eg:G0:as=\\E(0:ae=\\E(B:\\
+	:ac=\\140\\140aaffggjjkkllmmnnooppqqrrssttuuvvwwxxyyzz{{||}}~~..--++,,hhII00:\\
+	:po=\\E[5i:pf=\\E[4i:k0=\\E[10~:k1=\\EOP:k2=\\EOQ:k3=\\EOR:\\
+	:k4=\\EOS:k5=\\E[15~:k6=\\E[17~:k7=\\E[18~:k8=\\E[19~:\\
+	:k9=\\E[20~:k;=\\E[21~:F1=\\E[23~:F2=\\E[24~:F3=\\E[1;2P:\\
+	:F4=\\E[1;2Q:F5=\\E[1;2R:F6=\\E[1;2S:F7=\\E[15;2~:\\
+	:F8=\\E[17;2~:F9=\\E[18;2~:FA=\\E[19;2~:kb=:K2=\\EOE:\\
+	:kB=\\E[Z:kF=\\E[1;2B:kR=\\E[1;2A:*4=\\E[3;2~:*7=\\E[1;2F:\\
+	:#2=\\E[1;2H:#3=\\E[2;2~:#4=\\E[1;2D:%c=\\E[6;2~:%e=\\E[5;2~:\\
+	:%i=\\E[1;2C:kh=\\E[1~:@1=\\E[1~:kH=\\E[4~:@7=\\E[4~:\\
+	:kN=\\E[6~:kP=\\E[5~:kI=\\E[2~:kD=\\E[3~:ku=\\EOA:kd=\\EOB:\\
+	:kr=\\EOC:kl=\\EOD:km:',
+  'HISTCONTROL' : 'ignoredups'
+};
+
+$_Mask = 'YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY,IIIIIIII,IIIIIIII,YYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYYY';
+
+$_Barcodes/Lanes = {
+                     '1' => {
+                              'ATTACTCG-GTACTGAC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106130',
+                                                       'SAMPLE_ID' => 'MIC2206A8',
+                                                       'PROJECT_ID' => '718258'
+                                                     },
+                              'GAATTCGT-GGCTCTGA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106136',
+                                                       'SAMPLE_ID' => 'MIC2208A44',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'CGCTCATT-CCTATCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106132',
+                                                       'SAMPLE_ID' => 'MIC2208A19',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-TATAGCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106133',
+                                                       'SAMPLE_ID' => 'MIC2208A41',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'Undetermined' => {
+                                                  'CONTROL' => 'N',
+                                                  'SPECIES' => 'unknown',
+                                                  'DESCRIPTION' => 'Clusters with unmatched barcodes for lane 1',
+                                                  'SAMPLE_ID' => 'lane1',
+                                                  'PROJECT_ID' => 'Undetermined_indices'
+                                                },
+                              'CGCTCATT-ATAGAGGC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106139',
+                                                       'SAMPLE_ID' => 'MIC2206A37',
+                                                       'PROJECT_ID' => '718258'
+                                                     },
+                              'CTGAAGCT-TAATCTTA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106138',
+                                                       'SAMPLE_ID' => 'MIC2208A54',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-ATAGAGGC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106134',
+                                                       'SAMPLE_ID' => 'MIC2208A42',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-AGGCGAAG' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106137',
+                                                       'SAMPLE_ID' => 'MIC2208A45',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-CCTATCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106135',
+                                                       'SAMPLE_ID' => 'MIC2208A43',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'TCCGGAGA-GGCTCTGA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106131',
+                                                       'SAMPLE_ID' => 'MIC2206A12',
+                                                       'PROJECT_ID' => '718258'
+                                                     }
+                            },
+                     '2' => {
+                              'ATTACTCG-GTACTGAC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106130',
+                                                       'SAMPLE_ID' => 'MIC2206A8',
+                                                       'PROJECT_ID' => '718258'
+                                                     },
+                              'GAATTCGT-GGCTCTGA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106136',
+                                                       'SAMPLE_ID' => 'MIC2208A44',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'CGCTCATT-CCTATCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106132',
+                                                       'SAMPLE_ID' => 'MIC2208A19',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-TATAGCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106133',
+                                                       'SAMPLE_ID' => 'MIC2208A41',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'Undetermined' => {
+                                                  'CONTROL' => 'N',
+                                                  'SPECIES' => 'unknown',
+                                                  'DESCRIPTION' => 'Clusters with unmatched barcodes for lane 2',
+                                                  'SAMPLE_ID' => 'lane2',
+                                                  'PROJECT_ID' => 'Undetermined_indices'
+                                                },
+                              'CGCTCATT-ATAGAGGC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106139',
+                                                       'SAMPLE_ID' => 'MIC2206A37',
+                                                       'PROJECT_ID' => '718258'
+                                                     },
+                              'CTGAAGCT-TAATCTTA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106138',
+                                                       'SAMPLE_ID' => 'MIC2208A54',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-ATAGAGGC' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106134',
+                                                       'SAMPLE_ID' => 'MIC2208A42',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-AGGCGAAG' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106137',
+                                                       'SAMPLE_ID' => 'MIC2208A45',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'GAATTCGT-CCTATCCT' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106135',
+                                                       'SAMPLE_ID' => 'MIC2208A43',
+                                                       'PROJECT_ID' => '356717'
+                                                     },
+                              'TCCGGAGA-GGCTCTGA' => {
+                                                       'CONTROL' => 'N',
+                                                       'SPECIES' => 'hg19',
+                                                       'DESCRIPTION' => '2-106131',
+                                                       'SAMPLE_ID' => 'MIC2206A12',
+                                                       'PROJECT_ID' => '718258'
+                                                     }
+                            }
+                   };
+

@@ -13,9 +13,9 @@ fileConfig(config.config_file_name)
 
 # add your model's MetaData object here
 # for 'autogenerate' support
-import clinstatsdb.analysis.models
-import clinstatsdb.db.models
-from clinstatsdb.db.models import Model
+import cgstats.analysis.models
+import cgstats.db.models
+from cgstats.db.models import Model
 # target_metadata = mymodel.Base.metadata
 target_metadata = Model.metadata
 
