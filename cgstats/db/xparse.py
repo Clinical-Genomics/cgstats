@@ -11,6 +11,7 @@ import socket
 from path import Path
 from sqlalchemy import func
 
+from demux.utils import Samplesheet
 from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import xstats
 from cgstats.utils.utils import get_projects, gather_flowcell
@@ -70,8 +71,8 @@ def gather_supportparams(run_dir):
 
     # get the sample sheet and it's contents
     samplesheet_path = run_dir.joinpath('SampleSheet.csv')
-    rs['sampleconfig_path'] = samplesheet_path
-    rs['sampleconfig'] = ''.join(open(samplesheet_path, 'r').readlines())
+    rs['sampleconfig_path'] = str(samplesheet_path)
+    rs['sampleconfig'] = Samplesheet(samplesheet_path).raw()
 
     # get the unaligned dir
     document_path = run_dir.joinpath('Unaligned')
@@ -80,7 +81,7 @@ def gather_supportparams(run_dir):
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = document_path
+        rs['document_path'] = str(document_path)
 
     return rs
 
@@ -98,7 +99,7 @@ def gather_datasource(run_dir):
     rs = {} # result set
 
     # get the run name
-    rs['runname'] = run_dir.normpath().basename()
+    rs['runname'] = str(run_dir.normpath().basename())
 
     # get the run date
     rs['rundate'] = rs['runname'].split('_')[0]
@@ -116,7 +117,7 @@ def gather_datasource(run_dir):
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = document_path
+        rs['document_path'] = str(document_path)
 
     return rs
 
