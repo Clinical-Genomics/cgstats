@@ -1,19 +1,14 @@
-#CGSTATS
-Models and access to clinstatsdb
+# CGSTATS [![Build Status][travis-img]][travis-url]
 
+Models and CRUD to cgstats.
 
 ## configuration
 
-This module expects a config YAML file to be present in ~/.clinical by the name of `databases.yaml`.
+cgstats has a parameter `--database` that needs to hold a connection string to the database:
 
-The config file has following form:
-
-```
-# connection strings
-clinstats:
-    connection_string: "mysql://127.0.0.1:3306/db"
-    name: 'db'
-    version: '2.0.2'
+```bash
+$ cgstats --database mysql+pymysql://user:pass@127.0.0.1:3306/cgstats
 ```
 
-The version and name are to be present in the database table `version`.
+[travis-img]: https://travis-ci.org/Clinical-Genomics/cgstats.svg?branch=master
+[travis-url]: https://travis-ci.org/Clinical-Genomics/cgstats
