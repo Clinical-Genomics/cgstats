@@ -25,22 +25,22 @@ def parse(demux_stats):
         sample = {}
         cols = row.findAll('td')
 
-        lane = unicode(cols[0].string).encode('utf8')
+        lane = cols[0].string.encode('utf8')
         if not lane in samples:
             samples[lane] = {}
 
-        sample_name = unicode(cols[1].string).encode('utf8')
+        sample_name = cols[1].string.encode('utf8')
         sample['sample_name'] = sample_name
-        sample['barcode'] = unicode(cols[3].string).encode('utf8')
-        sample['project_id'] = unicode(cols[6].string).encode('utf8')
+        sample['barcode'] = cols[3].string.encode('utf8')
+        sample['project_id'] = cols[6].string.encode('utf8')
         sample['lane'] = lane
-        sample['yield_mb'] = int(unicode(cols[7].string).encode('utf8').replace(",",""))
-        sample['pf_pc'] = float(unicode(cols[8].string).encode('utf8'))
-        sample['readcounts'] = int(unicode(cols[9].string).encode('utf8').replace(",",""))
-        sample['raw_clusters_pc'] = float(unicode(cols[10].string).encode('utf8'))
-        sample['perfect_barcodes_pc'] = float(unicode(cols[11].string).encode('utf8'))
-        sample['q30_bases_pc'] = float(unicode(cols[13].string).encode('utf8'))
-        sample['mean_quality_score'] = float(unicode(cols[14].string).encode('utf8'))
+        sample['yield_mb'] = int(cols[7].string.encode('utf8').replace(",",""))
+        sample['pf_pc'] = float(cols[8].string.encode('utf8'))
+        sample['readcounts'] = int(cols[9].string.encode('utf8').replace(",",""))
+        sample['raw_clusters_pc'] = float(cols[10].string.encode('utf8'))
+        sample['perfect_barcodes_pc'] = float(cols[11].string.encode('utf8'))
+        sample['q30_bases_pc'] = float(cols[13].string.encode('utf8'))
+        sample['mean_quality_score'] = float(cols[14].string.encode('utf8'))
 
         samples[lane][sample_name] = sample
 
