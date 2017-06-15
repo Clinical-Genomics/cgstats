@@ -65,6 +65,16 @@ def test_db_add(sql_manager, rapid_run_dir, x_run_dir):
 
     _count_all_tables()
 
+def test_db_api(sql_manager, rapid_run_dir, x_run_dir):
+
+    # add some stuff
+    test_db_add(sql_manager, rapid_run_dir, x_run_dir)
+
+    # test
+    flowcells = api.flowcells(sample='SIB914A11').all()
+    assert len(flowcells) == 1
+    assert flowcells.pop().flowcellname == gather_flowcell(rapid_run_dir)['name']
+
 
 def test_select(sql_manager, rapid_run_dir, x_run_dir):
     """ Tests out one query that touches a lot of the tables.

@@ -32,7 +32,7 @@ def get_sample(sample_id):
 
 def flowcells(sample=None):
     """Return a query for the latest flowcells."""
-    query = (Flowcell.query.join(Flowcell.datasource, Demux.datasource)
+    query = (Flowcell.query.join(Demux).join(Datasource)
                            .order_by(Datasource.rundate.desc()))
     if sample:
         pattern = SAMPLE_PATTERN.format(sample)
