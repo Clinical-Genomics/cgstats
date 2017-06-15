@@ -1,24 +1,20 @@
 language: python
 python:
-  - "2.7"
-  - "3.6"
+- '2.7'
+- '3.6'
 services:
-  - mysql
-
+- mysql
 script:
-  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
-
+- py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
 install:
-  - pip install -r requirements.txt -e .
-
+- pip install -r requirements.txt -e .
 notification:
-  - email: false
-
+- email: false
 deploy:
   provider: pypi
-  user: kenny.billiau 
+  user: kenny.billiau
   password:
-    secure: UkXbhDi1Y+GhgUVxt3qEH3zVppS0rbtzRWUTGd13/nIJUcwELAe16gIaIVgGwJK/OVrGMAFfoCpC3By+5cKXhmIyPlVKf7PjHC1QD3koJ0Rlgb04JeMt0yfb5ve16l5Tp/pr4rTKmGq+RFMziHen7m2Hc344k+ruvi0gYcwxPvPTZG6KnJwjn5tz/HylQgcQFsUR8QJD/Zut1ysa5H9iVa0nrUa/7YzMgHUHX4GM+TzCOuo4Q4eNsYcgu3Ntp0wygQT4+/JAfUoOkOqmTK31O9itGnRhylmmfri7gshuxEDsLllRbxSUu99Fj5kHZKcp+BCE/fvmmAokmnhyfnOaHiOszISEUMqD3ZvSzrMuO3RYT4CTEUtOND2eDzdTDrUB6HQ9UJw+QcOTvpEN7q2oZWy5/Ohgj3hmsxS+tJG7PAmZPWYrLkF8qsTxqxB0Fu1fbhJUT5o1gBkVzPT9h5YthjFa79Wz1gBmAKWlohKPPSVjoEdw0+RPzj7h8quhBhtNXUFLg0Vr8y+XSjwjt1QSr/BlcEAbeumoDDLRFD/evp6NzcttBiIgqZE0OXxXY8O77cwad4ME98qeRNyrI+x+IR/l5ZiIub2NsSeZqdZ7eKC2OMVbJDqpqMEmFUT4SasxtK4uKiCOcE9sTLTIM0U9/0amtgXiYAgpQhwuLnDLvPc=
+    secure: owj2vVa/KZyBtkRZsYWcsYTXwyzCZQfGA3LWuuhpxR8CZQNOxWFfCw2fN2QJSXwGKQ6EVUdbMVoNADMcPYJgchnUMaV3o8rYlTicqgR4L/+3PN183+JBAAaqOPtiKzxYXf92RQtU/BN99WU6eg21ZLc/+w9ownVy7iD86vs1agDb8p9Y+gUke2iv9FQMTtvWShWtxQFwjUwmERYPn30F5gK8gm4Xc1No2tAiXFPS4bktsy3+0KNOUz8hxZ/c4s00fUsVesN/VG3fov9ygZwJPxfAqGdaJryg2QMXux+C1EAOc0rOB7CUBiO6dF6e15lwnE19EEu8q3bo1O/cIUd8fDtwed/nJ+Fiun9HICwaQEuh5KOOSPD1KtnZM7RQ+1ziFlS+gsQE3szhCnC/W570reODjgISiognmUxeLUn/kZgcJquX8Afnc6l+lDyj45RXHF9I1kiof3qmF3JWj5MkL2nAkl1uBPc1Rjiwt+JBDgfj9wBvImwkPh3zNwIiD7uBcBPlRgEtZM91nlL2HniYwMimE88mfEs5GcLy7pJZSOfSZxRpaZFt5gBhEqWIRYRW+KpV3zuvQrzs/bkTDFk8h+noYWYToR2fLts0x1J+kGzOmPVW7dKzSQTJlDYzvEJYhVIWmULCckQz1WLsMf2TBjuxqru3XdLD4h3ZrSOa1Jc=
   on:
     tags: true
     distributions: sdist bdist_wheel
