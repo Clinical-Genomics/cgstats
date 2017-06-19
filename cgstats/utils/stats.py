@@ -10,11 +10,18 @@ def parse(demux_stats):
 
     Args:
         demux_stats (str): a path to Demultiplex_Stats.htm of the run
-        unaligneddir (str): name of the Unaligned dir
 
-    Returns: TODO
+    Returns: { lane: { sample_id: {}}}
 
     """
+
+    def mkint(s):
+        """Make sure empty strings default to 0"""
+        return int('0'+s)
+
+    def mkfloat(s):
+        """Make sure empty strings default to 0"""
+        return float('0'+s)
 
     samples = {} # lane: sample_id: {}
 
@@ -34,13 +41,13 @@ def parse(demux_stats):
         sample['barcode'] = cols[3].string
         sample['project_id'] = cols[6].string
         sample['lane'] = lane
-        sample['yield_mb'] = int(cols[7].string.replace(",",""))
-        sample['pf_pc'] = float(cols[8].string)
-        sample['readcounts'] = int(cols[9].string.replace(",",""))
-        sample['raw_clusters_pc'] = float(cols[10].string)
-        sample['perfect_barcodes_pc'] = float(cols[11].string)
-        sample['q30_bases_pc'] = float(cols[13].string)
-        sample['mean_quality_score'] = float(cols[14].string)
+        sample['yield_mb'] = mkint(cols[7].string.replace(",",""))
+        sample['pf_pc'] = mkfloat(cols[8].string)
+        sample['readcounts'] = mkint(cols[9].string.replace(",",""))
+        sample['raw_clusters_pc'] = mkfloat(cols[10].string)
+        sample['perfect_barcodes_pc'] = mkfloat(cols[11].string)
+        sample['q30_bases_pc'] = mkfloat(cols[13].string)
+        sample['mean_quality_score'] = mkfloat(cols[14].string)
 
         samples[lane][sample_name] = sample
 
