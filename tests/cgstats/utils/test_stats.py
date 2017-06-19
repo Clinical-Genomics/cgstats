@@ -1,5 +1,12 @@
 from cgstats.utils import stats
 
+def test_missing_parse():
+    """After demuxing this run, stats failed on empty pf_pc of P012. This test is to make sure we get a 0 now"""
+
+    rs = stats.parse('tests/fixtures/170616_M03284_0062_000000000-B58CV/Unaligned-Y301I8I8Y301/Basecall_Stats_000000000-B58CV/Demultiplex_Stats.htm')
+
+    assert rs['1']['P012']['pf_pc'] == 0
+
 def test_parse():
     assert stats.parse('tests/fixtures/150114_D00134_0168_AHB07NADXX/Unaligned/Basecall_Stats_HB07NADXX/Demultiplex_Stats.htm') == {
         '1': {
