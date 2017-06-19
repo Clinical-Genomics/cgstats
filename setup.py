@@ -38,7 +38,7 @@ setup(
     # Versions should comply with PEP440. For a discussion on
     # single-sourcing the version across setup.py and the project code,
     # see http://packaging.python.org/en/latest/tutorial.html#version
-    version='1.0.5',
+    version='1.0.6',
     description='Models and access to cgstats',
     long_description=long_description,
     # What does your project relate to? Separate with spaces.
@@ -98,7 +98,7 @@ setup(
             'add = cgstats.db.cli:add',
             'delete = cgstats.db.cli:delete',
             'select = cgstats.db.cli:select',
-            #'lanestats = cgstats.db.cli:lanestats',
+            'lanestats = cgstats.db.cli:lanestats',
         ],
         'cgstats.models.1': [
             'core = cgstats.db.models',
