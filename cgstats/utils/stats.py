@@ -32,22 +32,22 @@ def parse(demux_stats):
         sample = {}
         cols = row.findAll('td')
 
-        lane = cols[0].string
+        lane = cols[0].text
         if not lane in samples:
             samples[lane] = {}
 
-        sample_name = cols[1].string
+        sample_name = cols[1].text
         sample['sample_name'] = sample_name
-        sample['barcode'] = cols[3].string
-        sample['project_id'] = cols[6].string
+        sample['barcode'] = cols[3].text
+        sample['project_id'] = cols[6].text
         sample['lane'] = lane
-        sample['yield_mb'] = mkint(cols[7].string.replace(",",""))
-        sample['pf_pc'] = mkfloat(cols[8].string)
-        sample['readcounts'] = mkint(cols[9].string.replace(",",""))
-        sample['raw_clusters_pc'] = mkfloat(cols[10].string)
-        sample['perfect_barcodes_pc'] = mkfloat(cols[11].string)
-        sample['q30_bases_pc'] = mkfloat(cols[13].string)
-        sample['mean_quality_score'] = mkfloat(cols[14].string)
+        sample['yield_mb'] = mkint(cols[7].text.replace(",",""))
+        sample['pf_pc'] = mkfloat(cols[8].text)
+        sample['readcounts'] = mkint(cols[9].text.replace(",",""))
+        sample['raw_clusters_pc'] = mkfloat(cols[10].text)
+        sample['perfect_barcodes_pc'] = mkfloat(cols[11].text)
+        sample['q30_bases_pc'] = mkfloat(cols[13].text)
+        sample['mean_quality_score'] = mkfloat(cols[14].text)
 
         samples[lane][sample_name] = sample
 
