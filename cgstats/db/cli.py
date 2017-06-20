@@ -8,6 +8,7 @@ from .models import Flowcell, Version, Sample, Demux, Unaligned
 from . import api
 from . import xparse
 from . import parse
+from ..utils import xstats
 
 log = logging.getLogger(__name__)
 
@@ -91,16 +92,39 @@ def samples(context, limit, offset, flowcell):
 
 
 @click.command()
+@click.argument('demux_dir')
+@click.pass_context
+def lanestats(context, demux_dir):
+    """List lane centric stats for X"""
+    lane_stats = sorted([ line for _, line in xstats.parse(demux_dir).items()], key=lambda line: int(line['lane']))
+
+    click.echo("Flowcell\tLane\tReads\tYieldMB\tQ30\tQ30_read1\tQ30_read2\tMeanQScore\tUndetermined")
+
+    for line in lane_stats:
+        click.echo('\t'.join(str(s) for s in [
+            line['flowcell'],
+            line['lane'],
+            line['pf_clusters'],
+            int(round(line['pf_yield'] / 1000000, 0)),
+            line['pf_Q30'],
+            line['pf_read1_q30'],
+            line['pf_read2_q30'],
+            line['pf_qscore'],
+            round(line['undetermined_pc'], 2)
+        ]))
+
+
+@click.command()
 @click.argument('flowcell')
 @click.option('-p', '--project', help='project name')
 @click.pass_context
 def select(context, flowcell, project):
-    """List samples in the database."""
+    """List sample centric stats"""
     query = api.select(flowcell, project)
 
     click.echo("sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
     for line in query:
-        click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
+            click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
 
 
 @click.command()

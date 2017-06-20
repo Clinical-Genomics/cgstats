@@ -147,9 +147,6 @@ def parse_samples(demux_dir):
     samples = list(set(samplesheet.samples()))
     lanes = list(set(samplesheet.column('lane')))
 
-    # get all % undetermined indexes / sample
-    proc_undetermined = calc_undetermined(demux_dir)
-
     # create a { 1: {}, 2: {}, ... } structure
     summaries = {lane_key: {} for lane_key in lanes}
 
@@ -233,7 +230,6 @@ def parse_samples(demux_dir):
                 'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2),
                 'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2),
                 'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100,
-                'undetermined_proc': round(proc_undetermined[ summary['samplename'] ], 2) if summary['samplename'] in proc_undetermined else 0,
                 'barcodes':         summary['barcodes'],
                 'perfect_barcodes': summary['perfect_barcodes'],
                 'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
@@ -251,9 +247,6 @@ def parse( demux_dir):
 
     samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
     lanes = list(set(samplesheet.column('lane')))
-
-    # get all % undetermined indexes / sample
-    proc_undetermined = calc_undetermined(demux_dir)
 
     # create a { 1: [], 2: [], ... } structure
     summaries = dict(zip(lanes, [ [] for t in range(len(lanes))])) # init ;)
@@ -332,7 +325,6 @@ def parse( demux_dir):
             'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2),
             'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2),
             'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100,
-            'undetermined_proc': round(proc_undetermined[ summary['samplename'] ], 2) if summary['samplename'] in proc_undetermined else 0,
             'barcodes':         summary['barcodes'],
             'perfect_barcodes': summary['perfect_barcodes'],
             'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
