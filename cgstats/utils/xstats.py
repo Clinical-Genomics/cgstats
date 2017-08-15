@@ -312,7 +312,7 @@ def parse( demux_dir):
 
     rs = {} # generate a dict: raw sample name is key, value is a dict of stats
     for lane, summary in total_lane_summary.items():
-        rs[ summary['samplename'] ] = {
+        rs[ lane ] = {
             'sample_name':     summary['samplename'],
             'flowcell':        summary['flowcell'],
             'lane':            lane,
