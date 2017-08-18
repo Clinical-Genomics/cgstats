@@ -311,13 +311,13 @@ def add(manager, demux_dir):
                 u.q30_bases_pct = stats_sample['pf_Q30']
                 u.mean_quality_score = stats_sample['pf_qscore']
             else:
-                u.yield_mb = round(int(stats[ sample['SampleID'] ]['pf_yield']) / 1000000, 2)
-                u.passed_filter_pct = stats[ sample['SampleID'] ]['pf_yield_pc']
-                u.readcounts = stats[ sample['SampleID'] ]['pf_clusters'] * 2
-                u.raw_clusters_per_lane_pct = stats[ sample['SampleID'] ]['raw_clusters_pc']
-                u.perfect_indexreads_pct = round(stats[ sample['SampleID'] ]['perfect_barcodes'] / stats[ sample['SampleID'] ]['barcodes'] * 100, 5)
-                u.q30_bases_pct = stats[ sample['SampleID'] ]['pf_Q30']
-                u.mean_quality_score = stats[ sample['SampleID'] ]['pf_qscore']
+                u.yield_mb = round(int(stats[ sample['Lane'] ]['pf_yield']) / 1000000, 2)
+                u.passed_filter_pct = stats[ sample['Lane'] ]['pf_yield_pc']
+                u.readcounts = stats[ sample['Lane'] ]['pf_clusters'] * 2
+                u.raw_clusters_per_lane_pct = stats[ sample['Lane'] ]['raw_clusters_pc']
+                u.perfect_indexreads_pct = round(stats[ sample['Lane'] ]['perfect_barcodes'] / stats[ sample['Lane'] ]['barcodes'] * 100, 5)
+                u.q30_bases_pct = stats[ sample['Lane'] ]['pf_Q30']
+                u.mean_quality_score = stats[ sample['Lane'] ]['pf_qscore']
             u.time = func.now()
 
             manager.add(u)
