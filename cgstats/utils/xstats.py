@@ -7,10 +7,15 @@ import xml.etree.cElementTree as et
 import glob
 import re
 import os
+import logging
 
 from path import Path
 
 from demux.utils import Samplesheet
+
+
+log = logging.getLogger(__name__)
+
 
 def xpathsum(tree, xpath):
     """Sums all numbers found at these xpath nodes
@@ -68,6 +73,7 @@ def get_sample_summary( tree, project, sample, barcode):
     pf_clusters = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/ClusterCount".format(project=project, sample=sample, barcode=barcode))
 
     pf_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read/Yield".format(project=project, sample=sample, barcode=barcode))
+    log.debug("\tpf_yield={}".format(pf_yield))
     pf_read1_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='1']/Yield".format(project=project, sample=sample, barcode=barcode))
     pf_read2_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read[@number='2']/Yield".format(project=project, sample=sample, barcode=barcode))
     raw_yield = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Raw/Read/Yield".format(project=project, sample=sample, barcode=barcode))
@@ -80,7 +86,7 @@ def get_sample_summary( tree, project, sample, barcode):
     #pf_q30_bases_pc = pf_q30 / pf_yield
 
     pf_qscore_sum = xpathsum(tree, "Flowcell/Project[@name='{project}']/Sample[@name='{sample}']/Barcode[@name='{barcode}']/Lane/Tile/Pf/Read/QualityScoreSum".format(project=project, sample=sample, barcode=barcode))
-    pf_qscore = pf_qscore_sum / pf_yield
+    pf_qscore = pf_qscore_sum / pf_yield if pf_yield != 0 else 0
 
     return {
         #'pf_q30_bases_pc': pf_q30_bases_pc,
@@ -143,6 +149,8 @@ def parse_samples(demux_dir):
         demux_dir (str): the DEMUX dir
 
     """
+    log.debug("Parsing sample stats ...")
+
     samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
     samples = list(set(samplesheet.samples()))
     lanes = list(set(samplesheet.column('lane')))
@@ -154,6 +162,7 @@ def parse_samples(demux_dir):
     et_stats_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
     et_index_files = dict(zip(lanes, [ [] for t in range(len(lanes))]))
     for lane in lanes:
+
         stats_files = glob.glob('{}/l{}t??/Stats/ConversionStats.xml'.format(demux_dir, lane))
         index_files = glob.glob('{}/l{}t??/Stats/DemultiplexingStats.xml'.format(demux_dir, lane))
 
@@ -172,8 +181,10 @@ def parse_samples(demux_dir):
     # get all the stats numbers
     #import ipdb; ipdb.set_trace()
     for sample in samples:
+        log.debug("Getting stats for '{}'...".format(sample))
         for line in samplesheet.lines_per_column('sample_id', sample):
             lane = line['lane']
+            log.debug("...for lane {}".format(lane))
             if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
 
             for tree in et_stats_files[lane]:
@@ -244,6 +255,8 @@ def parse( demux_dir):
         demux_dir (str): the DEMUX dir
 
     """
+
+    log.debug("Parsing on lane level ...")
 
     samplesheet = Samplesheet(Path(demux_dir).joinpath('SampleSheet.csv'))
     lanes = list(set(samplesheet.column('lane')))
