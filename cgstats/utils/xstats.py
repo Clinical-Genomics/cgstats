@@ -188,10 +188,10 @@ def parse_samples(demux_dir):
             if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
 
             for tree in et_stats_files[lane]:
-                summaries[lane][sample].append(get_sample_summary(tree, line['project'], line['sample_name'], line['index']))
+                summaries[lane][sample].append(get_sample_summary(tree, line['project'], line['sample_name'], line.dualindex))
 
             for tree in et_index_files[ line['lane'] ]:
-                summaries[lane][sample].append(get_barcode_summary(tree, line['project'], line['sample_name'], line['index']))
+                summaries[lane][sample].append(get_barcode_summary(tree, line['project'], line['sample_name'], line.dualindex))
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
@@ -293,7 +293,7 @@ def parse( demux_dir):
         # we need barcode stats on sample level
         for line in samplesheet.lines_per_column('lane', lane):
             for tree in et_index_files[ lane ]:
-                summaries[lane].append(get_barcode_summary(tree, line['project'], line['sample_name'], line['index']))
+                summaries[lane].append(get_barcode_summary(tree, line['project'], line['sample_name'], line.dualindex))
 
     # sum the numbers over a lane
     # create a { 1: {'raw_clusters': 0, ... } } structure
