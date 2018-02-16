@@ -17,8 +17,8 @@ def test_gather_supportparams(x_run_dir, x_pooled_missing_logs_run_dir, x_pooled
 
     assert gather_supportparams(x_run_dir) == {
             'idstring': 'bcl2fastq v2.15.0.4',
-            'commandline': '/usr/local/bin/bcl2fastq -d 2 -r 4 -w 4 -p 14 --tiles s_1_11 --tiles s_1_12 -R /scratch/743545//mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX -o /scratch/743545/Xout --barcode-mismatches 1 --use-bases-mask Y151,I8,Y151',
-            'time': '20170205061756',
+            'commandline': '/usr/local/bin/bcl2fastq -d 2 -r 4 -w 4 -p 14 --tiles s_8_21 --tiles s_8_22 -R /scratch/743610//mnt/hds2/proj/bioinfo/Runs/170202_ST-E00269_0169_AHC7H2ALXX -o /scratch/743610/Xout --barcode-mismatches 1 --use-bases-mask Y151,I8,Y151',
+            'time': '20170205085348',
             'program': '/usr/local/bin/bcl2fastq',
             'sampleconfig_path': str(Path(x_run_dir).joinpath('SampleSheet.csv')),
             'sampleconfig': '[Data]\n'
