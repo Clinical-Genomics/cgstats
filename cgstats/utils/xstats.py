@@ -183,6 +183,7 @@ def parse_samples(demux_dir):
     for sample in samples:
         log.debug("Getting stats for '{}'...".format(sample))
         for line in samplesheet.lines_per_column('sample_id', sample):
+
             lane = line['lane']
             log.debug("...for lane {}".format(lane))
             if sample not in summaries[lane]: summaries[lane][sample] = [] # init some more
@@ -224,7 +225,7 @@ def parse_samples(demux_dir):
                     total_sample_summary[lane][sample][ key ] += stat
 
     raw_clusters_lane = get_raw_clusters_lane(total_sample_summary)
-
+    
     rs= dict(zip(lanes, [ {} for t in range(len(lanes))]))
     for lane, sample_summary in total_sample_summary.items():
         for sample, summary in sample_summary.items():
@@ -248,7 +249,7 @@ def parse_samples(demux_dir):
 
     return rs
 
-def parse( demux_dir):
+def parse(demux_dir):
     """Takes a DEMUX dir and calculates statistics for the run.
 
     Args:
