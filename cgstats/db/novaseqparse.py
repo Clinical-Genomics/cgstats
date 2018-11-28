@@ -87,7 +87,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
     return rs
 
 
-def gather_datasource(run_dir):
+def gather_datasource(run_dir, unaligned_dir):
     """TODO: Docstring for gather_datasource.
 
     Args:
@@ -113,7 +113,7 @@ def gather_datasource(run_dir):
     rs['servername'] = socket.gethostname()
 
     # get the stats file
-    document_path = run_dir.joinpath('Unaligned-Y151I8N10Y151/Stats/ConversionStats.xml')
+    document_path = run_dir.joinpath(unaligned_dir, 'Stats/ConversionStats.xml')
     if not document_path.isfile():
         logger.error("Stats file not found at '%s'", document_path)
         import errno
@@ -226,10 +226,9 @@ def add(manager, demux_dir, unaligned_dir):
         manager.flush()
         supportparams_id = supportparams.supportparams_id
 
-    import ipdb; ipdb.set_trace()
     datasource_id = Datasource.exists(os.path.join(demux_dir, unaligned_dir, 'Stats/ConversionStats.xml'))
     if not datasource_id:
-        new_datasource = gather_datasource(demux_dir)
+        new_datasource = gather_datasource(demux_dir, unaligned_dir)
         datasource = Datasource()
         datasource.runname = new_datasource['runname']
         datasource.rundate = new_datasource['rundate']
