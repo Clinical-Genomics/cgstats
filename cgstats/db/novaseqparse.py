@@ -286,7 +286,6 @@ def add(manager, demux_dir, unaligned_dir):
         project_id_of[project_name] = project_id
 
     sample_sheet = get_sample_sheet(demux_dir, unaligned_dir)
-    # stats = novaseqstats.parse(Path(demux_dir).joinpath(unaligned_dir)) #  not needed for NovaSeq!
     stats_samples = novaseqstats.parse_samples(Path(demux_dir).joinpath(unaligned_dir))
     nr_samples_lane = get_nr_samples_lane(sample_sheet)
     for sample in sample_sheet:
