@@ -140,8 +140,6 @@ def gather_demux(run_dir):
     run_dir = Path(run_dir)
     logfile = run_dir.joinpath('projectlog.*.log')
     logfilenames = glob(logfile)  # should yield one result
-    # logfile = run_dir.joinpath('LOG', 'Xdem-l?t??-*.log')
-    # logfilenames = glob(logfile) # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
         logger.error('No log files found! Looking for {}'.format(logfile))
