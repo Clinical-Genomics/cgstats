@@ -8,6 +8,7 @@ from .models import Flowcell, Version, Sample, Demux, Unaligned
 from . import api
 from . import xparse
 from . import parse
+from . import novaseqparse
 from ..utils import xstats
 
 log = logging.getLogger(__name__)
@@ -129,16 +130,12 @@ def select(context, flowcell, project):
 
 @click.command()
 @click.argument('demux_dir')
-@click.option('-m', '--machine', type=click.Choice(['X', '2500']), help='machine type')
-@click.option('-u', '--unaligned', help='the unaligned dir name')
+@click.option('-m', '--machine', type=click.Choice(['X', '2500', 'novaseq']), help='machine type')
+@click.option('-u', '--unaligned', help='the unaligned dir name, mandatory for NovaSeq.')
 @click.option('-a', '--all-unaligned', is_flag=True, help='add all Unaligned* dirs')
 @click.pass_context
 def add(context, machine, demux_dir, unaligned, all_unaligned):
     """Add a FC to cgstats."""
-
-    #if not Version.check(config['clinstats']['name'], config['clinstats']['version']):
-    #    logger.error('Wrong database!')
-    #    exit(1) # change to exception
 
     manager = context.obj['manager']
 
@@ -153,6 +150,18 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
         else:
             log.info('Adding {}.'.format(unaligned))
             parse.add(manager, demux_dir, unaligned)
+    if machine == 'novaseq':
+        if not unaligned:
+            click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
+            context.abort()
+        if all_unaligned:
+            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            for unaligned in unaligned_dirs:
+                log.info('Adding {}.'.format(unaligned))
+                novaseqparse.add(manager, demux_dir, unaligned)
+        else:
+            novaseqparse.add(manager, demux_dir, unaligned)
+
 
 @click.command()
 @click.option('-f', '--flowcell', help='flowcell to remove')
