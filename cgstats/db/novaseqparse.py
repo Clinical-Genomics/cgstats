@@ -49,7 +49,6 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     # get some info from bcl2 fastq
     demux_dir = Path(demux_dir)
-    # logfile = demux_dir.joinpath('LOG', 'Xdem-l?t??-*.log')
     logfile = demux_dir.joinpath('projectlog.*.log')
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
@@ -229,7 +228,8 @@ def add(manager, demux_dir, unaligned_dir):
         manager.flush()
         supportparams_id = supportparams.supportparams_id
 
-    datasource_id = Datasource.exists(os.path.join(demux_dir, 'Unaligned-Y151I8N10Y151/Stats/ConversionStats.xml'))
+    import ipdb; ipdb.set_trace()
+    datasource_id = Datasource.exists(os.path.join(demux_dir, unaligned_dir, 'Stats/ConversionStats.xml'))
     if not datasource_id:
         new_datasource = gather_datasource(demux_dir)
         datasource = Datasource()
