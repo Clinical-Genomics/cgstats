@@ -158,7 +158,7 @@ class Supportparams(Model):
     program = Column(types.String(255))
     commandline = Column(types.Text)
     sampleconfig_path = Column(types.String(255))
-ALTER TABLE `supportparams` change `sampleconfig` `sampleconfig` MEDIUMTEXT;
+    sampleconfig = Column(types.Text)
     time = Column(types.DateTime)
 
     def __repr__(self):
