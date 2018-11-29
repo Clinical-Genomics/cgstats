@@ -158,7 +158,7 @@ class Supportparams(Model):
     program = Column(types.String(255))
     commandline = Column(types.Text)
     sampleconfig_path = Column(types.String(255))
-    sampleconfig = Column(types.Text)
+    sampleconfig = Column(types.Text(16777215))
     time = Column(types.DateTime)
 
     def __repr__(self):
