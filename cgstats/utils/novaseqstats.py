@@ -202,6 +202,8 @@ def parse_samples(unaligned_dir):
         log.debug("Getting stats for '{}'...".format(sample))
         for line in samplesheet.lines_per_column('sample_id', sample):
 
+            # in case of dualindex, convert to novaseq format (separated by '+' instead of '-')
+            barcode = line.dualindex.replace('-', '+')
             lane = line['lane']
             log.debug("...for lane {}".format(lane))
             if sample not in summaries[lane]:
@@ -209,11 +211,11 @@ def parse_samples(unaligned_dir):
 
             summaries[lane][sample].append(get_sample_summary(et_stats_file, line['project'],
                                                               line['sample_name'],
-                                                              line.dualindex, lane))
+                                                              barcode, lane))
 
             summaries[lane][sample].append(get_barcode_summary(et_index_file, line['project'],
                                                                line['sample_name'],
-                                                               line.dualindex, lane))
+                                                               barcode, lane))
 
     # sum the numbers over a lane
     # create a { 1: {}, 2: {}, ... } structure
