@@ -289,13 +289,14 @@ def add(manager, demux_dir, unaligned_dir):
     stats_samples = novaseqstats.parse_samples(Path(demux_dir).joinpath(unaligned_dir))
     nr_samples_lane = get_nr_samples_lane(sample_sheet)
     for sample in sample_sheet:
-        sample_id = Sample.exists(sample['SampleID'], sample['index'])
+        barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+{sample['index2']}"
+        sample_id = Sample.exists(sample['SampleID'], barcode)
         if not sample_id:
             s = Sample()
             s.project_id = project_id_of[sample['Project']]
             s.samplename = sample['SampleID']
             s.limsid = sample['SampleID'].split('_')[0]
-            s.barcode = sample['index']
+            s.barcode = barcode
             s.time = func.now()
 
             manager.add(s)
