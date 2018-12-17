@@ -7,7 +7,7 @@ alchy
 alembic
 bs4
 bumpversion
-click
+click<7
 path.py
 pymysql
 pytest
