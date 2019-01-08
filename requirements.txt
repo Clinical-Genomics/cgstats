@@ -1,6 +1,7 @@
 Flask
 Flask-Alchy
 Flask-Bootstrap
+Flask-SQLAlchemy==2.1
 PyYAML
 SQLAlchemy
 alchy
