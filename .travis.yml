@@ -15,7 +15,7 @@ before_install:
   - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
 
 install:
-  - pip install -r requirements.txt -e .
+  - pip install -r requirements.txt .
 
 notification:
   - email: false
