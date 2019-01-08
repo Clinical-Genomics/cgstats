@@ -13,3 +13,9 @@ pymysql
 pytest
 wheel
 -e git+https://github.com/Clinical-Genomics/demultiplexing.git#egg=demux 
+git-lint
+pylint
+pycodestyle
+yamllint
+docutils
+html-linter
