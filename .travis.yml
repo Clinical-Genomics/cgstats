@@ -1,15 +1,25 @@
 language: python
+
 python:
-- '2.7'
-- '3.6'
+  - '2.7'
+  - '3.6'
+
 services:
-- mysql
+  - mysql
+
 script:
-- py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+
+before_install:
+  - pip install git-lint pylint pycodestyle yamllint docutils html-linter
+  - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
+
 install:
-- pip install -r requirements.txt -e .
+  - pip install -r requirements.txt .
+
 notification:
-- email: false
+  - email: false
+
 deploy:
   provider: pypi
   user: kenny.billiau
