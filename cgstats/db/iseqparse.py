@@ -11,7 +11,7 @@ import socket
 from path import Path
 from sqlalchemy import func
 
-from demux.utils import iseqSamplesheet
+from demux.utils import iseqSampleSheet
 from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import iseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
@@ -74,7 +74,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
     document_path = demux_dir.joinpath(unaligned_dir)
     samplesheet_path = document_path.joinpath('SampleSheet.csv')
     rs['sampleconfig_path'] = str(samplesheet_path)
-    rs['sampleconfig'] = iseqSamplesheet(samplesheet_path).raw()
+    rs['sampleconfig'] = iseqSampleSheet(samplesheet_path).raw()
 
     # get the unaligned dir
     if not os.path.isdir(document_path):
