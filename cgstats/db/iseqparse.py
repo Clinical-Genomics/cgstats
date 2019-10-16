@@ -245,12 +245,11 @@ def add(manager, demux_dir, unaligned_dir):
 
     flowcell_namepos = gather_flowcell(demux_dir)
     flowcell_name = flowcell_namepos['name']
-    flowcell_pos = flowcell_namepos['pos']
     flowcell_id = Flowcell.exists(flowcell_name)
     if not flowcell_id:
         flowcell = Flowcell()
         flowcell.flowcellname = flowcell_name
-        flowcell.flowcell_pos = flowcell_pos
+        flowcell.flowcell_pos = 'A'
         flowcell.hiseqtype = 'iseq'
         flowcell.time = func.now()
 
