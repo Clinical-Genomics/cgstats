@@ -184,6 +184,8 @@ def get_sample_sheet(demux_dir, unaligned_dir):
             if line[0] == 'FCID':
                 header = line
                 continue
+            if not header:
+                continue
 
             entry = dict(zip(header, line))
             sample_sheet.append(entry)
