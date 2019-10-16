@@ -236,7 +236,7 @@ def add(manager, demux_dir, unaligned_dir):
         datasource_id = datasource.datasource_id
 
     flowcell_namepos = gather_flowcell(demux_dir)
-    flowcell_name = flowcell_namepos['name']
+    flowcell_name = flowcell_namepos['pos'] + flowcell_namepos['name']
     flowcell_id = Flowcell.exists(flowcell_name)
     if not flowcell_id:
         flowcell = Flowcell()
