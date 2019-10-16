@@ -11,7 +11,7 @@ import logging
 
 from path import Path
 
-from demux.utils import Samplesheet
+from demux.utils import iseqSampleSheet
 
 
 log = logging.getLogger(__name__)
@@ -183,7 +183,7 @@ def parse_samples(unaligned_dir):
     """
     log.debug("Parsing sample stats ...")
 
-    samplesheet = Samplesheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
+    samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
     samples = list(set(samplesheet.samples()))
     lanes = list(set(samplesheet.column('lane')))
 
@@ -282,7 +282,7 @@ def parse(unaligned_dir):
     """
     log.debug("Parsing on lane level ...")
 
-    samplesheet = Samplesheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
+    samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
     lanes = list(set(samplesheet.column('lane')))
 
     # create a { 1: [], 2: [], ... } structure
