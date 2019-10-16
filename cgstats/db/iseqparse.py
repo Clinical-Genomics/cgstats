@@ -191,16 +191,6 @@ def get_sample_sheet(demux_dir, unaligned_dir):
     return sample_sheet
 
 
-def get_nr_samples_lane(sample_sheet):
-    samples_lane = {}
-    for line in sample_sheet:
-        if line['Lane'] not in samples_lane:
-            samples_lane[line['Lane']] = 0
-        samples_lane[line['Lane']] += 1
-
-    return samples_lane
-
-
 def add(manager, demux_dir, unaligned_dir):
     """ Gathers and adds all data to cgstats.
 
@@ -286,7 +276,6 @@ def add(manager, demux_dir, unaligned_dir):
 
     sample_sheet = get_sample_sheet(demux_dir, unaligned_dir)
     stats_samples = iseqstats.parse_samples(Path(demux_dir).joinpath(unaligned_dir))
-    nr_samples_lane = get_nr_samples_lane(sample_sheet)
     for sample in sample_sheet:
         barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+{sample['index2']}"
         sample_id = Sample.exists(sample['Sample_ID'], barcode)
@@ -302,12 +291,12 @@ def add(manager, demux_dir, unaligned_dir):
             manager.flush()
             sample_id = s.sample_id
 
-        if not Unaligned.exists(sample_id, demux_id, sample['Lane']):
+        if not Unaligned.exists(sample_id, demux_id, 1):
             u = Unaligned()
             u.sample_id = sample_id
             u.demux_id = demux_id
-            u.lane = sample['Lane']
-            stats_sample = stats_samples[sample['Lane']][sample['Sample_ID']]
+            u.lane = 1
+            stats_sample = stats_samples[1][sample['Sample_ID']]
             u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
             u.passed_filter_pct = stats_sample['pf_yield_pc']
             u.readcounts = stats_sample['pf_clusters'] * 2

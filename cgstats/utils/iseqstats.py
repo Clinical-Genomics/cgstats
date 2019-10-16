@@ -185,7 +185,7 @@ def parse_samples(unaligned_dir):
 
     samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
     samples = list(set(samplesheet.samples()))
-    lanes = list(set(samplesheet.column('lane')))
+    lanes = [1]
 
     # create a { 1: {}, 2: {}, ... } structure
     summaries = {lane_key: {} for lane_key in lanes}
@@ -204,7 +204,7 @@ def parse_samples(unaligned_dir):
 
             # in case of dualindex, convert to iseq format (separated by '+' instead of '-')
             barcode = line.dualindex.replace('-', '+')
-            lane = line['lane']
+            lane = 1
             log.debug("...for lane {}".format(lane))
             if sample not in summaries[lane]:
                 summaries[lane][sample] = []  # init some more
@@ -221,7 +221,7 @@ def parse_samples(unaligned_dir):
     # create a { 1: {}, 2: {}, ... } structure
     total_sample_summary = dict(zip(lanes, [{} for t in range(len(lanes))]))
     for line in samplesheet.lines():
-        total_sample_summary[line['lane']][line['sample_id']] = {
+        total_sample_summary[1][line['sample_id']] = {
             'raw_clusters': 0,
             'raw_yield': 0,
             'pf_clusters': 0,
@@ -235,7 +235,7 @@ def parse_samples(unaligned_dir):
             'pf_qscore': 0,
             'flowcell': line['fcid'],
             'samplename': line['sample_id'],
-            'lane': line['lane'],
+            'lane': 1,
             'barcodes': 0,
             'perfect_barcodes': 0,
             'one_mismatch_barcodes': 0,
@@ -283,7 +283,7 @@ def parse(unaligned_dir):
     log.debug("Parsing on lane level ...")
 
     samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
-    lanes = list(set(samplesheet.column('lane')))
+    lanes = [1]
 
     # create a { 1: [], 2: [], ... } structure
     summaries = dict(zip(lanes, [[] for t in range(len(lanes))]))  # init ;)
