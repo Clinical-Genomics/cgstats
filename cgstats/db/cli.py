@@ -4,7 +4,7 @@ import click
 from path import Path
 from glob import glob
 
-from cgstats.cgstats.db import iseqparse
+from cgstats.db import iseqparse
 from .models import Flowcell, Version, Sample, Demux, Unaligned
 from . import api
 from . import xparse
