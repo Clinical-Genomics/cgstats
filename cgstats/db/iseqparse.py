@@ -181,7 +181,7 @@ def get_sample_sheet(demux_dir, unaligned_dir):
             # skip headers
             if line[0].startswith('['):
                 continue
-            if line[2] == 'SampleID':
+            if line[2] == 'Sample_ID':
                 header = line
                 continue
 
@@ -289,12 +289,12 @@ def add(manager, demux_dir, unaligned_dir):
     nr_samples_lane = get_nr_samples_lane(sample_sheet)
     for sample in sample_sheet:
         barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+{sample['index2']}"
-        sample_id = Sample.exists(sample['SampleID'], barcode)
+        sample_id = Sample.exists(sample['Sample_ID'], barcode)
         if not sample_id:
             s = Sample()
             s.project_id = project_id_of[sample['Project']]
-            s.samplename = sample['SampleID']
-            s.limsid = sample['SampleID'].split('_')[0]
+            s.samplename = sample['Sample_ID']
+            s.limsid = sample['Sample_ID'].split('_')[0]
             s.barcode = barcode
             s.time = func.now()
 
@@ -307,7 +307,7 @@ def add(manager, demux_dir, unaligned_dir):
             u.sample_id = sample_id
             u.demux_id = demux_id
             u.lane = sample['Lane']
-            stats_sample = stats_samples[sample['Lane']][sample['SampleID']]
+            stats_sample = stats_samples[sample['Lane']][sample['Sample_ID']]
             u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
             u.passed_filter_pct = stats_sample['pf_yield_pc']
             u.readcounts = stats_sample['pf_clusters'] * 2
