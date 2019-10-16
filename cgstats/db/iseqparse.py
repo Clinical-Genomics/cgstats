@@ -283,7 +283,7 @@ def add(manager, demux_dir, unaligned_dir):
         sample_id = Sample.exists(sample['Sample_ID'], barcode)
         if not sample_id:
             s = Sample()
-            s.project_id = project_id_of[sample['Project']]
+            s.project_id = project_id_of[sample['Sample_Project']]
             s.samplename = sample['Sample_ID']
             s.limsid = sample['Sample_ID'].split('_')[0]
             s.barcode = barcode
