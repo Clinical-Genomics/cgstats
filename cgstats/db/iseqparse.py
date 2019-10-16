@@ -181,7 +181,7 @@ def get_sample_sheet(demux_dir, unaligned_dir):
             # skip headers
             if line[0].startswith('['):
                 continue
-            if line[0] == 'Sample_ID':
+            if line[1] == 'Sample_ID':
                 header = line
                 continue
 
