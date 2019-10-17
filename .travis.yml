@@ -4,18 +4,18 @@ python:
   - '2.7'
   - '3.6'
 
+cache: pip
+
 services:
   - mysql
 
-script:
-  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
-
-before_install:
-  - pip install git-lint pylint pycodestyle yamllint docutils html-linter
-  - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
-
 install:
   - pip install -r requirements.txt .
+
+script:
+  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+  - coverage run --source "$(basename "$PWD")" setup.py test
+  - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
 
 notification:
   - email: false
