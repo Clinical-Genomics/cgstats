@@ -8,7 +8,7 @@ import logging
 import os
 import re
 import xml.etree.cElementTree as et
-from path import Path
+from pathlib import Path
 
 from demux.utils import iseqSampleSheet
 
@@ -254,15 +254,22 @@ def parse_samples(unaligned_dir):
                 'sample_name':     summary['samplename'],
                 'flowcell':        summary['flowcell'],
                 'lane':            lane,
-                'raw_clusters_pc': round(summary['raw_clusters'] / raw_clusters_lane[lane] * 100, 2) if raw_clusters_lane[lane] else 0,
+                'raw_clusters_pc': round(summary['raw_clusters'] / raw_clusters_lane[lane] * 100,
+                                         2) if raw_clusters_lane[lane] else 0,
                 'pf_clusters':     summary['pf_clusters'],
-                'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2) if summary['raw_yield'] else 0,
+                'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100,
+                                         2) if summary['raw_yield'] else 0,
                 'pf_yield':        summary['pf_yield'],
-                'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100, 2) if summary['pf_yield'] else 0,
-                'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2) if summary['pf_read1_yield'] else 0,
-                'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2) if summary['pf_read2_yield'] else 0,
-                'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2) if summary['pf_yield'] else 0,
-                'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100 if summary['pf_clusters'] else 0,
+                'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100,
+                                         2) if summary['pf_yield'] else 0,
+                'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] *
+                                         100, 2) if summary['pf_read1_yield'] else 0,
+                'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] *
+                                         100, 2) if summary['pf_read2_yield'] else 0,
+                'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'],
+                                         2) if summary['pf_yield'] else 0,
+                'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary[
+                    'pf_clusters'] * 100 if summary['pf_clusters'] else 0,
                 'barcodes':         summary['barcodes'],
                 'perfect_barcodes': summary['perfect_barcodes'],
                 'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
@@ -340,13 +347,19 @@ def parse(unaligned_dir):
             'lane':            lane,
             'raw_clusters_pc': 100,  # we still only have one sample/lane ;)
             'pf_clusters':     summary['pf_clusters'],
-            'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100, 2) if summary['raw_yield'] else 0,
+            'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100,
+                                     2) if summary['raw_yield'] else 0,
             'pf_yield':        summary['pf_yield'],
-            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100, 2) if summary['pf_yield'] else 0,
-            'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100, 2) if summary['pf_read1_yield'] else 0,
-            'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100, 2) if summary['pf_read2_yield'] else 0,
-            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'], 2) if summary['pf_yield'] else 0,
-            'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary['pf_clusters'] * 100 if summary['pf_clusters'] else 0,
+            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100,
+                                     2) if summary['pf_yield'] else 0,
+            'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100,
+                                     2) if summary['pf_read1_yield'] else 0,
+            'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100,
+                                     2) if summary['pf_read2_yield'] else 0,
+            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'],
+                                     2) if summary['pf_yield'] else 0,
+            'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary[
+                'pf_clusters'] * 100 if summary['pf_clusters'] else 0,
             'barcodes':         summary['barcodes'],
             'perfect_barcodes': summary['perfect_barcodes'],
             'one_mismatch_barcodes': summary['one_mismatch_barcodes'],

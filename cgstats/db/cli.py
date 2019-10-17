@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 import logging
-import click
-from path import Path
 from glob import glob
+import click
+from pathlib import Path
 
-from cgstats.db import iseqparse
-from .models import Flowcell, Version, Sample, Demux, Unaligned
 from . import api
-from . import xparse
-from . import parse
 from . import novaseqparse
+from . import parse
+from . import xparse
+from .models import Flowcell, Sample, Demux, Unaligned
 from ..utils import xstats
+from cgstats.db import iseqparse
 
 log = logging.getLogger(__name__)
 

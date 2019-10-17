@@ -8,7 +8,7 @@ import os
 import socket
 import sys
 from glob import glob
-from path import Path
+from pathlib import Path
 from sqlalchemy import func
 
 from cgstats.db.models import Supportparams, Datasource, Flowcell, Demux, Project, Sample, Unaligned
