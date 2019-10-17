@@ -1,16 +1,17 @@
 # -*- coding: utf-8 -*-
 import logging
 from glob import glob
-import click
 from pathlib import Path
+import click
 
+from cgstats.db import iseqparse
 from . import api
 from . import novaseqparse
 from . import parse
 from . import xparse
 from .models import Flowcell, Sample, Demux, Unaligned
 from ..utils import xstats
-from cgstats.db import iseqparse
+
 
 log = logging.getLogger(__name__)
 
@@ -170,7 +171,7 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
         if all_unaligned:
             unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
             for unaligned in unaligned_dirs:
-                log.info('Adding {}.'.format(unaligned))
+                log.info('Adding %s.', format(unaligned))
                 iseqparse.add(manager, demux_dir, unaligned)
         else:
             iseqparse.add(manager, demux_dir, unaligned)
