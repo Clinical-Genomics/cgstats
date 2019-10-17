@@ -3,16 +3,14 @@
 
 from __future__ import print_function, division
 
-import xml.etree.cElementTree as et
 import glob
-import re
-import os
 import logging
-
+import os
+import re
+import xml.etree.cElementTree as et
 from path import Path
 
 from demux.utils import iseqSampleSheet
-
 
 log = logging.getLogger(__name__)
 

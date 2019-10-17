@@ -2,19 +2,20 @@
 # encoding: utf-8
 
 from __future__ import print_function, division
-import sys
-import os
-from glob import glob
-import logging
-import socket
 
+import logging
+import os
+import socket
+import sys
+from glob import glob
 from path import Path
 from sqlalchemy import func
 
-from demux.utils import iseqSampleSheet
-from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
+from cgstats.db.models import Supportparams, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import iseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
+from demux.utils import iseqSampleSheet
+
 
 logger = logging.getLogger(__name__)
 
@@ -152,7 +153,8 @@ def gather_demux(run_dir):
             if '--use-bases-mask' in line:
                 line = line.strip()
                 split_line = line.split(' ')
-                basemask_params_pos = [i for i, x in enumerate(split_line) if x == '--use-bases-mask'][0]
+                basemask_params_pos = \
+                    [i for i, x in enumerate(split_line) if x == '--use-bases-mask'][0]
                 rs['basemask'] = split_line[basemask_params_pos + 1]
 
     return rs
@@ -218,7 +220,8 @@ def add(manager, demux_dir, unaligned_dir):
         manager.flush()
         supportparams_id = supportparams.supportparams_id
 
-    datasource_id = Datasource.exists(os.path.join(demux_dir, unaligned_dir, 'Stats/ConversionStats.xml'))
+    datasource_id = Datasource.exists(
+        os.path.join(demux_dir, unaligned_dir, 'Stats/ConversionStats.xml'))
     if not datasource_id:
         new_datasource = gather_datasource(demux_dir, unaligned_dir)
         datasource = Datasource()
@@ -279,7 +282,8 @@ def add(manager, demux_dir, unaligned_dir):
     sample_sheet = get_sample_sheet(demux_dir, unaligned_dir)
     stats_samples = iseqstats.parse_samples(Path(demux_dir).joinpath(unaligned_dir))
     for sample in sample_sheet:
-        barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+{sample['index2']}"
+        barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+" \
+                                                              f"{sample['index2']}"
         sample_id = Sample.exists(sample['Sample_ID'], barcode)
         if not sample_id:
             s = Sample()
@@ -303,7 +307,9 @@ def add(manager, demux_dir, unaligned_dir):
             u.passed_filter_pct = stats_sample['pf_yield_pc']
             u.readcounts = stats_sample['pf_clusters'] * 2
             u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
-            u.perfect_indexreads_pct = round(stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5) if stats_sample['barcodes'] else 0
+            u.perfect_indexreads_pct = round(
+                stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5) if \
+                stats_sample['barcodes'] else 0
             u.q30_bases_pct = stats_sample['pf_Q30']
             u.mean_quality_score = stats_sample['pf_qscore']
             u.time = func.now()
