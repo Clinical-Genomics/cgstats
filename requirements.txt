@@ -7,7 +7,7 @@ PyYAML==3.13
 SQLAlchemy==1.2.15
 alchy==2.2.2
 alembic==1.0.5
-bs4=0.0.1
+bs4==0.0.1
 click<7
 path.py==11.5.0
 pymysql==0.9.3
