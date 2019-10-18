@@ -23,3 +23,4 @@ pycodestyle
 yamllint
 docutils
 html-linter
+six>=1.12                   # due to astroid 2.3.1
