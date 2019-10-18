@@ -4,7 +4,7 @@ Flask-Alchy
 Flask-Bootstrap
 Flask-SQLAlchemy==2.1
 PyYAML
-SQLAlchemy
+SQLAlchemy==1.2.15
 alchy
 alembic
 bs4
