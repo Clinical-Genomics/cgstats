@@ -48,7 +48,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
-        LOGGER.error('No log files found! Looking for {}'.format(logfile))
+        LOGGER.error('No log files found! Looking for %s', format(logfile))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
@@ -73,7 +73,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     # get the unaligned dir
     if not os.path.isdir(document_path):
-        LOGGER.error("Unaligned dir not found at '{}'".format(document_path))
+        LOGGER.error("Unaligned dir not found at '%s'", format(document_path))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
@@ -83,29 +83,22 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
 
 def gather_datasource(run_dir, unaligned_dir):
-    """TODO: Docstring for gather_datasource.
-
-    Args:
-        run_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
+    """Gathers the datasource from run_dir and unaligned_dir"""
 
     run_dir = Path(run_dir)
-    rs = {}  # result set
+    datasource = {}  # result set
 
     # get the run name
-    rs['runname'] = str(run_dir.normpath().basename())
+    datasource['runname'] = str(run_dir.normpath().basename())
 
     # get the run date
-    rs['rundate'] = rs['runname'].split('_')[0]
+    datasource['rundate'] = datasource['runname'].split('_')[0]
 
     # get the machine name
-    rs['machine'] = rs['runname'].split('_')[1]
+    datasource['machine'] = datasource['runname'].split('_')[1]
 
     # get the server name on which the demux took place
-    rs['servername'] = socket.gethostname()
+    datasource['servername'] = socket.gethostname()
 
     # get the stats file
     document_path = run_dir.joinpath(unaligned_dir, 'Stats/ConversionStats.xml')
@@ -114,22 +107,15 @@ def gather_datasource(run_dir, unaligned_dir):
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = str(document_path)
+        datasource['document_path'] = str(document_path)
 
-    return rs
+    return datasource
 
 
 def gather_demux(run_dir):
-    """TODO: Docstring for gather_demux.
+    """Gathers demux from the run_dir"""
 
-    Args:
-        demux_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
-
-    rs = {}  # result set
+    demux = {}  # result set
 
     # get some info from bcl2 fastq
     run_dir = Path(run_dir)
@@ -137,7 +123,7 @@ def gather_demux(run_dir):
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
-        LOGGER.error('No log files found! Looking for {}'.format(logfile))
+        LOGGER.error('No log files found! Looking for %s', format(logfile))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
@@ -149,9 +135,9 @@ def gather_demux(run_dir):
                 split_line = line.split(' ')
                 basemask_params_pos = \
                     [i for i, x in enumerate(split_line) if x == '--use-bases-mask'][0]
-                rs['basemask'] = split_line[basemask_params_pos + 1]
+                demux['basemask'] = split_line[basemask_params_pos + 1]
 
-    return rs
+    return demux
 
 
 def sanitize_sample(sample):
@@ -168,6 +154,8 @@ def sanitize_sample(sample):
 
 
 def get_sample_sheet(demux_dir, unaligned_dir):
+    """Parses a sample sheet csv"""
+
     sample_sheet = []
     samplesheet_file_name = f"{demux_dir}/{unaligned_dir}/SampleSheet.csv"
     with open(samplesheet_file_name, 'r') as samplesheet_fh:
