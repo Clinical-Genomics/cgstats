@@ -5,16 +5,17 @@ from __future__ import print_function, division
 import errno
 import logging
 import os
+import os.path
 import socket
 import sys
 from glob import glob
-from pathlib import Path
 from sqlalchemy import func
 
-from demux.utils import iseqSampleSheet
 from cgstats.db.models import Supportparams, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import iseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
+from demux.utils import iseqSampleSheet
+
 
 LOGGER = logging.getLogger(__name__)
 

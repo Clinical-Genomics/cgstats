@@ -5,9 +5,9 @@ from __future__ import print_function, division
 import glob
 import logging
 import os
+import os.path
 import re
 import xml.etree.cElementTree as et
-from pathlib import Path
 
 from demux.utils import iseqSampleSheet
 
