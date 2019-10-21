@@ -74,7 +74,6 @@ def gather_supportparams(demux_dir, unaligned_dir):
     # get the unaligned dir
     if not os.path.isdir(document_path):
         LOGGER.error("Unaligned dir not found at '%s'", format(document_path))
-        import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
 
     params['document_path'] = str(document_path)
