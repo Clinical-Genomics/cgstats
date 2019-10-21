@@ -84,7 +84,7 @@ def test_select(sql_manager, rapid_run_dir, x_run_dir):
     unaligned = 'Unaligned'
     xparse.add(sql_manager, x_run_dir)
     parse.add(sql_manager, rapid_run_dir, unaligned)
-    selection = api.select(flowcell, project).all()
+    selection = api.select(flowcell, project).group_by(Sample.samplename).all()
 
     assert selection == [
         ('SIB914A11_sureselect11', 'HB07NADXX', '1,2', '38088672,38269896', 76358568, '3847,3865',
