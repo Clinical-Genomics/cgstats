@@ -2,6 +2,7 @@
 
 from __future__ import print_function, division
 
+import errno
 import logging
 import os
 import socket
@@ -49,7 +50,6 @@ def gather_supportparams(demux_dir, unaligned_dir):
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
         LOGGER.error('No log files found! Looking for %s', format(logfile))
-        import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
     with open(logfilenames[0], 'r') as logfile:
@@ -76,9 +76,8 @@ def gather_supportparams(demux_dir, unaligned_dir):
         LOGGER.error("Unaligned dir not found at '%s'", format(document_path))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
-    else:
-        params['document_path'] = str(document_path)
 
+    params['document_path'] = str(document_path)
     return params
 
 
@@ -102,12 +101,11 @@ def gather_datasource(run_dir, unaligned_dir):
 
     # get the stats file
     document_path = run_dir.joinpath(unaligned_dir, 'Stats/ConversionStats.xml')
-    if not document_path.isfile():
+    if not document_path.is_file():
         LOGGER.error("Stats file not found at '%s'", document_path)
-        import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
-    else:
-        datasource['document_path'] = str(document_path)
+
+    datasource['document_path'] = str(document_path)
 
     return datasource
 
@@ -124,7 +122,6 @@ def gather_demux(run_dir):
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
         LOGGER.error('No log files found! Looking for %s', format(logfile))
-        import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
     with open(logfilenames[0], 'r') as logfile:
