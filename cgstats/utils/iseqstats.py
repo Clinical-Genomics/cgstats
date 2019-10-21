@@ -294,12 +294,9 @@ def parse(unaligned_dir):
     # create a { 1: [], 2: [], ... } structure
     summaries = dict(zip(lanes, [[] for t in range(len(lanes))]))  # init ;)
 
-    stats_file = f"{unaligned_dir}Stats/ConversionStats.xml"
-    index_file = f"{unaligned_dir}Stats/DemultiplexingStats.xml"
-
     # preload the stats files
-    et_stats_file = et.parse(stats_file)
-    et_index_file = et.parse(index_file)
+    et_stats_file = et.parse(f"{unaligned_dir}Stats/ConversionStats.xml")
+    et_index_file = et.parse(f"{unaligned_dir}Stats/DemultiplexingStats.xml")
 
     # get all the stats numbers
     for lane in lanes:
@@ -340,9 +337,9 @@ def parse(unaligned_dir):
             for key, stat in summary_quart.items():
                 total_lane_summary[lane][key] += stat
 
-    rs = {}  # generate a dict: raw sample name is key, value is a dict of stats
+    sample_stats = {}  # generate a dict: raw sample name is key, value is a dict of stats
     for lane, summary in total_lane_summary.items():
-        rs[lane] = {
+        sample_stats[lane] = {
             'sample_name': summary['samplename'],
             'flowcell': summary['flowcell'],
             'lane': lane,
@@ -366,7 +363,7 @@ def parse(unaligned_dir):
             'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
         }
 
-    return rs
+    return sample_stats
 
 
 __ALL__ = ['parse', 'parse_samples']
