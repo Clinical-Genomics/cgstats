@@ -11,7 +11,7 @@ from pathlib import Path
 
 from demux.utils import iseqSampleSheet
 
-log = logging.getLogger(__name__)
+LOGGER = logging.getLogger(__name__)
 
 
 def xpathsum(tree, xpath):
@@ -28,7 +28,7 @@ def xpathsum(tree, xpath):
     return sum((int(number.text) for number in numbers))
 
 
-def get_barcode_summary(tree, project, sample, barcode, lane):
+def get_barcode_summary(tree, project, barcode, lane):
     """Calculates following statistics from the DemultiplexingStats file
     * BarcodeCount
     * PerfectBarcodeCount
@@ -59,7 +59,7 @@ def get_barcode_summary(tree, project, sample, barcode, lane):
     }
 
 
-def get_sample_summary(tree, project, sample, barcode, lane):
+def get_sample_summary(tree, project, barcode, lane):
     """Calculates following statistics from from the ConversionStats file, for a sample
     * pf clusters
     * pf yield
@@ -74,7 +74,8 @@ def get_sample_summary(tree, project, sample, barcode, lane):
         barcode (str): An index identifying a sample
         lane(str): A lane number
 
-    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield, pf_read2_yield,
+    Returns (dict): with following keys: pf_clusters, pf_yield, pf_q30, pf_read1_yield,
+    pf_read2_yield,
                     pf_read1_q30, pf_read2_q30, pf_qscore_sum, pf_qscore
 
     """
@@ -85,9 +86,10 @@ def get_sample_summary(tree, project, sample, barcode, lane):
                                  f"Barcode[@name='{barcode}']/Lane[@number='{lane}']/Tile/Pf/"
                                  f"ClusterCount")
     pf_yield = xpathsum(tree, f"Flowcell/Project[@name='{project}']/Sample/"
-                              f"Barcode[@name='{barcode}']/Lane[@number='{lane}']/Tile/Pf/Read/Yield")
+                              f"Barcode[@name='{barcode}']/Lane[@number='"
+                              f"{lane}']/Tile/Pf/Read/Yield")
 
-    log.debug("\tpf_yield={}".format(pf_yield))
+    LOGGER.debug("\tpf_yield=%s", format(pf_yield))
 
     pf_read1_yield = xpathsum(tree, f"Flowcell/Project[@name='{project}']/Sample/"
                                     f"Barcode[@name='{barcode}']/Lane[@number='{lane}']/Tile/Pf/"
@@ -102,7 +104,8 @@ def get_sample_summary(tree, project, sample, barcode, lane):
                                f"Yield")
 
     pf_q30 = xpathsum(tree, f"Flowcell/Project[@name='{project}']/Sample/"
-                            f"Barcode[@name='{barcode}']/Lane[@number='{lane}']/Tile/Pf/Read/YieldQ30")
+                            f"Barcode[@name='{barcode}']/Lane[@number='"
+                            f"{lane}']/Tile/Pf/Read/YieldQ30")
 
     pf_read1_q30 = xpathsum(tree, f"Flowcell/Project[@name='{project}']/Sample/"
                                   f"Barcode[@name='{barcode}']/Lane[@number='{lane}']/Tile/Pf/"
@@ -163,9 +166,10 @@ def get_raw_clusters_lane(total_sample_summary):
     Returns: TODO
 
     """
-    raw_clusters_lane = dict(zip(total_sample_summary.keys(), [0 for t in range(len(total_sample_summary.keys()))]))  # lane: raw_clusters
+    raw_clusters_lane = dict(zip(total_sample_summary.keys(), [0 for t in range(
+        len(total_sample_summary.keys()))]))  # lane: raw_clusters
     for lane, sample_summary in total_sample_summary.items():
-        for sample, summary in sample_summary.items():
+        for _, summary in sample_summary.items():
             raw_clusters_lane[lane] += summary['raw_clusters']
 
     return raw_clusters_lane
@@ -178,7 +182,7 @@ def parse_samples(unaligned_dir):
         demux_dir (str): the DEMUX dir
 
     """
-    log.debug("Parsing sample stats ...")
+    LOGGER.debug("Parsing sample stats ...")
 
     samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
     samples = list(set(samplesheet.samples()))
@@ -196,22 +200,20 @@ def parse_samples(unaligned_dir):
 
     # get all the stats numbers
     for sample in samples:
-        log.debug("Getting stats for '{}'...".format(sample))
+        LOGGER.debug("Getting stats for '%s'...", format(sample))
         for line in samplesheet.lines_per_column('sample_id', sample):
 
             # in case of dualindex, convert to iseq format (separated by '+' instead of '-')
             barcode = line.dualindex.replace('-', '+')
             lane = 1
-            log.debug("...for lane {}".format(lane))
+            LOGGER.debug("...for lane %s", format(lane))
             if sample not in summaries[lane]:
                 summaries[lane][sample] = []  # init some more
 
             summaries[lane][sample].append(get_sample_summary(et_stats_file, line['project'],
-                                                              line['sample_name'],
                                                               barcode, lane))
 
             summaries[lane][sample].append(get_barcode_summary(et_index_file, line['project'],
-                                                               line['sample_name'],
                                                                barcode, lane))
 
     # sum the numbers over a lane
@@ -246,35 +248,35 @@ def parse_samples(unaligned_dir):
 
     raw_clusters_lane = get_raw_clusters_lane(total_sample_summary)
 
-    rs = dict(zip(lanes, [{} for t in range(len(lanes))]))
+    parsed_samples = dict(zip(lanes, [{} for t in range(len(lanes))]))
     for lane, sample_summary in total_sample_summary.items():
         for sample, summary in sample_summary.items():
-            rs[lane][summary['samplename']] = {
-                'sample_name':     summary['samplename'],
-                'flowcell':        summary['flowcell'],
-                'lane':            lane,
+            parsed_samples[lane][summary['samplename']] = {
+                'sample_name': summary['samplename'],
+                'flowcell': summary['flowcell'],
+                'lane': lane,
                 'raw_clusters_pc': round(summary['raw_clusters'] / raw_clusters_lane[lane] * 100,
                                          2) if raw_clusters_lane[lane] else 0,
-                'pf_clusters':     summary['pf_clusters'],
-                'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100,
-                                         2) if summary['raw_yield'] else 0,
-                'pf_yield':        summary['pf_yield'],
-                'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100,
-                                         2) if summary['pf_yield'] else 0,
-                'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] *
-                                         100, 2) if summary['pf_read1_yield'] else 0,
-                'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] *
-                                         100, 2) if summary['pf_read2_yield'] else 0,
-                'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'],
-                                         2) if summary['pf_yield'] else 0,
+                'pf_clusters': summary['pf_clusters'],
+                'pf_yield_pc': round(summary['pf_yield'] / summary['raw_yield'] * 100,
+                                     2) if summary['raw_yield'] else 0,
+                'pf_yield': summary['pf_yield'],
+                'pf_Q30': round(summary['pf_q30'] / summary['pf_yield'] * 100,
+                                2) if summary['pf_yield'] else 0,
+                'pf_read1_q30': round(summary['pf_read1_q30'] / summary['pf_read1_yield'] *
+                                      100, 2) if summary['pf_read1_yield'] else 0,
+                'pf_read2_q30': round(summary['pf_read2_q30'] / summary['pf_read2_yield'] *
+                                      100, 2) if summary['pf_read2_yield'] else 0,
+                'pf_qscore': round(summary['pf_qscore_sum'] / summary['pf_yield'],
+                                   2) if summary['pf_yield'] else 0,
                 'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary[
                     'pf_clusters'] * 100 if summary['pf_clusters'] else 0,
-                'barcodes':         summary['barcodes'],
+                'barcodes': summary['barcodes'],
                 'perfect_barcodes': summary['perfect_barcodes'],
                 'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
             }
 
-    return rs
+    return parsed_samples
 
 
 def parse(unaligned_dir):
@@ -284,7 +286,7 @@ def parse(unaligned_dir):
         demux_dir (str): the DEMUX dir
 
     """
-    log.debug("Parsing on lane level ...")
+    LOGGER.debug("Parsing on lane level ...")
 
     samplesheet = iseqSampleSheet(Path(unaligned_dir).joinpath('SampleSheet.csv'))
     lanes = [1]
@@ -303,12 +305,12 @@ def parse(unaligned_dir):
     for lane in lanes:
 
         # only parse this on lane level
-        summaries[lane].append(get_sample_summary(et_stats_file, 'all', 'all', 'all', lane))
+        summaries[lane].append(get_sample_summary(et_stats_file, 'all', 'all', lane))
 
         # we need barcode stats on sample level
         for line in samplesheet.lines_per_column('lane', lane):
             summaries[lane].append(get_barcode_summary(et_index_file, line['project'],
-                                                       line['sample_name'], line.dualindex, lane))
+                                                       line.dualindex, lane))
 
     # sum the numbers over a lane
     # create a { 1: {'raw_clusters': 0, ... } } structure
@@ -341,25 +343,25 @@ def parse(unaligned_dir):
     rs = {}  # generate a dict: raw sample name is key, value is a dict of stats
     for lane, summary in total_lane_summary.items():
         rs[lane] = {
-            'sample_name':     summary['samplename'],
-            'flowcell':        summary['flowcell'],
-            'lane':            lane,
+            'sample_name': summary['samplename'],
+            'flowcell': summary['flowcell'],
+            'lane': lane,
             'raw_clusters_pc': 100,  # we still only have one sample/lane ;)
-            'pf_clusters':     summary['pf_clusters'],
-            'pf_yield_pc':     round(summary['pf_yield'] / summary['raw_yield'] * 100,
-                                     2) if summary['raw_yield'] else 0,
-            'pf_yield':        summary['pf_yield'],
-            'pf_Q30':          round(summary['pf_q30'] / summary['pf_yield'] * 100,
-                                     2) if summary['pf_yield'] else 0,
-            'pf_read1_q30':    round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100,
-                                     2) if summary['pf_read1_yield'] else 0,
-            'pf_read2_q30':    round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100,
-                                     2) if summary['pf_read2_yield'] else 0,
-            'pf_qscore':       round(summary['pf_qscore_sum'] / summary['pf_yield'],
-                                     2) if summary['pf_yield'] else 0,
+            'pf_clusters': summary['pf_clusters'],
+            'pf_yield_pc': round(summary['pf_yield'] / summary['raw_yield'] * 100,
+                                 2) if summary['raw_yield'] else 0,
+            'pf_yield': summary['pf_yield'],
+            'pf_Q30': round(summary['pf_q30'] / summary['pf_yield'] * 100,
+                            2) if summary['pf_yield'] else 0,
+            'pf_read1_q30': round(summary['pf_read1_q30'] / summary['pf_read1_yield'] * 100,
+                                  2) if summary['pf_read1_yield'] else 0,
+            'pf_read2_q30': round(summary['pf_read2_q30'] / summary['pf_read2_yield'] * 100,
+                                  2) if summary['pf_read2_yield'] else 0,
+            'pf_qscore': round(summary['pf_qscore_sum'] / summary['pf_yield'],
+                               2) if summary['pf_yield'] else 0,
             'undetermined_pc': (summary['pf_clusters'] - summary['barcodes']) / summary[
                 'pf_clusters'] * 100 if summary['pf_clusters'] else 0,
-            'barcodes':         summary['barcodes'],
+            'barcodes': summary['barcodes'],
             'perfect_barcodes': summary['perfect_barcodes'],
             'one_mismatch_barcodes': summary['one_mismatch_barcodes'],
         }
