@@ -1,5 +1,4 @@
-#!/usr/bin/env python
-# encoding: utf-8
+""" code to parse the iseq samplesheet """
 
 from __future__ import print_function, division
 
@@ -11,17 +10,12 @@ from glob import glob
 from pathlib import Path
 from sqlalchemy import func
 
+from demux.utils import iseqSampleSheet
 from cgstats.db.models import Supportparams, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import iseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
-from demux.utils import iseqSampleSheet
 
-
-logger = logging.getLogger(__name__)
-
-
-class NoLogsFoundError(Exception):
-    pass
+LOGGER = logging.getLogger(__name__)
 
 
 def gather_supportparams(demux_dir, unaligned_dir):
@@ -46,7 +40,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
         'sampleconfig',
         'time')
     """
-    rs = {}  # result set
+    params = {}  # result set
 
     # get some info from bcl2 fastq
     demux_dir = Path(demux_dir)
@@ -54,38 +48,38 @@ def gather_supportparams(demux_dir, unaligned_dir):
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for {}'.format(logfile))
+        LOGGER.error('No log files found! Looking for {}'.format(logfile))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
     with open(logfilenames[0], 'r') as logfile:
         for line in logfile.readlines():
             if 'bcl2fastq v' in line:
-                rs['idstring'] = line.strip()
+                params['idstring'] = line.strip()
 
             if '--use-bases-mask' in line:
                 line = line.strip()
                 split_line = line.split(' ')
-                rs['commandline'] = ' '.join(split_line[1:])  # remove the leading [date]
-                rs['time'] = split_line[0].strip('[]')  # remove the brackets around the date
-                rs['program'] = split_line[1]  # get the executed program
+                params['commandline'] = ' '.join(split_line[1:])  # remove the leading [date]
+                params['time'] = split_line[0].strip('[]')  # remove the brackets around the date
+                params['program'] = split_line[1]  # get the executed program
                 break
 
     # get the sample sheet and it's contents
     document_path = demux_dir.joinpath(unaligned_dir)
     samplesheet_path = document_path.joinpath('SampleSheet.csv')
-    rs['sampleconfig_path'] = str(samplesheet_path)
-    rs['sampleconfig'] = iseqSampleSheet(samplesheet_path).raw()
+    params['sampleconfig_path'] = str(samplesheet_path)
+    params['sampleconfig'] = iseqSampleSheet(samplesheet_path).raw()
 
     # get the unaligned dir
     if not os.path.isdir(document_path):
-        logger.error("Unaligned dir not found at '{}'".format(document_path))
+        LOGGER.error("Unaligned dir not found at '{}'".format(document_path))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = str(document_path)
+        params['document_path'] = str(document_path)
 
-    return rs
+    return params
 
 
 def gather_datasource(run_dir, unaligned_dir):
@@ -116,7 +110,7 @@ def gather_datasource(run_dir, unaligned_dir):
     # get the stats file
     document_path = run_dir.joinpath(unaligned_dir, 'Stats/ConversionStats.xml')
     if not document_path.isfile():
-        logger.error("Stats file not found at '%s'", document_path)
+        LOGGER.error("Stats file not found at '%s'", document_path)
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
@@ -143,7 +137,7 @@ def gather_demux(run_dir):
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for {}'.format(logfile))
+        LOGGER.error('No log files found! Looking for {}'.format(logfile))
         import errno
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
