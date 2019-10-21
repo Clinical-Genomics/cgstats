@@ -251,13 +251,13 @@ def add(manager, demux_dir, unaligned_dir):
     for project_name in get_projects(demux_dir, unaligned_dir='Unaligned*'):
         project_id = Project.exists(project_name)
         if not project_id:
-            p = Project()
-            p.projectname = project_name
-            p.time = func.now()
+            project_obj = Project()
+            project_obj.projectname = project_name
+            project_obj.time = func.now()
 
-            manager.add(p)
+            manager.add(project_obj)
             manager.flush()
-            project_id = p.project_id
+            project_id = project_obj.project_id
 
         project_id_of[project_name] = project_id
 
@@ -268,35 +268,35 @@ def add(manager, demux_dir, unaligned_dir):
                                                               f"{sample['index2']}"
         sample_id = Sample.exists(sample['Sample_ID'], barcode)
         if not sample_id:
-            s = Sample()
-            s.project_id = project_id_of[sample['Sample_Project']]
-            s.samplename = sample['Sample_ID']
-            s.limsid = sample['Sample_ID'].split('_')[0]
-            s.barcode = barcode
-            s.time = func.now()
+            sample_obj = Sample()
+            sample_obj.project_id = project_id_of[sample['Sample_Project']]
+            sample_obj.samplename = sample['Sample_ID']
+            sample_obj.limsid = sample['Sample_ID'].split('_')[0]
+            sample_obj.barcode = barcode
+            sample_obj.time = func.now()
 
-            manager.add(s)
+            manager.add(sample_obj)
             manager.flush()
-            sample_id = s.sample_id
+            sample_id = sample_obj.sample_id
 
         if not Unaligned.exists(sample_id, demux_id, 1):
-            u = Unaligned()
-            u.sample_id = sample_id
-            u.demux_id = demux_id
-            u.lane = 1
+            unaligned_obj = Unaligned()
+            unaligned_obj.sample_id = sample_id
+            unaligned_obj.demux_id = demux_id
+            unaligned_obj.lane = 1
             stats_sample = stats_samples[1][sample['Sample_ID']]
-            u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
-            u.passed_filter_pct = stats_sample['pf_yield_pc']
-            u.readcounts = stats_sample['pf_clusters'] * 2
-            u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
-            u.perfect_indexreads_pct = round(
+            unaligned_obj.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
+            unaligned_obj.passed_filter_pct = stats_sample['pf_yield_pc']
+            unaligned_obj.readcounts = stats_sample['pf_clusters'] * 2
+            unaligned_obj.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
+            unaligned_obj.perfect_indexreads_pct = round(
                 stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5) if \
                 stats_sample['barcodes'] else 0
-            u.q30_bases_pct = stats_sample['pf_Q30']
-            u.mean_quality_score = stats_sample['pf_qscore']
-            u.time = func.now()
+            unaligned_obj.q30_bases_pct = stats_sample['pf_Q30']
+            unaligned_obj.mean_quality_score = stats_sample['pf_qscore']
+            unaligned_obj.time = func.now()
 
-            manager.add(u)
+            manager.add(unaligned_obj)
 
     manager.flush()
     manager.commit()
