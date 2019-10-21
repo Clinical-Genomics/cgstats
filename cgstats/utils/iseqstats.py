@@ -137,6 +137,8 @@ def get_sample_summary(tree, project, barcode, lane):
 
 
 def calc_undetermined(demux_dir):
+    """Calculate percentage undetermined"""
+
     sizes = {}
     all_files = glob.glob(demux_dir + '/l*/Project*/Sample*/*fastq.gz')
     for f in all_files:
@@ -150,11 +152,11 @@ def calc_undetermined(demux_dir):
         sample_name = re.search(r'Sample_(.*)/', f).group(1)
         sizes[sample_name]['u_size_of'] += os.path.getsize(f)
 
-    proc_undetermined = {}
+    perc_undetermined = {}
     for sample_name, size in sizes.items():
-        proc_undetermined[sample_name] = float(size['u_size_of']) / size['size_of'] * 100
+        perc_undetermined[sample_name] = float(size['u_size_of']) / size['size_of'] * 100
 
-    return proc_undetermined
+    return perc_undetermined
 
 
 def get_raw_clusters_lane(total_sample_summary):
