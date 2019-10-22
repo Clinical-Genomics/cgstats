@@ -1,3 +1,4 @@
+# application requirements
 Flask
 Flask-Alchy
 Flask-Bootstrap
@@ -7,16 +8,19 @@ SQLAlchemy
 alchy
 alembic
 bs4
-bumpversion
 click<7
 path.py
 pymysql
+-e git+https://github.com/Clinical-Genomics/demultiplexing.git#egg=demux 
+
+# development requirements
+bumpversion
 pytest
 wheel
--e git+https://github.com/Clinical-Genomics/demultiplexing.git#egg=demux 
 git-lint
 pylint
 pycodestyle
 yamllint
 docutils
 html-linter
+six>=1.12                   # due to astroid 2.3.1

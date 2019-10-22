@@ -1,15 +1,17 @@
 # -*- coding: utf-8 -*-
 import logging
-import click
-from path import Path
 from glob import glob
+from pathlib import Path
+import click
 
-from .models import Flowcell, Version, Sample, Demux, Unaligned
+from cgstats.db import iseqparse
 from . import api
-from . import xparse
-from . import parse
 from . import novaseqparse
+from . import parse
+from . import xparse
+from .models import Flowcell, Sample, Demux, Unaligned
 from ..utils import xstats
+
 
 log = logging.getLogger(__name__)
 
@@ -130,7 +132,8 @@ def select(context, flowcell, project):
 
 @click.command()
 @click.argument('demux_dir')
-@click.option('-m', '--machine', type=click.Choice(['X', '2500', 'novaseq']), help='machine type')
+@click.option('-m', '--machine', type=click.Choice(['X', '2500', 'novaseq', 'iseq']),
+              help='machine type')
 @click.option('-u', '--unaligned', help='the unaligned dir name, mandatory for NovaSeq.')
 @click.option('-a', '--all-unaligned', is_flag=True, help='add all Unaligned* dirs')
 @click.pass_context
@@ -161,6 +164,17 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
                 novaseqparse.add(manager, demux_dir, unaligned)
         else:
             novaseqparse.add(manager, demux_dir, unaligned)
+    if machine == 'iseq':
+        if not unaligned:
+            click.echo(click.style("Please specify an unaligned directory for iSeq!", fg='yellow'))
+            context.abort()
+        if all_unaligned:
+            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            for unaligned in unaligned_dirs:
+                log.info('Adding %s.', format(unaligned))
+                iseqparse.add(manager, demux_dir, unaligned)
+        else:
+            iseqparse.add(manager, demux_dir, unaligned)
 
 
 @click.command()
