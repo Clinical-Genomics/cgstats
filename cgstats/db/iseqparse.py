@@ -300,7 +300,3 @@ def add(manager, demux_dir, unaligned_dir):
     manager.commit()
 
     return True
-
-
-if __name__ == '__main__':
-    xadd(sys.argv[1:])
