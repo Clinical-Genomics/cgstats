@@ -6,6 +6,7 @@ import errno
 import logging
 import os
 import os.path
+from pathlib import Path
 import socket
 import sys
 from glob import glob
