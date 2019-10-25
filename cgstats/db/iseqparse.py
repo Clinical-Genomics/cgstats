@@ -48,7 +48,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
     # get some info from bcl2 fastq
     demux_dir = Path(demux_dir)
     logfile = demux_dir.joinpath('projectlog.*.log')
-    logfilenames = glob(logfile)  # should yield one result
+    logfilenames = glob(str(logfile))  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
         LOGGER.error('No log files found! Looking for %s', format(logfile))
@@ -89,7 +89,7 @@ def gather_datasource(run_dir, unaligned_dir):
     datasource = {}  # result set
 
     # get the run name
-    datasource['runname'] = str(run_dir.normpath().basename())
+    datasource['runname'] = str(run_dir.resolve().stem)
 
     # get the run date
     datasource['rundate'] = datasource['runname'].split('_')[0]
@@ -119,7 +119,7 @@ def gather_demux(run_dir):
     # get some info from bcl2 fastq
     run_dir = Path(run_dir)
     logfile = run_dir.joinpath('projectlog.*.log')
-    logfilenames = glob(logfile)  # should yield one result
+    logfilenames = glob(str(logfile))  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
         LOGGER.error('No log files found! Looking for %s', format(logfile))

@@ -6,6 +6,7 @@ import glob
 import logging
 import os
 import os.path
+from pathlib import Path
 import re
 import xml.etree.cElementTree as et
 
