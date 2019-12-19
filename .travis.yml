@@ -1,24 +1,56 @@
 language: python
-
 python:
-  - '2.7'
-  - '3.6'
+    - "2.7"
+    - "3.6"
+
+services:
+    - mysql
+
+# command to install dependencies
+# pip locked to version in P_deliver
+install:
+  - pip install pip==19.0.1
+  - pip install -U -r requirements.txt .
+# command to run tests
+script:
+  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+  - pytest
 
 cache: pip
 
-services:
-  - mysql
+jobs:
+  include:
+    - name: "production dependencies"
+      if: type = pull_request
+      script:
+        - pip check
+    - name: "development dependencies"
+      if: type = pull_request
+      script:
+        - pip install -U -r requirements-dev.txt .
+        - pip check
+    - name: "coverage"
+      if: NOT type = pull_request
+      script:
+        - pip install --upgrade pip
+        - pip install -U -r requirements-dev.txt
+        - coverage run --branch --omit="*.html" --source "$(basename "$PWD")" setup.py test
+        - coveralls
+    - name: "code formatting"
+      if: type = pull_request
+      script:
+        - pip install --upgrade pip
+        - pip install black
+        - git --no-pager diff --name-only --diff-filter=AM $TRAVIS_COMMIT_RANGE | grep ".py" | xargs black --check
+    - name: "linting"
+      if: type = pull_request
+      script:
+        - pip install --upgrade pip
+        - pip install -U -r requirements-dev.txt
+        - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
 
-install:
-  - pip install -r requirements.txt .
-
-script:
-  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
-  - coverage run --source "$(basename "$PWD")" setup.py test
-  - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
-
-notification:
-  - email: false
+notifications:
+  email: never
 
 deploy:
   provider: pypi
