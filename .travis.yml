@@ -31,7 +31,7 @@ jobs:
       if: type = pull_request
       python: "3.6"   # on Thalamus
       install:
-        - pip install pip==9.0.1  # pip version in prod
+        # - pip install pip==9.0.1  # pip version in prod
         - pip install -U cython
         - pip install -U -r requirements.txt
       script: pip check
@@ -40,7 +40,7 @@ jobs:
       if: type = pull_request
       python: "3.7"   # on Hasta
       install:
-        - pip install pip==18.1  # pip version in P_main
+        # - pip install pip==18.1  # pip version in P_main
         - pip install -U cython
         - pip install -U -r requirements.txt
       script: pip check
