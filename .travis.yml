@@ -1,52 +1,75 @@
 language: python
-# 3.7 on hasta and 3.6 on thalamus
-python:
-  - "3.7"
-  - "3.6"
-
-services:
-  - mysql
-
-# command to install dependencies
-# pip locked to version in P_main
-install:
-  - pip install pip==18.1
-  - pip install -U -r requirements.txt .
-# command to run tests
-script:
-  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
-  - pytest
-
+python: "3.8"   # default in jobs
 cache: pip
 
 jobs:
   include:
-    - name: "production dependencies"
+    - name: "Tests on python 3.6 (Thalamus)"
       if: type = pull_request
+      python: "3.6"   # on Thalamus
+      services: mysql
+      install: pip install -U -r requirements.txt -r requirements-dev.txt .
       script:
-        - pip check
-    - name: "development dependencies"
+        - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+        - pytest
+
+    - name: "Tests on python 3.7 (Hasta)"
       if: type = pull_request
+      python: "3.7"   # on hasta
+      services: mysql
+      install: pip install -U -r requirements.txt -r requirements-dev.txt .
       script:
-        - pip install -U -r requirements-dev.txt .
-        - pip check
-    - name: "coverage"
+        - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+        - pytest
+
+    - name: "Package install"
+      if: type = pull_request
+      install: python setup.py install
+      script: true
+
+    - name: "Production dependencies on Thalamus"
+      if: type = pull_request
+      python: "3.6"   # on Thalamus
+      install:
+        - pip install pip==9.0.1  # pip version in prod
+        - pip install -U cython
+        - pip install -U -r requirements.txt
+      script: pip check
+
+    - name: "Production dependencies on Hasta"
+      if: type = pull_request
+      python: "3.7"   # on Hasta
+      install:
+        - pip install pip==18.1  # pip version in P_main
+        - pip install -U cython
+        - pip install -U -r requirements.txt
+      script: pip check
+
+    - name: "Development dependencies"
+      if: type = pull_request
+      install:
+        - pip install cython
+        - pip install -U -r requirements.txt -r requirements-dev.txt .
+      script: pip check
+
+    - name: "Coverage"
       if: NOT type = pull_request
-      script:
-        - pip install --upgrade pip
-        - pip install -U -r requirements-dev.txt
-        - coverage run --branch --omit="*.html" --source "$(basename "$PWD")" setup.py test
-        - coveralls
-    - name: "code formatting"
+      services: mysql
+      install:
+        - pip install -U cython
+        - pip install -U -r requirements.txt -r requirements-dev.txt .
+      script: coverage run --branch --omit="*.html" --source "$(basename "$PWD")" setup.py test
+      after_success: coveralls
+
+    - name: "Code formatting"
       if: type = pull_request
-      script:
-        - pip install --upgrade pip
-        - pip install black
-        - git --no-pager diff --name-only --diff-filter=AM $TRAVIS_COMMIT_RANGE | grep -F ".py" | xargs black --check
-    - name: "pylint score"
+      install: pip install -U black
+      script: git --no-pager diff --name-only --diff-filter=AM $TRAVIS_COMMIT_RANGE | grep -F ".py" | xargs black --check
+
+    - name: "Pylint score"
       if: type = pull_request
+      install: pip install -U pylint
       script:
-        - pip install --upgrade pip && pip install -U -r requirements-dev.txt .
         - grep -r -E "pylint. {0,1}disable\=" .; if [ $? -eq 0 ]; then echo "Can not run pylint scoring with any pylint warnings disabled, please remove them and try again" && false; else true; fi
         - (git --no-pager diff --name-only --diff-filter=M $TRAVIS_COMMIT_RANGE | grep -F ".py" || echo "$(basename "$PWD")") > $TRAVIS_HOME/before_files.txt
         - (git --no-pager diff --name-only --diff-filter=AM $TRAVIS_COMMIT_RANGE | grep -F ".py" || echo "$(basename "$PWD")") > $TRAVIS_HOME/after_files.txt
@@ -54,22 +77,11 @@ jobs:
         - git checkout $TRAVIS_BRANCH
         - pylint --rcfile=.configs/pylintrc --jobs=0 --exit-zero $(< $TRAVIS_HOME/before_files.txt) > $TRAVIS_HOME/pylint_before_output.txt
         - grep -F "/10, -" $TRAVIS_HOME/pylint_before_output.txt || grep -F "/10, +0.00" $TRAVIS_HOME/pylint_before_output.txt || (echo "pylint score decreased, please try again after fixing some lint issues." && cat $TRAVIS_HOME/pylint_after_output.txt && false)
-    - name: "linting"
+
+    - name: "Linting"
       if: type = pull_request
-      script:
-        - pip install --upgrade pip
-        - pip install -U -r requirements-dev.txt
-        - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
+      install: pip install -U -r requirements-dev.txt
+      script: git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
 
 notifications:
   email: never
-
-deploy:
-  provider: pypi
-  user: kenny.billiau
-  password:
-    secure: owj2vVa/KZyBtkRZsYWcsYTXwyzCZQfGA3LWuuhpxR8CZQNOxWFfCw2fN2QJSXwGKQ6EVUdbMVoNADMcPYJgchnUMaV3o8rYlTicqgR4L/+3PN183+JBAAaqOPtiKzxYXf92RQtU/BN99WU6eg21ZLc/+w9ownVy7iD86vs1agDb8p9Y+gUke2iv9FQMTtvWShWtxQFwjUwmERYPn30F5gK8gm4Xc1No2tAiXFPS4bktsy3+0KNOUz8hxZ/c4s00fUsVesN/VG3fov9ygZwJPxfAqGdaJryg2QMXux+C1EAOc0rOB7CUBiO6dF6e15lwnE19EEu8q3bo1O/cIUd8fDtwed/nJ+Fiun9HICwaQEuh5KOOSPD1KtnZM7RQ+1ziFlS+gsQE3szhCnC/W570reODjgISiognmUxeLUn/kZgcJquX8Afnc6l+lDyj45RXHF9I1kiof3qmF3JWj5MkL2nAkl1uBPc1Rjiwt+JBDgfj9wBvImwkPh3zNwIiD7uBcBPlRgEtZM91nlL2HniYwMimE88mfEs5GcLy7pJZSOfSZxRpaZFt5gBhEqWIRYRW+KpV3zuvQrzs/bkTDFk8h+noYWYToR2fLts0x1J+kGzOmPVW7dKzSQTJlDYzvEJYhVIWmULCckQz1WLsMf2TBjuxqru3XdLD4h3ZrSOa1Jc=
-  on:
-    tags: true
-    distributions: sdist bdist_wheel
-    repo: Clinical-Genomics/cgstats
