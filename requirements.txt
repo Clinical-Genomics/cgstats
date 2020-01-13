@@ -1,5 +1,5 @@
 # application requirements
-Flask
+Flask>=1.1.1
 Flask-Alchy
 Flask-Bootstrap
 Flask-SQLAlchemy==2.1
