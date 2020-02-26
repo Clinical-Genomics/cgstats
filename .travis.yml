@@ -66,7 +66,7 @@ jobs:
 
     - name: "Pylint score"
       if: type = pull_request
-      install: pip install pylint
+      install: pip install pylint . -r requirements-dev.txt
       script: bash <(curl https://raw.githubusercontent.com/Clinical-Genomics/snippets/distinguish-new-old-score/check_pylint_score.sh)
 
     - name: "Linting"
