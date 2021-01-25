@@ -3,7 +3,7 @@ Flask>=1.1.1
 Flask-Alchy
 Flask-Bootstrap
 Flask-SQLAlchemy==2.1
-PyYAML
+PyYAML>=5.3.1
 SQLAlchemy
 alchy
 alembic
