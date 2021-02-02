@@ -59,15 +59,15 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     with open(logfilenames[0], 'r') as logfile:
         for line in logfile.readlines():
-            if 'bcl2fastq v' in line:
-                rs['idstring'] = line.strip()
-
-            if '--use-bases-mask' in line:
+            if 'bcl2fastq' in line and '--use-bases-mask' in line:
                 line = line.strip()
                 split_line = line.split(' ')
-                rs['commandline'] = ' '.join(split_line[1:])  # remove the leading [date]
+                rs['commandline'] = ' '.join(split_line[6:])  # remove the leading [date]
                 rs['time'] = split_line[0].strip('[]')  # remove the brackets around the date
-                rs['program'] = split_line[1]  # get the executed program
+                rs['program'] = split_line[6]  # get the executed program
+
+            if 'bcl2fastq v' in line:
+                rs['idstring'] = line.strip()
                 break
 
     # get the sample sheet and it's contents
