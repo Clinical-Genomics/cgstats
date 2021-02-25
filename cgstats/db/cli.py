@@ -161,9 +161,9 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
             unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
             for unaligned in unaligned_dirs:
                 log.info('Adding {}.'.format(unaligned))
-                novaseqparse.add(manager, demux_dir, unaligned)
+                novaseqparse.add(manager, demux_dir, unaligned, machine)
         else:
-            novaseqparse.add(manager, demux_dir, unaligned)
+            novaseqparse.add(manager, demux_dir, unaligned, machine)
     if machine == 'iseq':
         if not unaligned:
             click.echo(click.style("Please specify an unaligned directory for iSeq!", fg='yellow'))

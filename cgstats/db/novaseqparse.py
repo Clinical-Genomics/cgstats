@@ -201,7 +201,7 @@ def get_nr_samples_lane(sample_sheet):
     return samples_lane
 
 
-def add(manager, demux_dir, unaligned_dir):
+def add(manager, demux_dir, unaligned_dir, machine):
     """ Gathers and adds all data to cgstats.
 
     params:
@@ -251,7 +251,7 @@ def add(manager, demux_dir, unaligned_dir):
         flowcell = Flowcell()
         flowcell.flowcellname = flowcell_name
         flowcell.flowcell_pos = flowcell_pos
-        flowcell.hiseqtype = 'novaseq'
+        flowcell.hiseqtype = machine
         flowcell.time = func.now()
 
         manager.add(flowcell)
