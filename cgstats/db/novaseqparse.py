@@ -2,19 +2,20 @@
 # encoding: utf-8
 
 from __future__ import print_function, division
-import sys
-import os
 from glob import glob
 import logging
+import os
 import socket
+import sys
 
 from path import Path
 from sqlalchemy import func
 
-from demux.utils import Samplesheet
+from cgstats.constants import SEQUENCERS
 from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
 from cgstats.utils import novaseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
+from demux.utils import Samplesheet
 
 logger = logging.getLogger(__name__)
 
@@ -251,7 +252,7 @@ def add(manager, demux_dir, unaligned_dir, machine):
         flowcell = Flowcell()
         flowcell.flowcellname = flowcell_name
         flowcell.flowcell_pos = flowcell_pos
-        flowcell.hiseqtype = machine
+        flowcell.hiseqtype = SEQUENCERS[machine]
         flowcell.time = func.now()
 
         manager.add(flowcell)
