@@ -1,31 +1,81 @@
 language: python
 
-python:
-  - '2.7'
-  - '3.6'
-
 cache: pip
 
-services:
-  - mysql
+jobs:
+  include:
+    - name: "Coverage"
+      services: mysql
+      install:
+        - pip install cython
+        - pip install  . -r requirements-dev.txt
+      script: coverage run --branch --omit="*.html" --source "$(basename "$PWD")" setup.py test
+      after_success: coveralls
 
-install:
-  - pip install -r requirements.txt .
+    - name: "Tests on python 3.6 (Clinical-preproc)"
+      if: type = pull_request       # extra on PR
+      python: "3.6.2"   # on prod
+      services: mysql
+      install: pip install . -r requirements-dev.txt
+      script:
+        - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+        - pytest
 
-script:
-  - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
-  - coverage run --source "$(basename "$PWD")" setup.py test
-  - git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
+    - name: "Tests on python 3.7 (Hasta)"
+      python: "3.7.2"   # on P_demux
+      services: mysql
+      install: pip install . -r requirements-dev.txt
+      script:
+        - py.test tests/ -vv --sqlalchemy-connect-url mysql+pymysql://travis@127.0.0.1/cgstats_test
+        - pytest
 
-notification:
-  - email: false
+    - name: "Package install"
+      if: type = pull_request
+      install: python setup.py install
+      script: pip check
 
-deploy:
-  provider: pypi
-  user: kenny.billiau
-  password:
-    secure: owj2vVa/KZyBtkRZsYWcsYTXwyzCZQfGA3LWuuhpxR8CZQNOxWFfCw2fN2QJSXwGKQ6EVUdbMVoNADMcPYJgchnUMaV3o8rYlTicqgR4L/+3PN183+JBAAaqOPtiKzxYXf92RQtU/BN99WU6eg21ZLc/+w9ownVy7iD86vs1agDb8p9Y+gUke2iv9FQMTtvWShWtxQFwjUwmERYPn30F5gK8gm4Xc1No2tAiXFPS4bktsy3+0KNOUz8hxZ/c4s00fUsVesN/VG3fov9ygZwJPxfAqGdaJryg2QMXux+C1EAOc0rOB7CUBiO6dF6e15lwnE19EEu8q3bo1O/cIUd8fDtwed/nJ+Fiun9HICwaQEuh5KOOSPD1KtnZM7RQ+1ziFlS+gsQE3szhCnC/W570reODjgISiognmUxeLUn/kZgcJquX8Afnc6l+lDyj45RXHF9I1kiof3qmF3JWj5MkL2nAkl1uBPc1Rjiwt+JBDgfj9wBvImwkPh3zNwIiD7uBcBPlRgEtZM91nlL2HniYwMimE88mfEs5GcLy7pJZSOfSZxRpaZFt5gBhEqWIRYRW+KpV3zuvQrzs/bkTDFk8h+noYWYToR2fLts0x1J+kGzOmPVW7dKzSQTJlDYzvEJYhVIWmULCckQz1WLsMf2TBjuxqru3XdLD4h3ZrSOa1Jc=
-  on:
-    tags: true
-    distributions: sdist bdist_wheel
-    repo: Clinical-Genomics/cgstats
+    - name: "Development dependencies"
+      if: type = pull_request
+      install:
+        - pip install cython
+        - pip install  . -r requirements-dev.txt
+      script: pip check
+
+    - name: "Production dependencies on Clinical-preproc"
+      if: type = pull_request
+      python: "3.6.2"   # on prod
+      install:
+        - pip install pip==9.0.1  # pip version in prod
+        - pip install cython
+        - pip install  .
+      script: pip check
+
+    - name: "Production dependencies on Hasta"
+      if: type = pull_request
+      python: "3.7.2"   # on P_demux
+      install:
+        - pip install pip==19.0.1  # pip version in P_main
+        - pip install cython
+        - pip install  .
+      script: pip check
+
+    - name: "Code formatting"
+      if: type = pull_request
+      install: pip install black
+      script: git --no-pager diff --name-only --diff-filter=AM $TRAVIS_COMMIT_RANGE | grep -F ".py" | xargs black --check
+
+    - name: "Pylint score"
+      if: type = pull_request
+      install: pip install pylint . -r requirements-dev.txt
+      script: bash <(curl https://raw.githubusercontent.com/Clinical-Genomics/snippets/distinguish-new-old-score/check_pylint_score.sh)
+
+    - name: "Linting"
+      if: type = pull_request
+      install: pip install -r requirements-dev.txt
+      script: git reset --soft ${TRAVIS_COMMIT_RANGE%...*} && git lint
+
+notifications:
+  email:
+    if: branch = master AND NOT type = push
+    on_success: never
+    on_failure: always
