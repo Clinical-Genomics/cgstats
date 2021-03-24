@@ -141,43 +141,6 @@ def gather_datasource(run_dir, unaligned_dir):
     return rs
 
 
-def gather_demux(run_dir):
-    """TODO: Docstring for gather_demux.
-
-    Args:
-        demux_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
-
-    rs = {}  # result set
-
-    # get some info from bcl2 fastq
-    run_dir = Path(run_dir)
-    logfile = run_dir.joinpath("projectlog.*.log")
-    logfilenames = glob(logfile)  # should yield one result
-    logfilenames.sort(key=os.path.getmtime, reverse=True)
-    if len(logfilenames) == 0:
-        logger.error("No log files found! Looking for {}".format(logfile))
-        import errno
-
-        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
-
-    with open(logfilenames[0], "r") as logfile:
-        for line in logfile.readlines():
-
-            if "--use-bases-mask" in line:
-                line = line.strip()
-                split_line = line.split(" ")
-                basemask_params_pos = [
-                    i for i, x in enumerate(split_line) if x == "--use-bases-mask"
-                ][0]
-                rs["basemask"] = split_line[basemask_params_pos + 1]
-
-    return rs
-
-
 def sanitize_sample(sample):
     """Removes the _nxdual9 index indication
     Removes the B (reprep) or F (reception fail) suffix from the sample name
@@ -280,13 +243,12 @@ def add(manager, demux_dir, unaligned_dir, machine):
         manager.flush()
         flowcell_id = flowcell.flowcell_id
 
-    new_demux = gather_demux(demux_dir)
-    demux_id = Demux.exists(flowcell_id, new_demux["basemask"])
+    demux_id = Demux.exists(flowcell_id, "")
     if not demux_id:
         demux = Demux()
         demux.flowcell_id = flowcell_id
         demux.datasource_id = datasource_id
-        demux.basemask = new_demux["basemask"]
+        demux.basemask = ""
         demux.time = func.now()
 
         manager.add(demux)
