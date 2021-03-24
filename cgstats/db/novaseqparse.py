@@ -60,7 +60,7 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     with open(logfilenames[0], 'r') as logfile:
         for line in logfile.readlines():
-            if 'bcl2fastq' in line and '--use-bases-mask' in line:
+            if 'bcl2fastq' in line and 'singularity' in line:
                 line = line.strip()
                 split_line = line.split(' ')
                 rs['commandline'] = ' '.join(split_line[6:])  # remove the leading [date]
