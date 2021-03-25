@@ -12,7 +12,16 @@ from path import Path
 from sqlalchemy import func
 
 from cgstats.constants import SEQUENCERS
-from cgstats.db.models import Supportparams, Version, Datasource, Flowcell, Demux, Project, Sample, Unaligned
+from cgstats.db.models import (
+    Supportparams,
+    Version,
+    Datasource,
+    Flowcell,
+    Demux,
+    Project,
+    Sample,
+    Unaligned,
+)
 from cgstats.utils import novaseqstats
 from cgstats.utils.utils import get_projects, gather_flowcell
 from demux.utils import Samplesheet
@@ -50,40 +59,46 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     # get some info from bcl2 fastq
     demux_dir = Path(demux_dir)
-    logfile = demux_dir.joinpath('projectlog.*.log')
+    logfile = demux_dir.joinpath("projectlog.*.log")
     logfilenames = glob(logfile)  # should yield one result
     logfilenames.sort(key=os.path.getmtime, reverse=True)
     if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for {}'.format(logfile))
+        logger.error("No log files found! Looking for {}".format(logfile))
         import errno
+
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
 
-    with open(logfilenames[0], 'r') as logfile:
+    with open(logfilenames[0], "r") as logfile:
         for line in logfile.readlines():
-            if 'bcl2fastq' in line and '--use-bases-mask' in line:
+            if "bcl2fastq" in line and "singularity" in line:
                 line = line.strip()
-                split_line = line.split(' ')
-                rs['commandline'] = ' '.join(split_line[6:])  # remove the leading [date]
-                rs['time'] = split_line[0].strip('[]')  # remove the brackets around the date
-                rs['program'] = split_line[6]  # get the executed program
+                split_line = line.split(" ")
+                rs["commandline"] = " ".join(
+                    split_line[6:]
+                )  # remove the leading [date]
+                rs["time"] = split_line[0].strip(
+                    "[]"
+                )  # remove the brackets around the date
+                rs["program"] = split_line[5]  # get the executed program
 
-            if 'bcl2fastq v' in line:
-                rs['idstring'] = line.strip()
+            if "bcl2fastq v" in line:
+                rs["idstring"] = line.strip()
                 break
 
     # get the sample sheet and it's contents
     document_path = demux_dir.joinpath(unaligned_dir)
-    samplesheet_path = document_path.joinpath('SampleSheet.csv')
-    rs['sampleconfig_path'] = str(samplesheet_path)
-    rs['sampleconfig'] = Samplesheet(samplesheet_path).raw()
+    samplesheet_path = document_path.joinpath("SampleSheet.csv")
+    rs["sampleconfig_path"] = str(samplesheet_path)
+    rs["sampleconfig"] = Samplesheet(samplesheet_path).raw()
 
     # get the unaligned dir
     if not os.path.isdir(document_path):
         logger.error("Unaligned dir not found at '{}'".format(document_path))
         import errno
+
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = str(document_path)
+        rs["document_path"] = str(document_path)
 
     return rs
 
@@ -102,59 +117,26 @@ def gather_datasource(run_dir, unaligned_dir):
     rs = {}  # result set
 
     # get the run name
-    rs['runname'] = str(run_dir.normpath().basename())
+    rs["runname"] = str(run_dir.normpath().basename())
 
     # get the run date
-    rs['rundate'] = rs['runname'].split('_')[0]
+    rs["rundate"] = rs["runname"].split("_")[0]
 
     # get the machine name
-    rs['machine'] = rs['runname'].split('_')[1]
+    rs["machine"] = rs["runname"].split("_")[1]
 
     # get the server name on which the demux took place
-    rs['servername'] = socket.gethostname()
+    rs["servername"] = socket.gethostname()
 
     # get the stats file
-    document_path = run_dir.joinpath(unaligned_dir, 'Stats/ConversionStats.xml')
+    document_path = run_dir.joinpath(unaligned_dir, "Stats/ConversionStats.xml")
     if not document_path.isfile():
         logger.error("Stats file not found at '%s'", document_path)
         import errno
+
         raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), document_path)
     else:
-        rs['document_path'] = str(document_path)
-
-    return rs
-
-
-def gather_demux(run_dir):
-    """TODO: Docstring for gather_demux.
-
-    Args:
-        demux_dir (TODO): TODO
-
-    Returns: TODO
-
-    """
-
-    rs = {}  # result set
-
-    # get some info from bcl2 fastq
-    run_dir = Path(run_dir)
-    logfile = run_dir.joinpath('projectlog.*.log')
-    logfilenames = glob(logfile)  # should yield one result
-    logfilenames.sort(key=os.path.getmtime, reverse=True)
-    if len(logfilenames) == 0:
-        logger.error('No log files found! Looking for {}'.format(logfile))
-        import errno
-        raise IOError(errno.ENOENT, os.strerror(errno.ENOENT), logfile)
-
-    with open(logfilenames[0], 'r') as logfile:
-        for line in logfile.readlines():
-
-            if '--use-bases-mask' in line:
-                line = line.strip()
-                split_line = line.split(' ')
-                basemask_params_pos = [i for i, x in enumerate(split_line) if x == '--use-bases-mask'][0]
-                rs['basemask'] = split_line[basemask_params_pos + 1]
+        rs["document_path"] = str(document_path)
 
     return rs
 
@@ -169,20 +151,20 @@ def sanitize_sample(sample):
     Return (str): a sanitized sample name
 
     """
-    return sample.split('_')[0].rstrip('BF')
+    return sample.split("_")[0].rstrip("BF")
 
 
 def get_sample_sheet(demux_dir, unaligned_dir):
     sample_sheet = []
     samplesheet_file_name = f"{demux_dir}/{unaligned_dir}/SampleSheet.csv"
-    with open(samplesheet_file_name, 'r') as samplesheet_fh:
-        lines = [line.strip().split(',') for line in samplesheet_fh.readlines()]
+    with open(samplesheet_file_name, "r") as samplesheet_fh:
+        lines = [line.strip().split(",") for line in samplesheet_fh.readlines()]
         header = []
         for line in lines:
             # skip headers
-            if line[0].startswith('['):
+            if line[0].startswith("["):
                 continue
-            if line[2] == 'SampleID':
+            if line[2] == "SampleID":
                 header = line
                 continue
 
@@ -195,15 +177,15 @@ def get_sample_sheet(demux_dir, unaligned_dir):
 def get_nr_samples_lane(sample_sheet):
     samples_lane = {}
     for line in sample_sheet:
-        if line['Lane'] not in samples_lane:
-            samples_lane[line['Lane']] = 0
-        samples_lane[line['Lane']] += 1
+        if line["Lane"] not in samples_lane:
+            samples_lane[line["Lane"]] = 0
+        samples_lane[line["Lane"]] += 1
 
     return samples_lane
 
 
 def add(manager, demux_dir, unaligned_dir, machine):
-    """ Gathers and adds all data to cgstats.
+    """Gathers and adds all data to cgstats.
 
     params:
         manager (managerAlchamy): a manager object which can be used to query the DB
@@ -215,28 +197,30 @@ def add(manager, demux_dir, unaligned_dir, machine):
     if not supportparams_id:
         new_supportparams = gather_supportparams(demux_dir, unaligned_dir)
         supportparams = Supportparams()
-        supportparams.document_path = new_supportparams['document_path']
-        supportparams.idstring = new_supportparams['idstring']
-        supportparams.program = new_supportparams['program']
-        supportparams.commandline = new_supportparams['commandline']
-        supportparams.sampleconfig_path = new_supportparams['sampleconfig_path']
-        supportparams.sampleconfig = new_supportparams['sampleconfig']
-        supportparams.time = new_supportparams['time']
+        supportparams.document_path = new_supportparams["document_path"]
+        supportparams.idstring = new_supportparams["idstring"]
+        supportparams.program = new_supportparams["program"]
+        supportparams.commandline = new_supportparams["commandline"]
+        supportparams.sampleconfig_path = new_supportparams["sampleconfig_path"]
+        supportparams.sampleconfig = new_supportparams["sampleconfig"]
+        supportparams.time = new_supportparams["time"]
 
         manager.add(supportparams)
         manager.flush()
         supportparams_id = supportparams.supportparams_id
 
-    datasource_id = Datasource.exists(os.path.join(demux_dir, unaligned_dir, 'Stats/ConversionStats.xml'))
+    datasource_id = Datasource.exists(
+        os.path.join(demux_dir, unaligned_dir, "Stats/ConversionStats.xml")
+    )
     if not datasource_id:
         new_datasource = gather_datasource(demux_dir, unaligned_dir)
         datasource = Datasource()
-        datasource.runname = new_datasource['runname']
-        datasource.rundate = new_datasource['rundate']
-        datasource.machine = new_datasource['machine']
-        datasource.server = new_datasource['servername']
-        datasource.document_path = new_datasource['document_path']
-        datasource.document_type = 'xml'
+        datasource.runname = new_datasource["runname"]
+        datasource.rundate = new_datasource["rundate"]
+        datasource.machine = new_datasource["machine"]
+        datasource.server = new_datasource["servername"]
+        datasource.document_path = new_datasource["document_path"]
+        datasource.document_type = "xml"
         datasource.time = func.now()
         datasource.supportparams_id = supportparams_id
 
@@ -245,8 +229,8 @@ def add(manager, demux_dir, unaligned_dir, machine):
         datasource_id = datasource.datasource_id
 
     flowcell_namepos = gather_flowcell(demux_dir)
-    flowcell_name = flowcell_namepos['name']
-    flowcell_pos = flowcell_namepos['pos']
+    flowcell_name = flowcell_namepos["name"]
+    flowcell_pos = flowcell_namepos["pos"]
     flowcell_id = Flowcell.exists(flowcell_name)
     if not flowcell_id:
         flowcell = Flowcell()
@@ -259,13 +243,12 @@ def add(manager, demux_dir, unaligned_dir, machine):
         manager.flush()
         flowcell_id = flowcell.flowcell_id
 
-    new_demux = gather_demux(demux_dir)
-    demux_id = Demux.exists(flowcell_id, new_demux['basemask'])
+    demux_id = Demux.exists(flowcell_id, "")
     if not demux_id:
         demux = Demux()
         demux.flowcell_id = flowcell_id
         demux.datasource_id = datasource_id
-        demux.basemask = new_demux['basemask']
+        demux.basemask = ""
         demux.time = func.now()
 
         manager.add(demux)
@@ -273,7 +256,7 @@ def add(manager, demux_dir, unaligned_dir, machine):
         demux_id = demux.demux_id
 
     project_id_of = {}  # project name: project id
-    for project_name in get_projects(demux_dir, unaligned_dir='Unaligned*'):
+    for project_name in get_projects(demux_dir, unaligned_dir="Unaligned*"):
         project_id = Project.exists(project_name)
         if not project_id:
             p = Project()
@@ -290,13 +273,17 @@ def add(manager, demux_dir, unaligned_dir, machine):
     stats_samples = novaseqstats.parse_samples(Path(demux_dir).joinpath(unaligned_dir))
     nr_samples_lane = get_nr_samples_lane(sample_sheet)
     for sample in sample_sheet:
-        barcode = sample['index'] if sample['index2'] == '' else f"{sample['index']}+{sample['index2']}"
-        sample_id = Sample.exists(sample['SampleID'], barcode)
+        barcode = (
+            sample["index"]
+            if sample["index2"] == ""
+            else f"{sample['index']}+{sample['index2']}"
+        )
+        sample_id = Sample.exists(sample["SampleID"], barcode)
         if not sample_id:
             s = Sample()
-            s.project_id = project_id_of[sample['Project']]
-            s.samplename = sample['SampleID']
-            s.limsid = sample['SampleID'].split('_')[0]
+            s.project_id = project_id_of[sample["Project"]]
+            s.samplename = sample["SampleID"]
+            s.limsid = sample["SampleID"].split("_")[0]
             s.barcode = barcode
             s.time = func.now()
 
@@ -304,19 +291,25 @@ def add(manager, demux_dir, unaligned_dir, machine):
             manager.flush()
             sample_id = s.sample_id
 
-        if not Unaligned.exists(sample_id, demux_id, sample['Lane']):
+        if not Unaligned.exists(sample_id, demux_id, sample["Lane"]):
             u = Unaligned()
             u.sample_id = sample_id
             u.demux_id = demux_id
-            u.lane = sample['Lane']
-            stats_sample = stats_samples[sample['Lane']][sample['SampleID']]
-            u.yield_mb = round(int(stats_sample['pf_yield']) / 1000000, 2)
-            u.passed_filter_pct = stats_sample['pf_yield_pc']
-            u.readcounts = stats_sample['pf_clusters'] * 2
-            u.raw_clusters_per_lane_pct = stats_sample['raw_clusters_pc']
-            u.perfect_indexreads_pct = round(stats_sample['perfect_barcodes'] / stats_sample['barcodes'] * 100, 5) if stats_sample['barcodes'] else 0
-            u.q30_bases_pct = stats_sample['pf_Q30']
-            u.mean_quality_score = stats_sample['pf_qscore']
+            u.lane = sample["Lane"]
+            stats_sample = stats_samples[sample["Lane"]][sample["SampleID"]]
+            u.yield_mb = round(int(stats_sample["pf_yield"]) / 1000000, 2)
+            u.passed_filter_pct = stats_sample["pf_yield_pc"]
+            u.readcounts = stats_sample["pf_clusters"] * 2
+            u.raw_clusters_per_lane_pct = stats_sample["raw_clusters_pc"]
+            u.perfect_indexreads_pct = (
+                round(
+                    stats_sample["perfect_barcodes"] / stats_sample["barcodes"] * 100, 5
+                )
+                if stats_sample["barcodes"]
+                else 0
+            )
+            u.q30_bases_pct = stats_sample["pf_Q30"]
+            u.mean_quality_score = stats_sample["pf_qscore"]
             u.time = func.now()
 
             manager.add(u)
@@ -327,5 +320,5 @@ def add(manager, demux_dir, unaligned_dir, machine):
     return True
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     xadd(sys.argv[1:])
