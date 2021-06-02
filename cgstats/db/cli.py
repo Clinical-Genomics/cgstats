@@ -12,7 +12,6 @@ from . import xparse
 from .models import Flowcell, Sample, Demux, Unaligned
 from ..utils import xstats
 
-
 log = logging.getLogger(__name__)
 
 
@@ -99,9 +98,11 @@ def samples(context, limit, offset, flowcell):
 @click.pass_context
 def lanestats(context, demux_dir):
     """List lane centric stats for X"""
-    lane_stats = sorted([ line for _, line in xstats.parse(demux_dir).items()], key=lambda line: int(line['lane']))
+    lane_stats = sorted([line for _, line in xstats.parse(demux_dir).items()],
+                        key=lambda line: int(line['lane']))
 
-    click.echo("Flowcell\tLane\tReads\tYieldMB\tQ30\tQ30_read1\tQ30_read2\tMeanQScore\tUndetermined")
+    click.echo(
+        "Flowcell\tLane\tReads\tYieldMB\tQ30\tQ30_read1\tQ30_read2\tMeanQScore\tUndetermined")
 
     for line in lane_stats:
         click.echo('\t'.join(str(s) for s in [
@@ -125,9 +126,12 @@ def select(context, flowcell, project):
     """List sample centric stats"""
     query = api.select(flowcell, project)
 
-    click.echo("sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
+    click.echo(
+        "sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
     for line in query:
-            click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
+        click.echo('\t'.join(str(s) for s in
+                             [line.samplename, line.flowcellname, line.lanes, line.reads,
+                              line.readsum, line.yld, line.yieldsum, line.q30, line.meanq]))
 
 
 @click.command()
@@ -144,9 +148,19 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
 
     if machine == 'X':
         xparse.add(manager, demux_dir)
-    if machine == 'novaseq' or machine == '2500':
-        if not unaligned and machine == 'novaseq':
-            click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
+    if machine == '2500':
+        if all_unaligned:
+            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            for unaligned in unaligned_dirs:
+                log.info('Adding {}.'.format(unaligned))
+                parse.add(manager, demux_dir, unaligned)
+        else:
+            log.info('Adding {}.'.format(unaligned))
+            parse.add(manager, demux_dir, unaligned)
+    if machine == 'novaseq':
+        if not unaligned:
+            click.echo(
+                click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
             context.abort()
         if all_unaligned:
             unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
@@ -175,7 +189,6 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
 @click.option('-s', '--sample', help='sample to remove')
 @click.pass_context
 def delete(context, flowcell, basemask, sample):
-
     if flowcell:
         rs = Flowcell.query.filter_by(flowcellname=flowcell)
 
