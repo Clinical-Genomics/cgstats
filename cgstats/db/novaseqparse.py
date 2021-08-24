@@ -28,6 +28,7 @@ from demux.utils import Samplesheet
 
 logger = logging.getLogger(__name__)
 
+RS_KEYS = ["commandline", "idstring", "program", "time"]
 
 class NoLogsFoundError(Exception):
     pass
@@ -84,6 +85,26 @@ def gather_supportparams(demux_dir, unaligned_dir):
             if "bcl2fastq v" in line:
                 rs["idstring"] = line.strip()
                 break
+
+    # Check if the entries where not found
+    if not rs.keys():
+        with open(logfilenames[0], "r") as logfile:
+            for line in logfile.readlines():
+                if "/usr/local/bin/configureBclToFastq.pl" in line:
+                    white_space_split_line = line.split(" ")
+                    rs["command_line"] = " ".join(white_space_split_line[1:]).strip("\n")
+                    # Start from 1 since first string is the date
+                    rs["time"] = white_space_split_line[0].strip("[]")
+                    # Take the date and strip the brackets for db input
+                    if "[configureBclToFastq.pl]" and "version" in line:
+                        comma_split_line = line.split(":")
+                    rs["idstring"] = comma_split_line[4].strip()
+                    rs["program"] = "BclToFastq"
+
+    if not all([key in rs.keys() for key in RS_KEYS]):
+        raise ValueError(
+            "Unknown log-format, please ensure seqencer type and/or possible" +
+            " legacy log-formats")
 
     # get the sample sheet and it's contents
     document_path = demux_dir.joinpath(unaligned_dir)
