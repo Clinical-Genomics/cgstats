@@ -50,6 +50,10 @@ _DEVELOP/
 # SublimeText
 *.sublime-*
 
+# IDEAJ
+*idea*
+venv*
+
 # project files should be version controlled, unless a significant
 # proportion of contributors will probably not be using SublimeText
 # *.sublime-project
