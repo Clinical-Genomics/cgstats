@@ -7,8 +7,9 @@ import logging
 import os
 import socket
 import sys
+from typing import Dict
 
-from path import Path
+from pathlib import Path
 from sqlalchemy import func
 
 from cgstats.constants import SEQUENCERS
@@ -30,11 +31,12 @@ logger = logging.getLogger(__name__)
 
 RS_KEYS = ["commandline", "idstring", "program", "time"]
 
+
 class NoLogsFoundError(Exception):
     pass
 
 
-def gather_supportparams(demux_dir, unaligned_dir):
+def gather_supportparams(demux_dir: Path, unaligned_dir: Path):
     """Aggregates all the support params:
     - bcl2fastq version
     - bcl2fastq path
@@ -45,7 +47,8 @@ def gather_supportparams(demux_dir, unaligned_dir):
     - DEMUX path
 
     Args:
-        demux_dir (str): FQPN run dir
+        demux_dir (Path): FQPN run dir
+        unaligned_dir (Path): Unaligned basemask dir
 
     Returns: dict(
         'document_path',
@@ -88,23 +91,17 @@ def gather_supportparams(demux_dir, unaligned_dir):
 
     # Check if the entries where not found
     if not rs.keys():
-        with open(logfilenames[0], "r") as logfile:
-            for line in logfile.readlines():
-                if "/usr/local/bin/configureBclToFastq.pl" in line:
-                    white_space_split_line = line.split(" ")
-                    rs["command_line"] = " ".join(white_space_split_line[1:]).strip("\n")
-                    # Start from 1 since first string is the date
-                    rs["time"] = white_space_split_line[0].strip("[]")
-                    # Take the date and strip the brackets for db input
-                    if "[configureBclToFastq.pl]" and "version" in line:
-                        comma_split_line = line.split(":")
-                    rs["idstring"] = comma_split_line[4].strip()
-                    rs["program"] = "BclToFastq"
+        rapid_support_params = gather_rapid_supportparams(
+            demux_dir=demux_dir, unaligned_dir=unaligned_dir
+        )
+        for key in rapid_support_params.keys():
+            rs[key] = rapid_support_params[key]
 
     if not all([key in rs.keys() for key in RS_KEYS]):
         raise ValueError(
-            "Unknown log-format, please ensure seqencer type and/or possible" +
-            " legacy log-formats")
+            "Unknown log-format, please ensure seqencer type and/or possible"
+            + " legacy log-formats"
+        )
 
     # get the sample sheet and it's contents
     document_path = demux_dir.joinpath(unaligned_dir)
@@ -122,6 +119,79 @@ def gather_supportparams(demux_dir, unaligned_dir):
         rs["document_path"] = str(document_path)
 
     return rs
+
+
+def gather_rapid_supportparams(demux_dir: Path, unaligned_dir: Path) -> Dict[str, str]:
+    """Collects all the support parameters for the rapid support.txt
+
+    Args:
+        demux_dir (Path): FQPN run dir
+        unaligned_dir (Path): Unaligned basemask dir
+
+    Returns: dict(
+        'document_path',
+        'idstring',
+        'program',
+        'commandline',
+        'sampleconfig_path',
+        'sampleconfig',
+        'time')
+    """
+
+    logfilenames = glob(
+        demux_dir.joinpath("projectlog.*.txt")
+    )  # should yield one result
+    rs = {}
+    latest_logile_path: Path = Path(
+        logfilenames.sort(key=os.path.getmtime, reverse=True)[0]
+    )
+    support_file_path = demux_dir.joinpath(Path(unaligned_dir + "/support.txt"))
+    rapid_parameters = get_rapid_parameters(support_file_path=support_file_path)
+    rs["commandline"] = get_rapid_command_line(support_file_path=support_file_path)
+    rs["idstring"] = rapid_parameters["idstring"]
+    rs["program"] = rapid_parameters["program"]
+
+    with latest_logile_path.open("r") as latest_logfile:
+        for line in latest_logfile.readlines():
+            if "/usr/local/bin/configureBclToFastq.pl" in line:
+                white_space_split_line = line.split(" ")
+                rs["time"] = white_space_split_line[0].strip("[]")
+
+    return rs
+
+
+def get_rapid_command_line(support_file_path: Path) -> str:
+    """Get the commandline from a rapid flowcell support.txt"""
+
+    command_list = []
+
+    with support_file_path.open("r") as support_file:
+        for line in support_file:
+            if "$_Command-line" in line:
+                cl_finish = False
+                while not cl_finish:
+                    new_line = support_file.readline()
+                    if "];" in new_line:
+                        cl_finish = True
+                    else:
+                        command_list.append(new_line.strip().strip("',"))
+
+    return " ".join(command_list)
+
+
+def get_rapid_parameters(support_file_path: Path) -> Dict[str, str]:
+    """Get the ID-string from a rapid flowcell support.txt"""
+
+    rapid_parameters = {}
+
+    with support_file_path.open("r") as support_file:
+        for line in support_file:
+            if "$_ID-string" in line:
+                rapid_parameters["idstring"] = line.split("=")[1].strip().strip("';")
+            if "$_Program" in line:
+                rapid_parameters["program"] = line.split("=")[1].strip().strip("';")
+
+    return rapid_parameters
 
 
 def gather_datasource(run_dir, unaligned_dir):
