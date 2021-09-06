@@ -4,7 +4,9 @@ from glob import glob
 from pathlib import Path
 import click
 
+
 from cgstats.db import iseqparse
+from cgstats.utils.checkforrapid import check_for_rapid_support
 from . import api
 from . import novaseqparse
 from . import parse
@@ -141,6 +143,8 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
     """Add a FC to cgstats."""
 
     manager = context.obj['manager']
+    demux_dir_path = Path(demux_dir)
+    unaligned_dir_path = demux_dir_path.joinpath(unaligned)
 
     if machine == 'X':
         xparse.add(manager, demux_dir)
@@ -149,10 +153,14 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
             click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
             context.abort()
         if all_unaligned:
-            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            unaligned_dirs = glob(demux_dir_path.joinpath('Unaligned*'))
             for unaligned in unaligned_dirs:
                 log.info('Adding {}.'.format(unaligned))
                 novaseqparse.add(manager, demux_dir, unaligned, machine)
+        if machine == '2500':
+            if check_for_rapid_support(unaligned_dir_path=unaligned_dir_path):
+                log.info('Adding {}.'.format(unaligned))
+                parse.add(manager, demux_dir, unaligned)
         else:
             log.info('Adding {}.'.format(unaligned))
             novaseqparse.add(manager, demux_dir, unaligned, machine)
