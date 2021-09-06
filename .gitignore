@@ -26,6 +26,10 @@ lib64
 # Installer logs
 pip-log.txt
 
+# IDEAJ
+*idea*
+venv*
+
 # Unit test / coverage reports
 .coverage
 .tox
