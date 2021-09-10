@@ -207,15 +207,14 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
 
             manager.add(s)
             manager.flush()
-            sample_id = s.sample_id.split('_')[0]
+            sample_id = s.sample_id
 
         if not Unaligned.exists(sample_id, demux_id, line['lane']):
             u = Unaligned()
             u.sample_id = sample_id
             u.demux_id = demux_id
             u.lane = line['lane']
-            stats_sample = stats[line['lane']][line['sample_id']]
-
+            stats_sample = stats[line['lane']][line['sample_id'].split('_')[0]]
             u.yield_mb = int(stats_sample['yield_mb'])
             u.passed_filter_pct = stats_sample['pf_pc']
             u.readcounts = stats_sample['readcounts']
