@@ -196,7 +196,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
         project_id_of[ project_name ] = project_id
 
     for line in samplesheet.lines():
-        sample_id = Sample.exists(line['sample_id'], line['index'])
+        sample_id = Sample.exists(line['sample_id'].split('_')[0], line['index'])
         if not sample_id:
             s = Sample()
             s.project_id = project_id_of[ line['project'] ]
