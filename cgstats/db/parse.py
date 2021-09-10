@@ -207,7 +207,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
 
             manager.add(s)
             manager.flush()
-            sample_id = s.sample_id
+            sample_id = s.sample_id.split('_')[0]
 
         if not Unaligned.exists(sample_id, demux_id, line['lane']):
             u = Unaligned()
