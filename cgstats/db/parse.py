@@ -214,6 +214,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
             u.sample_id = sample_id
             u.demux_id = demux_id
             u.lane = line['lane']
+            print(stats[line['lane']][line['sample_id']])
             stats_sample = stats[line['lane']][line['sample_id']].split('_')[0]
             u.yield_mb = int(stats_sample['yield_mb'])
             u.passed_filter_pct = stats_sample['pf_pc']
