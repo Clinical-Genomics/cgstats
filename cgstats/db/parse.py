@@ -196,11 +196,11 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
         project_id_of[ project_name ] = project_id
 
     for line in samplesheet.lines():
-        sample_id = Sample.exists(line['sample_id'], line['index'])
+        sample_id = Sample.exists(line['sample_id'].split('_')[0], line['index'])
         if not sample_id:
             s = Sample()
             s.project_id = project_id_of[ line['project'] ]
-            s.samplename = line['sample_id']
+            s.samplename = line['sample_id'].split('_')[0]
             s.limsid = line['sample_id'].split('_')[0]
             s.barcode = line['index']
             s.time = func.now()
@@ -215,7 +215,6 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name = 'SampleSheet.csv')
             u.demux_id = demux_id
             u.lane = line['lane']
             stats_sample = stats[line['lane']][line['sample_id']]
-
             u.yield_mb = int(stats_sample['yield_mb'])
             u.passed_filter_pct = stats_sample['pf_pc']
             u.readcounts = stats_sample['readcounts']
