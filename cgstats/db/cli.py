@@ -148,23 +148,27 @@ def add(context, machine, demux_dir, unaligned, all_unaligned):
 
     if machine == 'X':
         xparse.add(manager, demux_dir)
-    if machine == 'novaseq' or machine == '2500':
-        if not unaligned and machine == 'novaseq':
-            click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
-            context.abort()
-        if all_unaligned:
-            unaligned_dirs = glob(demux_dir_path.joinpath('Unaligned*'))
-            for unaligned in unaligned_dirs:
-                log.info('Adding {}.'.format(unaligned))
-                novaseqparse.add(manager, demux_dir, unaligned, machine)
-        if machine == '2500':
-            if check_for_rapid_support(unaligned_dir_path=unaligned_dir_path):
-                log.info('Adding {}.'.format(unaligned))
-                parse.add(manager, demux_dir, unaligned)
-        else:
+
+    if not unaligned and machine == 'novaseq':
+        click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
+        context.abort()
+
+    if unaligned and machine == 'novaseq':
+        log.info('Adding {}.'.format(unaligned))
+        novaseqparse.add(manager, demux_dir, unaligned, machine)
+
+    if all_unaligned and machine == 'novaseq' or machine == '2500':
+        unaligned_dirs = glob(demux_dir_path.joinpath('Unaligned*'))
+        for unaligned in unaligned_dirs:
             log.info('Adding {}.'.format(unaligned))
             novaseqparse.add(manager, demux_dir, unaligned, machine)
-    if machine == 'iseq':
+
+    if unaligned and machine == '2500':
+        if check_for_rapid_support(unaligned_dir_path=unaligned_dir_path):
+            log.info('Adding {}.'.format(unaligned))
+            parse.add(manager, demux_dir, unaligned)
+
+    if not unaligned and machine == 'iseq':
         if not unaligned:
             click.echo(click.style("Please specify an unaligned directory for iSeq!", fg='yellow'))
             context.abort()
