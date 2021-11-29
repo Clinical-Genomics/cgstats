@@ -193,7 +193,7 @@ class Datasource(Model):
     machine = Column(types.String(255))
     rundate = Column(types.Date)
     document_path = Column(types.String(255), nullable=False)
-    document_type = Column(types.Enum('csv','html', 'xml', 'undefined'),
+    document_type = Column(types.Enum('csv', 'html', 'xml', 'undefined'),
                            nullable=False, default='html')
     server = Column(types.String(255))
     time = Column(types.DateTime)
