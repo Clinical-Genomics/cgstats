@@ -12,11 +12,10 @@ def json_serial(obj):
     if isinstance(obj, datetime):
         serial = obj.isoformat()
         return serial
-    raise TypeError('Type not serializable')
+    raise TypeError("Type not serializable")
 
 
 class JsonModel(ModelBase):
-
     def to_json(self, pretty=False):
         """Serialize to JSON.
 
@@ -36,11 +35,10 @@ class Project(Model):
     comment = Column(types.Text)
     time = Column(types.DateTime, nullable=False)
 
-    samples = orm.relationship('Sample', cascade='all', backref=orm.backref('project'))
+    samples = orm.relationship("Sample", cascade="all", backref=orm.backref("project"))
 
     def __repr__(self):
-        return (u"{self.__class__.__name__}: {self.project_id}"
-                .format(self=self))
+        return "{self.__class__.__name__}: {self.project_id}".format(self=self)
 
     @staticmethod
     def exists(project_name):
@@ -55,8 +53,7 @@ class Project(Model):
 
         """
         try:
-            rs = (Project.query
-                         .filter_by(projectname=project_name).one())
+            rs = Project.query.filter_by(projectname=project_name).one()
             return rs.project_id
         except NoResultFound:
             return False
@@ -65,20 +62,24 @@ class Project(Model):
 class Sample(Model):
 
     sample_id = Column(types.Integer, primary_key=True)
-    project_id = Column(ForeignKey('project.project_id', ondelete='CASCADE'), nullable=False)
+    project_id = Column(
+        ForeignKey("project.project_id", ondelete="CASCADE"), nullable=False
+    )
     samplename = Column(types.String(255), nullable=False)
     customerid = Column(types.String(255))
     limsid = Column(types.String(255))
     barcode = Column(types.String(255))
     time = Column(types.DateTime)
 
-    unaligned = orm.relationship('Unaligned', cascade='all, delete-orphan', backref=orm.backref('sample'))
+    unaligned = orm.relationship(
+        "Unaligned", cascade="all, delete-orphan", backref=orm.backref("sample")
+    )
 
     @property
     def lims_id(self):
         """Parse out the LIMS id from the samplename in demux database."""
-        sample_part = self.samplename.split('_')[0]
-        sanitized_id = sample_part.rstrip('FB')
+        sample_part = self.samplename.split("_")[0]
+        sanitized_id = sample_part.rstrip("FB")
         return sanitized_id
 
     @staticmethod
@@ -96,9 +97,11 @@ class Sample(Model):
 
         """
         try:
-            rs = (Sample.query
-                        .filter_by(samplename=sample_name)
-                        .filter_by(barcode=barcode).one())
+            rs = (
+                Sample.query.filter_by(samplename=sample_name)
+                .filter_by(barcode=barcode)
+                .one()
+            )
             return rs.sample_id
         except NoResultFound:
             return False
@@ -107,8 +110,10 @@ class Sample(Model):
 class Unaligned(Model):
 
     unaligned_id = Column(types.Integer, primary_key=True)
-    sample_id = Column(ForeignKey('sample.sample_id', ondelete='CASCADE'), nullable=False)
-    demux_id = Column(ForeignKey('demux.demux_id', ondelete='CASCADE'), nullable=False)
+    sample_id = Column(
+        ForeignKey("sample.sample_id", ondelete="CASCADE"), nullable=False
+    )
+    demux_id = Column(ForeignKey("demux.demux_id", ondelete="CASCADE"), nullable=False)
     lane = Column(types.Integer)
     yield_mb = Column(types.Integer)
     passed_filter_pct = Column(types.Numeric(10, 5))
@@ -119,8 +124,8 @@ class Unaligned(Model):
     mean_quality_score = Column(types.Numeric(10, 5))
     time = Column(types.DateTime)
 
-    #demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
-    #sample = orm.relationship('Sample', single_parent=True, cascade='all, delete-orphan', passive_deletes=True, backref=orm.backref('unaligned'))
+    # demux = orm.relationship('Demux', backref=orm.backref('unaligned'))
+    # sample = orm.relationship('Sample', single_parent=True, cascade='all, delete-orphan', passive_deletes=True, backref=orm.backref('unaligned'))
 
     @staticmethod
     def exists(sample_id, demux_id, lane):
@@ -137,10 +142,12 @@ class Unaligned(Model):
 
         """
         try:
-            rs = (Unaligned.query
-                           .filter_by(sample_id=sample_id)
-                           .filter_by(demux_id=demux_id)
-                           .filter_by(lane=lane).one())
+            rs = (
+                Unaligned.query.filter_by(sample_id=sample_id)
+                .filter_by(demux_id=demux_id)
+                .filter_by(lane=lane)
+                .one()
+            )
             return rs.unaligned_id
         except NoResultFound:
             return False
@@ -162,7 +169,7 @@ class Supportparams(Model):
     time = Column(types.DateTime)
 
     def __repr__(self):
-        return (u'{self.__class__.__name__}: {self.document_path}'.format(self=self))
+        return "{self.__class__.__name__}: {self.document_path}".format(self=self)
 
     @staticmethod
     def exists(document_path):
@@ -177,8 +184,7 @@ class Supportparams(Model):
 
         """
         try:
-            rs = (Supportparams.query
-                               .filter_by(document_path=document_path).one())
+            rs = Supportparams.query.filter_by(document_path=document_path).one()
             return rs.supportparams_id
         except NoResultFound:
             return False
@@ -187,22 +193,25 @@ class Supportparams(Model):
 class Datasource(Model):
 
     datasource_id = Column(types.Integer, primary_key=True)
-    supportparams_id = Column(ForeignKey('supportparams.supportparams_id', ondelete='CASCADE'),
-                              nullable=False)
+    supportparams_id = Column(
+        ForeignKey("supportparams.supportparams_id", ondelete="CASCADE"), nullable=False
+    )
     runname = Column(types.String(255))
     machine = Column(types.String(255))
     rundate = Column(types.Date)
     document_path = Column(types.String(255), nullable=False)
-    document_type = Column(types.Enum('csv', 'html', 'xml', 'undefined'),
-                           nullable=False, default='html')
+    document_type = Column(
+        types.Enum("csv", "html", "xml", "undefined"), nullable=False, default="html"
+    )
     server = Column(types.String(255))
     time = Column(types.DateTime)
 
-    supportparams = orm.relationship('Supportparams', cascade='all',
-                                     backref=orm.backref('datasources'))
+    supportparams = orm.relationship(
+        "Supportparams", cascade="all", backref=orm.backref("datasources")
+    )
 
     def __repr__(self):
-        return (u'{self.__class__.__name__}: {self.runname}'.format(self=self))
+        return "{self.__class__.__name__}: {self.runname}".format(self=self)
 
     @staticmethod
     def exists(document_path):
@@ -217,8 +226,7 @@ class Datasource(Model):
 
         """
         try:
-            rs = (Datasource.query
-                            .filter_by(document_path=document_path).one())
+            rs = Datasource.query.filter_by(document_path=document_path).one()
             return rs.datasource_id
         except NoResultFound:
             return False
@@ -226,19 +234,35 @@ class Datasource(Model):
 
 class Demux(Model):
 
-    __table_args__ = (UniqueConstraint('flowcell_id', 'basemask',
-                                       name='demux_ibuk_1'),)
+    __table_args__ = (UniqueConstraint("flowcell_id", "basemask", name="demux_ibuk_1"),)
 
     demux_id = Column(types.Integer, primary_key=True)
-    flowcell_id = Column(ForeignKey('flowcell.flowcell_id', ondelete='CASCADE'), nullable=False)
-    datasource_id = Column(ForeignKey('datasource.datasource_id', ondelete='CASCADE'), nullable=False)
+    flowcell_id = Column(
+        ForeignKey("flowcell.flowcell_id", ondelete="CASCADE"), nullable=False
+    )
+    datasource_id = Column(
+        ForeignKey("datasource.datasource_id", ondelete="CASCADE"), nullable=False
+    )
     basemask = Column(types.String(255))
     time = Column(types.DateTime)
 
-    datasource = orm.relationship('Datasource', cascade='all', backref=orm.backref('demuxes'))
-    unaligned = orm.relation('Unaligned', single_parent=True, cascade='all, delete-orphan', backref=orm.backref('demux'))
+    datasource = orm.relationship(
+        "Datasource", cascade="all", backref=orm.backref("demuxes")
+    )
+    unaligned = orm.relation(
+        "Unaligned",
+        single_parent=True,
+        cascade="all, delete-orphan",
+        backref=orm.backref("demux"),
+    )
     # add the viewonly attribute to make sure the Session.delete(demux) works
-    samples = orm.relation('Sample', secondary='unaligned', viewonly=True, cascade='all', backref=orm.backref('demuxes'))
+    samples = orm.relation(
+        "Sample",
+        secondary="unaligned",
+        viewonly=True,
+        cascade="all",
+        backref=orm.backref("demuxes"),
+    )
 
     @staticmethod
     def exists(flowcell_id, basemask):
@@ -254,9 +278,11 @@ class Demux(Model):
 
         """
         try:
-            rs = (Demux.query
-                       .filter_by(flowcell_id=flowcell_id)
-                       .filter_by(basemask=basemask).one())
+            rs = (
+                Demux.query.filter_by(flowcell_id=flowcell_id)
+                .filter_by(basemask=basemask)
+                .one()
+            )
             return rs.demux_id
         except NoResultFound:
             return False
@@ -266,11 +292,11 @@ class Flowcell(Model):
 
     flowcell_id = Column(types.Integer, primary_key=True)
     flowcellname = Column(types.String(255), nullable=False, unique=True)
-    flowcell_pos = Column(types.Enum('A', 'B'), nullable=False)
+    flowcell_pos = Column(types.Enum("A", "B"), nullable=False)
     hiseqtype = Column(types.String(255), nullable=False)
     time = Column(types.DateTime)
 
-    demux = orm.relationship('Demux', cascade='all', backref=orm.backref('flowcell'))
+    demux = orm.relationship("Demux", cascade="all", backref=orm.backref("flowcell"))
 
     @staticmethod
     def exists(flowcell_name):
@@ -309,11 +335,11 @@ class Backup(Model):
     toanalysis = Column(types.DateTime)
     fromanalysis = Column(types.DateTime)
     inbackupdir = Column(types.Integer)
-    backuptape_id = Column(ForeignKey('backuptape.backuptape_id'), nullable=False)
+    backuptape_id = Column(ForeignKey("backuptape.backuptape_id"), nullable=False)
     backupdone = Column(types.DateTime)
     md5done = Column(types.DateTime)
 
-    tape = orm.relationship('Backuptape', backref=orm.backref('backup'))
+    tape = orm.relationship("Backuptape", backref=orm.backref("backup"))
 
     @staticmethod
     def exists(runname, tapedir=None):
@@ -330,10 +356,12 @@ class Backup(Model):
         """
         try:
             if tapedir is not None:
-                rs = (Backup.query
-                            .outerjoin(Backuptape)
-                            .filter_by(runname=runname)
-                            .filter(Backuptape.tapedir == tapedir).one())
+                rs = (
+                    Backup.query.outerjoin(Backuptape)
+                    .filter_by(runname=runname)
+                    .filter(Backuptape.tapedir == tapedir)
+                    .one()
+                )
             else:
                 rs = Backup.query.filter_by(runname=runname).one()
             return rs.runname
@@ -369,8 +397,11 @@ class Backuptape(Model):
 
 class Version(Model):
 
-    __table_args__ = (UniqueConstraint('name', 'major', 'minor', 'patch',
-                                       name='name_major_minor_patch_uc'),)
+    __table_args__ = (
+        UniqueConstraint(
+            "name", "major", "minor", "patch", name="name_major_minor_patch_uc"
+        ),
+    )
 
     version_id = Column(types.Integer, primary_key=True)
     name = Column(types.String(255))
@@ -405,6 +436,7 @@ class Version(Model):
         """
         rs = Version.get_version()
         if rs is not None:
-            ver_string = "{0}.{1}.{2}".format(str(rs.major), str(rs.minor),
-                                              str(rs.patch))
-            return ((ver_string == ver) and (dbname == rs.name))
+            ver_string = "{0}.{1}.{2}".format(
+                str(rs.major), str(rs.minor), str(rs.patch)
+            )
+            return (ver_string == ver) and (dbname == rs.name)

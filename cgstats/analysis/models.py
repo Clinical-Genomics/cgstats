@@ -12,7 +12,7 @@ class SampleFlowcell(Model):
 
     id = Column(types.Integer, primary_key=True)
     flowcell_id = Column(types.String(16))
-    sample_id = Column(ForeignKey('analysis_sample.id'))
+    sample_id = Column(ForeignKey("analysis_sample.id"))
 
     lane = Column(types.Integer)
     cbot_machine = Column(types.String(32))
@@ -34,9 +34,9 @@ class AnalysisSample(Model):
 
     id = Column(types.Integer, primary_key=True)
     sample_id = Column(types.String(32), unique=True)
-    analysis_id = Column(ForeignKey('analysis.id'))
-    sequencing_type = Column(types.Enum('wes', 'wgs'))
-    sex_predicted = Column(types.Enum('male', 'female', 'unknown'))
+    analysis_id = Column(ForeignKey("analysis.id"))
+    sequencing_type = Column(types.Enum("wes", "wgs"))
+    sex_predicted = Column(types.Enum("male", "female", "unknown"))
 
     # pre-sequencing lab stuff
     capture_kit = Column(types.String(32))
@@ -75,8 +75,9 @@ class AnalysisSample(Model):
     hethom_ratio = Column(types.Float)
     titv_ratio = Column(types.Float)
 
-    flowcells = orm.relationship('SampleFlowcell', cascade='all,delete',
-                                 backref='sample')
+    flowcells = orm.relationship(
+        "SampleFlowcell", cascade="all,delete", backref="sample"
+    )
 
     @property
     def read_pairs(self):
@@ -103,9 +104,10 @@ class Analysis(Model):
     def program_versions(self, value):
         self._program_versions = json.dumps(value)
 
-    samples = orm.relationship('AnalysisSample', cascade='all,delete',
-                               backref='analysis')
+    samples = orm.relationship(
+        "AnalysisSample", cascade="all,delete", backref="analysis"
+    )
 
     @property
     def family_id(self):
-        return self.analysis_id.split('-', 1)[-1]
+        return self.analysis_id.split("-", 1)[-1]

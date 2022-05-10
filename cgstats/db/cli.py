@@ -19,8 +19,8 @@ log = logging.getLogger(__name__)
 
 
 @click.command()
-@click.option('-l', '--limit', default=10)
-@click.argument('flowcell_id', required=False)
+@click.option("-l", "--limit", default=10)
+@click.argument("flowcell_id", required=False)
 @click.pass_context
 def show(context, limit, flowcell_id):
     """Show flowcells as JSON objects."""
@@ -33,9 +33,9 @@ def show(context, limit, flowcell_id):
 
 
 @click.command()
-@click.option('-e', '--expected', type=int, help='expected number of reads')
-@click.option('-d', '--date', is_flag=True, help='show date of last sequencing')
-@click.argument('sample_id')
+@click.option("-e", "--expected", type=int, help="expected number of reads")
+@click.option("-d", "--date", is_flag=True, help="show date of last sequencing")
+@click.argument("sample_id")
 @click.pass_context
 def sample(context, expected, date, sample_id):
     """Report how many reads a sample has been sequenced."""
@@ -59,18 +59,19 @@ def sample(context, expected, date, sample_id):
         context.abort()
 
     if date:
-        sorted_dates = sorted(unaligned.demux.datasource.rundate for unaligned
-                              in sample_obj.unaligned)
+        sorted_dates = sorted(
+            unaligned.demux.datasource.rundate for unaligned in sample_obj.unaligned
+        )
         click.echo(sorted_dates[-1])
     else:
         click.echo(reads)
 
 
 @click.command()
-@click.option('-l', '--limit', default=20, help='limit number of flowcells')
-@click.option('-o', '--offset', default=0, help='skip initial flowcells')
-@click.option('-s', '--sample', help='look up flowcells based on sample')
-@click.option('-v', '--verbose', is_flag=True, help='show more information')
+@click.option("-l", "--limit", default=20, help="limit number of flowcells")
+@click.option("-o", "--offset", default=0, help="skip initial flowcells")
+@click.option("-s", "--sample", help="look up flowcells based on sample")
+@click.option("-v", "--verbose", is_flag=True, help="show more information")
 @click.pass_context
 def flowcells(context, limit, offset, sample, verbose):
     """Get information about flowcells."""
@@ -83,9 +84,9 @@ def flowcells(context, limit, offset, sample, verbose):
 
 
 @click.command()
-@click.option('-l', '--limit', default=20, help='limit number of flowcells')
-@click.option('-o', '--offset', default=0, help='skip initial flowcells')
-@click.option('-f', '--flowcell', help='flowcell name')
+@click.option("-l", "--limit", default=20, help="limit number of flowcells")
+@click.option("-o", "--offset", default=0, help="skip initial flowcells")
+@click.option("-f", "--flowcell", help="flowcell name")
 @click.pass_context
 def samples(context, limit, offset, flowcell):
     """List samples in the database."""
@@ -97,90 +98,131 @@ def samples(context, limit, offset, flowcell):
 
 
 @click.command()
-@click.argument('demux_dir')
+@click.argument("demux_dir")
 @click.pass_context
 def lanestats(context, demux_dir):
     """List lane centric stats for X"""
-    lane_stats = sorted([ line for _, line in xstats.parse(demux_dir).items()], key=lambda line: int(line['lane']))
+    lane_stats = sorted(
+        [line for _, line in xstats.parse(demux_dir).items()],
+        key=lambda line: int(line["lane"]),
+    )
 
-    click.echo("Flowcell\tLane\tReads\tYieldMB\tQ30\tQ30_read1\tQ30_read2\tMeanQScore\tUndetermined")
+    click.echo(
+        "Flowcell\tLane\tReads\tYieldMB\tQ30\tQ30_read1\tQ30_read2\tMeanQScore\tUndetermined"
+    )
 
     for line in lane_stats:
-        click.echo('\t'.join(str(s) for s in [
-            line['flowcell'],
-            line['lane'],
-            line['pf_clusters'],
-            int(round(line['pf_yield'] / 1000000, 0)),
-            line['pf_Q30'],
-            line['pf_read1_q30'],
-            line['pf_read2_q30'],
-            line['pf_qscore'],
-            round(line['undetermined_pc'], 2)
-        ]))
+        click.echo(
+            "\t".join(
+                str(s)
+                for s in [
+                    line["flowcell"],
+                    line["lane"],
+                    line["pf_clusters"],
+                    int(round(line["pf_yield"] / 1000000, 0)),
+                    line["pf_Q30"],
+                    line["pf_read1_q30"],
+                    line["pf_read2_q30"],
+                    line["pf_qscore"],
+                    round(line["undetermined_pc"], 2),
+                ]
+            )
+        )
 
 
 @click.command()
-@click.argument('flowcell')
-@click.option('-p', '--project', help='project name')
+@click.argument("flowcell")
+@click.option("-p", "--project", help="project name")
 @click.pass_context
 def select(context, flowcell, project):
     """List sample centric stats"""
     query = api.select(flowcell, project)
 
-    click.echo("sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore")
+    click.echo(
+        "sample\tFlowcell\tLanes\treadcounts/lane\tsum_readcounts\tyieldMB/lane\tsum_yield\t%Q30\tMeanQscore"
+    )
     for line in query:
-            click.echo('\t'.join( str(s) for s in [line.samplename, line.flowcellname, line.lanes, line.reads, line.readsum, line.yld, line.yieldsum, line.q30, line.meanq] ))
+        click.echo(
+            "\t".join(
+                str(s)
+                for s in [
+                    line.samplename,
+                    line.flowcellname,
+                    line.lanes,
+                    line.reads,
+                    line.readsum,
+                    line.yld,
+                    line.yieldsum,
+                    line.q30,
+                    line.meanq,
+                ]
+            )
+        )
 
 
 @click.command()
-@click.argument('demux_dir')
-@click.option('-m', '--machine', type=click.Choice(['X', '2500', 'novaseq', 'iseq']),
-              help='machine type')
-@click.option('-u', '--unaligned', help='the unaligned dir name, mandatory for NovaSeq.')
-@click.option('-a', '--all-unaligned', is_flag=True, help='add all Unaligned* dirs')
+@click.argument("demux_dir")
+@click.option(
+    "-m",
+    "--machine",
+    type=click.Choice(["X", "2500", "novaseq", "iseq"]),
+    help="machine type",
+)
+@click.option(
+    "-u", "--unaligned", help="the unaligned dir name, mandatory for NovaSeq."
+)
+@click.option("-a", "--all-unaligned", is_flag=True, help="add all Unaligned* dirs")
 @click.pass_context
 def add(context, machine, demux_dir, unaligned, all_unaligned):
     """Add a FC to cgstats."""
 
-    manager = context.obj['manager']
+    manager = context.obj["manager"]
     demux_dir_path = Path(demux_dir)
     unaligned_dir_path = demux_dir_path.joinpath(unaligned)
 
-    if machine == 'X':
+    if machine == "X":
         xparse.add(manager, demux_dir)
-    if machine == 'novaseq' or machine == '2500':
-        if not unaligned and machine == 'novaseq':
-            click.echo(click.style("Please specify an unaligned directory for NovaSeq!", fg='yellow'))
+    if machine == "novaseq" or machine == "2500":
+        if not unaligned and machine == "novaseq":
+            click.echo(
+                click.style(
+                    "Please specify an unaligned directory for NovaSeq!", fg="yellow"
+                )
+            )
             context.abort()
         if all_unaligned:
-            unaligned_dirs = glob(demux_dir_path.joinpath('Unaligned*'))
+            unaligned_dirs = glob(demux_dir_path.joinpath("Unaligned*"))
             for unaligned in unaligned_dirs:
-                log.info('Adding {}.'.format(unaligned))
+                log.info("Adding {}.".format(unaligned))
                 novaseqparse.add(manager, demux_dir, unaligned, machine)
-        if machine == '2500':
+        if machine == "2500":
             if check_for_rapid_support(unaligned_dir_path=unaligned_dir_path):
-                log.info('Adding {}.'.format(unaligned))
+                log.info("Adding {}.".format(unaligned))
                 parse.add(manager, demux_dir, unaligned)
         else:
-            log.info('Adding {}.'.format(unaligned))
+            log.info("Adding {}.".format(unaligned))
             novaseqparse.add(manager, demux_dir, unaligned, machine)
-    if machine == 'iseq':
+    if machine == "iseq":
         if not unaligned:
-            click.echo(click.style("Please specify an unaligned directory for iSeq!", fg='yellow'))
+            click.echo(
+                click.style(
+                    "Please specify an unaligned directory for iSeq!", fg="yellow"
+                )
+            )
             context.abort()
         if all_unaligned:
-            unaligned_dirs = glob(Path(demux_dir).joinpath('Unaligned*'))
+            unaligned_dirs = glob(Path(demux_dir).joinpath("Unaligned*"))
             for unaligned in unaligned_dirs:
-                log.info('Adding %s.', format(unaligned))
+                log.info("Adding %s.", format(unaligned))
                 iseqparse.add(manager, demux_dir, unaligned)
         else:
             iseqparse.add(manager, demux_dir, unaligned)
 
 
 @click.command()
-@click.option('-f', '--flowcell', help='flowcell to remove')
-@click.option('-b', '--basemask', help='demux with given basemask to remove')
-@click.option('-s', '--sample', help='sample to remove')
+@click.option("-f", "--flowcell", help="flowcell to remove")
+@click.option("-b", "--basemask", help="demux with given basemask to remove")
+@click.option("-s", "--sample", help="sample to remove")
 @click.pass_context
 def delete(context, flowcell, basemask, sample):
 
@@ -189,17 +231,22 @@ def delete(context, flowcell, basemask, sample):
 
     if basemask:
         if not flowcell:
-            click.echo('Missing flowcell parameter', err=True)
+            click.echo("Missing flowcell parameter", err=True)
             context.abort()
         rs = Demux.query.filter_by(basemask=basemask)
 
     if sample:
         rs = Sample.query.filter_by(limsid=sample)
         if flowcell:
-            rs = rs.join(Unaligned).join(Demux).join(Flowcell).filter_by(flowcellname=flowcell)
+            rs = (
+                rs.join(Unaligned)
+                .join(Demux)
+                .join(Flowcell)
+                .filter_by(flowcellname=flowcell)
+            )
 
     rs = rs.all()
-    manager = context.obj['manager']
+    manager = context.obj["manager"]
     if click.confirm("Are you sure you want to delete {}?".format(rs)):
         manager.delete(rs)
         manager.commit()

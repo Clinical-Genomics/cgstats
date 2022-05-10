@@ -3,10 +3,10 @@
 import yaml
 from os.path import expanduser
 
-class BaseConfig:
 
+class BaseConfig:
     def __init__(self):
-        with open(expanduser("~/.clinical/databases.yaml"), 'r') as ymlfile:
+        with open(expanduser("~/.clinical/databases.yaml"), "r") as ymlfile:
             self.config = yaml.load(ymlfile)
 
     def __getitem__(self, key):

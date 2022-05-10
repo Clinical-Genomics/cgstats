@@ -28,11 +28,11 @@ def init_log(logger, filename=None, loglevel=None):
 
     # We will always print warnings and higher to stderr
     console = logging.StreamHandler()
-    console.setLevel('WARNING')
+    console.setLevel("WARNING")
     console.setFormatter(formatter)
 
     if filename:
-        file_handler = logging.FileHandler(filename, encoding='utf-8')
+        file_handler = logging.FileHandler(filename, encoding="utf-8")
         if loglevel:
             file_handler.setLevel(getattr(logging, loglevel))
         file_handler.setFormatter(formatter)
@@ -52,8 +52,10 @@ class EntryPointsCLI(click.MultiCommand):
     def _iter_commands(self):
         """Iterate over all subcommands as defined by the entry point."""
         subcommands_ep = "{}.subcommands.1".format(__title__)
-        return {entry_point.name: entry_point for entry_point in
-                pkg_resources.iter_entry_points(subcommands_ep)}
+        return {
+            entry_point.name: entry_point
+            for entry_point in pkg_resources.iter_entry_points(subcommands_ep)
+        }
 
     def list_commands(self, ctx):
         """List the available commands."""
@@ -70,13 +72,17 @@ class EntryPointsCLI(click.MultiCommand):
 
 
 @click.group(cls=EntryPointsCLI)
-@click.option('-c', '--config', default='~/.cgstats.yaml',
-              type=click.Path(), help='path to config file')
-@click.option('-d', '--database', help='path/URI of the SQL database')
-@click.option('-l', '--log-level', default='INFO', help='level to log at')
-@click.option('-r', '--reset', is_flag=True,
-              help='reset database from scratch')
-@click.option('--log-file', type=click.Path(), help='write logs to a file')
+@click.option(
+    "-c",
+    "--config",
+    default="~/.cgstats.yaml",
+    type=click.Path(),
+    help="path to config file",
+)
+@click.option("-d", "--database", help="path/URI of the SQL database")
+@click.option("-l", "--log-level", default="INFO", help="level to log at")
+@click.option("-r", "--reset", is_flag=True, help="reset database from scratch")
+@click.option("--log-file", type=click.Path(), help="write logs to a file")
 @click.version_option(__version__, prog_name=__title__)
 @click.pass_context
 def root(context, config, database, reset, log_level, log_file):
@@ -91,6 +97,6 @@ def root(context, config, database, reset, log_level, log_file):
         context.obj = {}
 
     if database:
-        context.obj['database'] = database
-    if context.obj.get('database'):
-        context.obj['manager'] = api.connect(context.obj['database'])
+        context.obj["database"] = database
+    if context.obj.get("database"):
+        context.obj["manager"] = api.connect(context.obj["database"])
