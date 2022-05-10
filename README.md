@@ -1,6 +1,4 @@
-# CGSTATS [![Build Status][travis-img]][travis-url]
-
-Models and CRUD to cgstats.
+# Models and CRUD to cgstats
 
 ## configuration
 
@@ -31,6 +29,3 @@ $ cgstats --database mysql+pymysql://user:pass@127.0.0.1:3306/cgstats
 **backup**: holds the data regarding backup of a run
 
 **backtape**: holds the backup tape's name
-
-[travis-img]: https://travis-ci.org/Clinical-Genomics/cgstats.svg?branch=master
-[travis-url]: https://travis-ci.org/Clinical-Genomics/cgstats
