@@ -13,7 +13,7 @@ import ast
 from datetime import datetime
 
 from sqlalchemy import func
-from path import Path
+from pathlib import Path
 
 from demux.utils import HiSeq2500Samplesheet
 from cgstats.utils import stats as hiseqstats
@@ -96,18 +96,18 @@ def gather_supportparams(demuxdir, unaligneddir):
         "commandline": " ".join([program, " ".join(c)]),
         "sampleconfig_path": samplesheet_path,
         "sampleconfig": samplesheet.raw(),
-        "time": datetime.fromtimestamp(support_file.getmtime()),
+        "time": datetime.fromtimestamp(os.path.getmtime(support_file)),
     }
 
 
 def gather_datasource(demuxdir):
     rs = {}  # resultset
 
-    runname = demuxdir.normpath().basename()
+    runname = demuxdir.name
     name_parts = runname.split("_")
 
     rs["runname"] = str(runname)
-    rs["rundate"] = name_parts[0]
+    rs["rundate"] = datetime(int(name_parts[0][0:2]), int(name_parts[0][2:4]), int(name_parts[0][4:6]))
     rs["machine"] = name_parts[1]
     rs["servername"] = socket.gethostname()
 
@@ -126,7 +126,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name="SampleSheet.csv"):
 
     demux_dir = Path(demux_dir)
     demux_stats = glob.glob(
-        demux_dir.joinpath(unaligned_dir, "Basecall_Stats_*", "Demultiplex_Stats.htm")
+        demux_dir.joinpath(unaligned_dir, "Basecall_Stats_*", "Demultiplex_Stats.htm").as_posix()
     )[0]
 
     samplesheet_path = demux_dir.joinpath(samplesheet_name)
@@ -134,7 +134,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name="SampleSheet.csv"):
 
     stats = hiseqstats.parse(demux_stats)
 
-    supportparams_id = Supportparams.exists(demux_dir.joinpath(unaligned_dir))
+    supportparams_id = Supportparams.exists(demux_dir.joinpath(unaligned_dir).as_posix())
     new_supportparams = gather_supportparams(demux_dir, unaligned_dir)
     if not supportparams_id:
         supportparams = Supportparams()
@@ -151,6 +151,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name="SampleSheet.csv"):
         supportparams_id = supportparams.supportparams_id
 
     datasource_id = Datasource.exists(str(demux_stats))
+
     if not datasource_id:
         new_datasource = gather_datasource(demux_dir)
         datasource = Datasource()
@@ -160,7 +161,7 @@ def add(manager, demux_dir, unaligned_dir, samplesheet_name="SampleSheet.csv"):
         datasource.server = new_datasource["servername"]
         datasource.document_path = str(demux_stats)
         datasource.document_type = "html"
-        datasource.time = datetime.fromtimestamp(Path(demux_stats).getmtime())
+        datasource.time = datetime.fromtimestamp(os.path.getmtime(Path(demux_stats)))
         datasource.supportparams_id = supportparams_id
 
         manager.add(datasource)

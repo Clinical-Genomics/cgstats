@@ -17,21 +17,20 @@ def connect(uri):
     for models in pkg_resources.iter_entry_points("cgstats.models.1"):
         models.load()
     log.debug("open connection to database: %s", uri)
-    manager = Manager(
+    
+    return Manager(
         config=dict(SQLALCHEMY_DATABASE_URI=uri),
         Model=Model,
         session_options=dict(autoflush=False),
     )
-    return manager
 
 
 def get_sample(sample_id):
     """Get a unique demux sample."""
     pattern = SAMPLE_PATTERN.format(sample_id)
-    query = Sample.query.filter(
+    return Sample.query.filter(
         or_(Sample.samplename.like(pattern), Sample.samplename == sample_id)
     )
-    return query
 
 
 def flowcells(sample=None):

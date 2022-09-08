@@ -9,7 +9,7 @@ import re
 import os
 import logging
 
-from path import Path
+from pathlib import Path
 
 from demux.utils import Samplesheet
 

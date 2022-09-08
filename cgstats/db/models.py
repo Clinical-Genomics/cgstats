@@ -53,8 +53,9 @@ class Project(Model):
 
         """
         try:
-            rs = Project.query.filter_by(projectname=project_name).one()
-            return rs.project_id
+            rs = Project.query.filter_by(projectname=project_name).first()
+            if rs:
+                return rs.project_id
         except NoResultFound:
             return False
 
@@ -100,9 +101,10 @@ class Sample(Model):
             rs = (
                 Sample.query.filter_by(samplename=sample_name)
                 .filter_by(barcode=barcode)
-                .one()
+                .first()
             )
-            return rs.sample_id
+            if rs:
+                return rs.sample_id
         except NoResultFound:
             return False
 
@@ -146,9 +148,10 @@ class Unaligned(Model):
                 Unaligned.query.filter_by(sample_id=sample_id)
                 .filter_by(demux_id=demux_id)
                 .filter_by(lane=lane)
-                .one()
+                .first()
             )
-            return rs.unaligned_id
+            if rs:
+                return rs.unaligned_id
         except NoResultFound:
             return False
 
@@ -185,7 +188,8 @@ class Supportparams(Model):
         """
         try:
             rs = Supportparams.query.filter_by(document_path=document_path).one()
-            return rs.supportparams_id
+            if rs:
+                return rs.supportparams_id
         except NoResultFound:
             return False
 
@@ -226,8 +230,9 @@ class Datasource(Model):
 
         """
         try:
-            rs = Datasource.query.filter_by(document_path=document_path).one()
-            return rs.datasource_id
+            rs = Datasource.query.filter_by(document_path=document_path).first()
+            if rs:
+                return rs.datasource_id
         except NoResultFound:
             return False
 
@@ -260,7 +265,6 @@ class Demux(Model):
         "Sample",
         secondary="unaligned",
         viewonly=True,
-        cascade="all",
         backref=orm.backref("demuxes"),
     )
 
@@ -281,9 +285,10 @@ class Demux(Model):
             rs = (
                 Demux.query.filter_by(flowcell_id=flowcell_id)
                 .filter_by(basemask=basemask)
-                .one()
+                .first()
             )
-            return rs.demux_id
+            if rs:
+                return rs.demux_id
         except NoResultFound:
             return False
 
@@ -311,8 +316,9 @@ class Flowcell(Model):
 
         """
         try:
-            rs = Flowcell.query.filter_by(flowcellname=flowcell_name).one()
-            return rs.flowcell_id
+            rs = Flowcell.query.filter_by(flowcellname=flowcell_name).first()
+            if rs:
+                return rs.flowcell_id
         except NoResultFound:
             return False
 
@@ -360,11 +366,12 @@ class Backup(Model):
                     Backup.query.outerjoin(Backuptape)
                     .filter_by(runname=runname)
                     .filter(Backuptape.tapedir == tapedir)
-                    .one()
+                    .first()
                 )
             else:
-                rs = Backup.query.filter_by(runname=runname).one()
-            return rs.runname
+                rs = Backup.query.filter_by(runname=runname).first()
+            if rs:
+                return rs.runname
         except NoResultFound:
             return False
 
@@ -389,8 +396,9 @@ class Backuptape(Model):
 
         """
         try:
-            rs = Backuptape.query.filter_by(tapedir=tapedir).one()
-            return rs.backuptape_id
+            rs = Backuptape.query.filter_by(tapedir=tapedir).first()
+            if rs:
+                return rs.backuptape_id
         except NoResultFound:
             return False
 
@@ -419,7 +427,7 @@ class Version(Model):
         """
 
         """SELECT major, minor, patch, name FROM version ORDER BY time DESC LIMIT 1"""
-        return Version.query.order_by(Version.time.desc()).limit(1).one()
+        return Version.query.order_by(Version.time.desc()).limit(1).first()
 
     @staticmethod
     def check(dbname, ver):
@@ -435,7 +443,7 @@ class Version(Model):
           True: if identical
         """
         rs = Version.get_version()
-        if rs is not None:
+        if rs:
             ver_string = "{0}.{1}.{2}".format(
                 str(rs.major), str(rs.minor), str(rs.patch)
             )

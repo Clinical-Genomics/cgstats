@@ -9,18 +9,13 @@ alchy
 alembic
 bs4
 click<7
-path.py
+pathlib
 pymysql
--e git+https://github.com/Clinical-Genomics/demultiplexing.git#egg=demux 
 
 # development requirements
 bumpversion
 pytest
 wheel
-git-lint
-pylint
 pycodestyle
-yamllint
 docutils
-html-linter
 six>=1.12                   # due to astroid 2.3.1

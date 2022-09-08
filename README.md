@@ -1,6 +1,10 @@
-# Models and CRUD to cgstats
+# Cgstats
 
-## configuration
+[![Coverage Status][coveralls-image]][coveralls-url]
+
+## Models and CRUD to cgstats
+
+### configuration
 
 cgstats has a parameter `--database` that needs to hold a connection string to the database:
 
@@ -8,7 +12,7 @@ cgstats has a parameter `--database` that needs to hold a connection string to t
 $ cgstats --database mysql+pymysql://user:pass@127.0.0.1:3306/cgstats
 ```
 
-## Table description
+### Table description
 
 **supportparams**: holds the data regarding how the demultiplexing was started
 
@@ -29,3 +33,8 @@ $ cgstats --database mysql+pymysql://user:pass@127.0.0.1:3306/cgstats
 **backup**: holds the data regarding backup of a run
 
 **backtape**: holds the backup tape's name
+
+<!-- badges -->
+
+[coveralls-url]: https://coveralls.io/github/Clinical-Genomics/cgstats
+[coveralls-image]: https://coveralls.io/repos/github/Clinical-Genomics/cgstats/badge.svg?branch=master

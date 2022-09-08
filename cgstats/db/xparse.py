@@ -8,6 +8,7 @@ from glob import glob
 import logging
 import socket
 
+from datetime import datetime
 from path import Path
 from sqlalchemy import func
 
@@ -119,7 +120,9 @@ def gather_datasource(run_dir):
     rs["runname"] = str(run_dir.normpath().basename())
 
     # get the run date
-    rs["rundate"] = rs["runname"].split("_")[0]
+    date_string = rs["runname"].split("_")[0]
+    rs["rundate"] = datetime(int(date_string[:2]), int(date_string[2:4]), int(date_string[4:6]))
+
 
     # get the machine name
     rs["machine"] = rs["runname"].split("_")[1]
@@ -242,9 +245,9 @@ def add(manager, demux_dir):
         supportparams.commandline = new_supportparams["commandline"]
         supportparams.sampleconfig_path = new_supportparams["sampleconfig_path"]
         supportparams.sampleconfig = new_supportparams["sampleconfig"]
-        supportparams.time = new_supportparams["time"]
 
-        manager.add(supportparams)
+        time = new_supportparams["time"]
+        supportparams.time = datetime(year=int(time[:4]), month=int(time[4:6]), day=int(time[6:8]), hour=int(time[8:10]), minute=int(time[10:12]), second=int(time[12:14]))
         manager.flush()
         supportparams_id = supportparams.supportparams_id
 

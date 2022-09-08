@@ -40,6 +40,9 @@ htmlcov
 # Virtual environments
 .venv/
 
+# VSCode
+.vscode/
+
 # Translations
 *.mo
 

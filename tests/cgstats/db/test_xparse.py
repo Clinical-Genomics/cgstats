@@ -3,7 +3,7 @@
 
 import socket
 import pytest
-from path import Path
+from pathlib import Path
 
 from cgstats.db.xparse import gather_supportparams, gather_datasource, gather_demux
 
@@ -40,7 +40,7 @@ def test_gather_datasource(x_run_dir, x_pooled_missing_logs_run_dir):
         gather_datasource(x_pooled_missing_logs_run_dir)
 
     assert gather_datasource(x_run_dir) == {
-            'runname': str(Path(x_run_dir).normpath().basename()),
+            'runname': str(Path(x_run_dir).name),
             'rundate': '170202',
             'machine': 'ST-E00269',
             'servername': socket.gethostname(),
